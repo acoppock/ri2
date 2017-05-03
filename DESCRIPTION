@@ -1,0 +1,15 @@
+Package: ri2
+Type: Package
+Title: Randomization Inference for Randomized Experiments
+Version: 0.1.0
+Author: person("Alexander", "Coppock", email = "acoppock@gmail.com", role = c("aut", "cre"))
+Description: More about what it does (maybe more than one line)
+License: All rights reserved
+Encoding: UTF-8
+LazyData: true
+Imports: Rcpp (>= 0.12.10),
+    randomizr,
+    ggplot2
+LinkingTo: Rcpp, RcppArmadillo
+Suggests: testthat
+RoxygenNote: 6.0.1

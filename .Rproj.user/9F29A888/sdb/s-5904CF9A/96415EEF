@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "context(\"Two Arm Trial\")\n\n\ntest_that(\"Basic Two Arm Trial\",{\n  library(ggplot2)\n  N <- 100\n  declaration <- randomizr::declare_ra(N = N, m = 50)\n\n  Z <- randomizr::conduct_ra(declaration)\n  X <- rnorm(N)\n  Y <- .9*X + .2 * Z + rnorm(N)\n  W <- runif(N)\n  df <- data.frame(Y, X, Z, W)\n\n  ri_out <-\n  conduct_ri(formula = Y~Z,\n             declaration = declaration,\n             assignment = \"Z\",\n             sharp_hypothesis = 0,\n             data = df)\n\n\n  plot(ri_out)\n  summary(ri_out)\n\n  ri_out <-\n    conduct_ri(formula = Y ~ Z + X,\n               declaration = declaration,\n               assignment = \"Z\",\n               sharp_hypothesis = 0,\n               data = df)\n\n\n  plot(ri_out)\n  summary(ri_out)\n\n\n\n})\n\n",
+    "created" : 1493854979045.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3639813031",
+    "id" : "96415EEF",
+    "lastKnownWriteTime" : 1493855012,
+    "last_content_update" : 1493855012342,
+    "path" : "~/git_projects/ri2/tests/testthat/test-two-arm.R",
+    "project_path" : "tests/testthat/test-two-arm.R",
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
