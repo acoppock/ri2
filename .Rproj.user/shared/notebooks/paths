@@ -2,6 +2,7 @@
 /Users/ac2595/git_projects/attrition/R/helper_functions.R="E8810A8F"
 /Users/ac2595/git_projects/attrition/R/user_facing_functions.R="4BFEED56"
 /Users/ac2595/git_projects/estimatr/R/lm_robust.R="EB7CD433"
+/Users/ac2595/git_projects/ri2/.gitignore="5E19F471"
 /Users/ac2595/git_projects/ri2/DESCRIPTION="E3ADA8C6"
 /Users/ac2595/git_projects/ri2/NAMESPACE="3700895D"
 /Users/ac2595/git_projects/ri2/R/RcppExports.R="92062663"
@@ -12,4 +13,5 @@
 /Users/ac2595/git_projects/ri2/src/RcppExports.cpp="AC34E4FB"
 /Users/ac2595/git_projects/ri2/src/quick_lm.cpp="3FAD53E5"
 /Users/ac2595/git_projects/ri2/tests/testthat/test-compare-ri.R="F3062F3F"
+/Users/ac2595/git_projects/ri2/tests/testthat/test-two-arm.R="7BF8C9DA"
 /Users/ac2595/git_projects/ri2/tests/testthat/two_arm_trial.R="36331191"
