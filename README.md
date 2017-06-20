@@ -23,13 +23,13 @@ W <- runif(N)
 df <- data.frame(Y, X, Z, W)
 
 ri_out <-
-conduct_ri(
-formula = Y ~ Z,
-declaration = declaration,
-assignment = "Z",
-sharp_hypothesis = 0,
-data = df
-)
+  conduct_ri(
+    formula = Y ~ Z,
+    declaration = declaration,
+    assignment = "Z",
+    sharp_hypothesis = 0,
+    data = df
+  )
 
 
 plot(ri_out)
@@ -40,11 +40,11 @@ plot(ri_out)
 ``` r
 summary(ri_out)
 #>                               estimate 
-#>                              0.5232297 
+#>                              0.1471318 
 #>                                p_value 
-#>                              0.0740000 
+#>                              0.5970000 
 #>  2.5th Percentile of Null Distribution 
-#>                             -0.5774404 
+#>                             -0.5450577 
 #> 97.5th Percentile of Null Distribution 
-#>                              0.5529152
+#>                              0.5685965
 ```

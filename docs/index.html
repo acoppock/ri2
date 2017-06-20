@@ -65,26 +65,26 @@ W &lt;-<span class="st"> </span><span class="kw">runif</span>(N)
 df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, X, Z, W)
 
 ri_out &lt;-
-<span class="kw"><a href="reference/conduct_ri.html">conduct_ri</a></span>(
-<span class="dt">formula =</span> Y ~<span class="st"> </span>Z,
-<span class="dt">declaration =</span> declaration,
-<span class="dt">assignment =</span> <span class="st">"Z"</span>,
-<span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
-<span class="dt">data =</span> df
-)
+<span class="st">  </span><span class="kw"><a href="reference/conduct_ri.html">conduct_ri</a></span>(
+    <span class="dt">formula =</span> Y ~<span class="st"> </span>Z,
+    <span class="dt">declaration =</span> declaration,
+    <span class="dt">assignment =</span> <span class="st">"Z"</span>,
+    <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
+    <span class="dt">data =</span> df
+  )
 
 
 <span class="kw">plot</span>(ri_out)</code></pre></div>
 <p><img src="README-unnamed-chunk-3-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri_out)
 <span class="co">#&gt;                               estimate </span>
-<span class="co">#&gt;                              0.4937442 </span>
+<span class="co">#&gt;                              0.3208074 </span>
 <span class="co">#&gt;                                p_value </span>
-<span class="co">#&gt;                              0.0910000 </span>
+<span class="co">#&gt;                              0.2160000 </span>
 <span class="co">#&gt;  2.5th Percentile of Null Distribution </span>
-<span class="co">#&gt;                             -0.5791882 </span>
+<span class="co">#&gt;                             -0.4913923 </span>
 <span class="co">#&gt; 97.5th Percentile of Null Distribution </span>
-<span class="co">#&gt;                              0.5671251</span></code></pre></div>
+<span class="co">#&gt;                              0.5085006</span></code></pre></div>
 </div>
   </div>
 
