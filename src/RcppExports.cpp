@@ -18,3 +18,13 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+
+static const R_CallMethodDef CallEntries[] = {
+    {"ri2_quick_lm", (DL_FUNC) &ri2_quick_lm, 2},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_ri2(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
+}

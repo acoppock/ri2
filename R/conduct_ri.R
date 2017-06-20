@@ -2,6 +2,7 @@
 
 
 
+
 #' Conduct Randomization Inference
 #'
 #' @param formula an object of class formula, as in \code{\link{lm}}.
@@ -28,10 +29,6 @@ conduct_ri <- function(formula,
   design_matrix <- model.matrix.default(formula, data = data)
   outcome_vec <- data[, all.vars(formula[[2]])]
 
-  pos_mat <- generate_pos(Y = outcome_vec,
-                          Z = assignment_vec,
-                          sharp_hypothesis = sharp_hypothesis)
-
   # The observed value ------------------------------------------------------
 
   if (IPW) {
@@ -40,10 +37,18 @@ conduct_ri <- function(formula,
     design_matrix <- sqrt(weights_vec) * design_matrix
     outcome_vec <- sqrt(weights_vec) * outcome_vec
   }
+
   coefs_obs <-
     quick_lm(y = outcome_vec, X = design_matrix)$coefficients
   rownames(coefs_obs) <- colnames(design_matrix)
-  est_obs <- coefs_obs[assignment,]
+  est_obs <- coefs_obs[assignment, ]
+
+
+  # Obtain Hypothesized POs -------------------------------------------------
+
+  pos_mat <- generate_pos(Y = outcome_vec,
+                            Z = assignment_vec,
+                            sharp_hypothesis = sharp_hypothesis)
 
 
   # The ri function ------------------------------------------
@@ -51,8 +56,13 @@ conduct_ri <- function(formula,
   ri_function <- function() {
     Z_sim <- conduct_ra(declaration)
     design_matrix[, assignment] <- Z_sim
-    outcome_vec_sim <-
-      switching_equation(pos_mat = pos_mat, Z = Z_sim)
+
+    if(sharp_hypothesis == 0){
+        outcome_vec_sim <- data[, all.vars(formula[[2]])]
+    }else{
+      outcome_vec_sim <-
+        switching_equation(pos_mat = pos_mat, Z = Z_sim)
+    }
 
     if (IPW) {
       weights_vec_sim <-
@@ -65,7 +75,7 @@ conduct_ri <- function(formula,
     coefs_sim <-
       quick_lm(y = outcome_vec_sim, X = design_matrix)$coefficients
     rownames(coefs_sim) <- colnames(design_matrix)
-    coefs_sim[assignment,]
+    coefs_sim[assignment, ]
   }
 
 
@@ -88,6 +98,7 @@ conduct_ri <- function(formula,
 
 
 #' @export
+#' @import ggplot2
 #'
 #'
 plot.ri <- function(x, ...) {
@@ -98,20 +109,30 @@ plot.ri <- function(x, ...) {
                            Estimate = "Observed Value")
 
   ggplot(ests_df, aes(x = ests, alpha = extreme)) +
-    geom_histogram(bins = nrow(ests_df)/20) +
-    geom_vline(data = results_df, aes(xintercept = est_obs,
-                                      linetype = Estimate,
-                                      colour = Estimate),
-               show.legend = TRUE) +
+    geom_histogram(bins = nrow(ests_df) / 20) +
+    geom_vline(
+      data = results_df,
+      aes(
+        xintercept = est_obs,
+        linetype = Estimate,
+        colour = Estimate
+      ),
+      show.legend = TRUE
+    ) +
     scale_alpha_manual(values = c(0.5, 1), guide = FALSE) +
     xlab("Simulated Estimates") +
-    ggtitle("Randomization Inference Under Sharp Null Hypothesis",
-            paste0("Hypothesized Value of Treatment Effect = ",
-                   x$sharp_hypothesis,
-                   "; Two-tailed p value = ",
-                   round(mean(abs(x$null_distribution) >= abs(x$est_obs)), 3))
-            ) +
-  theme_bw() +
+    ggtitle(
+      "Randomization Inference Under Sharp Null Hypothesis",
+      paste0(
+        "Hypothesized Value of Treatment Effect = ",
+        x$sharp_hypothesis,
+        "; Two-tailed p value = ",
+        round(mean(
+          abs(x$null_distribution) >= abs(x$est_obs)
+        ), 3)
+      )
+    ) +
+    theme_bw() +
     theme(legend.position = "bottom",
           axis.title.y = element_blank())
 }
@@ -125,23 +146,33 @@ print.ri <- function(x, p = "two-tailed", ...) {
 #' @export
 summary.ri <- function(object, p = "two-tailed", ...) {
   if (p == "two-tailed") {
-    return_vec <- c(estimate = object$est,
-                    p_value = mean(abs(object$null_distribution) >= abs(object$est)),
-                    ci_lower = quantile(object$null_distribution, 0.025),
-                    ci_upper = quantile(object$null_distribution, 0.975))
+    return_vec <- c(
+      estimate = object$est,
+      p_value = mean(abs(object$null_distribution) >= abs(object$est)),
+      ci_lower = quantile(object$null_distribution, 0.025),
+      ci_upper = quantile(object$null_distribution, 0.975)
+    )
   } else if (p == "lower") {
     return_vec <- c(
       estimate = object$est,
       p_value = mean(object$null_distribution <= object$est),
       ci_lower = quantile(object$null_distribution, 0.025),
-      ci_upper = quantile(object$null_distribution, 0.975))
+      ci_upper = quantile(object$null_distribution, 0.975)
+    )
   } else {
     return_vec <- c(
       estimate = object$est,
       p_value = mean(object$null_distribution >= object$est),
       ci_lower = quantile(object$null_distribution, 0.025),
-      ci_upper = quantile(object$null_distribution, 0.975))
+      ci_upper = quantile(object$null_distribution, 0.975)
+    )
   }
-  names(return_vec) <- c("estimate", "p_value", "2.5th Percentile of Null Distribution", "97.5th Percentile of Null Distribution")
+  names(return_vec) <-
+    c(
+      "estimate",
+      "p_value",
+      "2.5th Percentile of Null Distribution",
+      "97.5th Percentile of Null Distribution"
+    )
   return(return_vec)
 }
