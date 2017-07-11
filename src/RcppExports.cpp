@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // quick_lm
 List quick_lm(const arma::vec& y, const arma::mat& X);
-RcppExport SEXP ri2_quick_lm(SEXP ySEXP, SEXP XSEXP) {
+RcppExport SEXP _ri2_quick_lm(SEXP ySEXP, SEXP XSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,7 +20,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"ri2_quick_lm", (DL_FUNC) &ri2_quick_lm, 2},
+    {"_ri2_quick_lm", (DL_FUNC) &_ri2_quick_lm, 2},
     {NULL, NULL, 0}
 };
 

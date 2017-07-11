@@ -20,7 +20,6 @@ test_that("Basic Two Arm Trial", {
       data = df
     )
 
-
   plot(ri_out)
   summary(ri_out)
 

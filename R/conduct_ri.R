@@ -1,8 +1,6 @@
 
 
 
-
-
 #' Conduct Randomization Inference
 #'
 #' @param formula an object of class formula, as in \code{\link{lm}}.
@@ -14,6 +12,7 @@
 #'
 #' @export
 #'
+#' @import dplyr
 #' @importFrom randomizr conduct_ra obtain_condition_probabilities
 #'
 conduct_ri <- function(formula,
@@ -25,9 +24,32 @@ conduct_ri <- function(formula,
                        sharp_hypothesis = 0,
                        sims = 1000) {
   # setup
+
   assignment_vec <- data[, assignment]
   design_matrix <- model.matrix.default(formula, data = data)
   outcome_vec <- data[, all.vars(formula[[2]])]
+  condition_names <- sort(unique(assignment_vec))
+
+  # Determine coefficient names
+
+  if (is.numeric(assignment_vec)) {
+    coefficient_names <- assignment
+  } else{
+    coefficient_names <- paste0(assignment, condition_names[-1])
+  }
+
+  if (length(sharp_hypothesis) != 1 &
+      length(sharp_hypothesis) != length(coefficient_names)) {
+    stop(
+      "If you supply multiple sharp hypotheses, you must supply a number of sharp hypotheses equal to the number of treatment conditions minus 1."
+    )
+  }
+
+  if (length(sharp_hypothesis) == 1) {
+    sharp_hypothesis <-
+      rep(sharp_hypothesis, length(coefficient_names))
+  }
+
 
   # The observed value ------------------------------------------------------
 
@@ -41,77 +63,111 @@ conduct_ri <- function(formula,
   coefs_obs <-
     quick_lm(y = outcome_vec, X = design_matrix)$coefficients
   rownames(coefs_obs) <- colnames(design_matrix)
-  est_obs <- coefs_obs[assignment, ]
+  coefs_obs <- as.list(coefs_obs[coefficient_names, ])
 
 
   # Obtain Hypothesized POs -------------------------------------------------
 
   pos_mat <- generate_pos(Y = outcome_vec,
-                            Z = assignment_vec,
-                            sharp_hypothesis = sharp_hypothesis)
+                          assignment_vec = assignment_vec,
+                          sharp_hypothesis = sharp_hypothesis)
 
 
-  # The ri function ------------------------------------------
+  null_distributions <- vector("list",
+                               length = length(condition_names) - 1)
 
-  ri_function <- function() {
-    Z_sim <- conduct_ra(declaration)
-    design_matrix[, assignment] <- Z_sim
+  names(null_distributions) <- coefficient_names
 
-    if(sharp_hypothesis == 0){
+  for (i in 2:length(condition_names)) {
+    ri_function <- function() {
+      Z_sim <- conduct_conditional_ra(declaration,
+                                      assignment_vec = assignment_vec,
+                                      conditions = as.character(condition_names[c(1, i)]))
+
+      design_matrix[, coefficient_names] <- model.matrix.default(~ Z_sim)[,-1]
+
+      if (sharp_hypothesis[i - 1] == 0) {
         outcome_vec_sim <- data[, all.vars(formula[[2]])]
-    }else{
-      outcome_vec_sim <-
-        switching_equation(pos_mat = pos_mat, Z = Z_sim)
+      } else{
+        outcome_vec_sim <-
+          switching_equation(pos_mat = pos_mat, Z = Z_sim)
+      }
+
+      if (IPW) {
+        weights_vec_sim <-
+          1 / obtain_condition_probabilities(declaration, assignment = Z_sim)
+        design_matrix <- sqrt(weights_vec_sim) * design_matrix
+        outcome_vec_sim <- sqrt(weights_vec_sim) * outcome_vec_sim
+      }
+
+
+      coefs_sim <-
+        quick_lm(y = outcome_vec_sim, X = design_matrix)$coefficients
+      rownames(coefs_sim) <- colnames(design_matrix)
+      coefs_sim[coefficient_names[i-1], ]
     }
 
-    if (IPW) {
-      weights_vec_sim <-
-        1 / obtain_condition_probabilities(declaration, assignment = Z_sim)
-      design_matrix <- sqrt(weights_vec_sim) * design_matrix
-      outcome_vec_sim <- sqrt(weights_vec_sim) * outcome_vec_sim
-    }
-
-
-    coefs_sim <-
-      quick_lm(y = outcome_vec_sim, X = design_matrix)$coefficients
-    rownames(coefs_sim) <- colnames(design_matrix)
-    coefs_sim[assignment, ]
+    null_distributions[[i - 1]] <-
+      pbapply::pbreplicate(sims, ri_function())
+    #null_distribution <- replicate(sims, ri_function())
   }
 
+  sharp_hypothesis <- as.list(sharp_hypothesis)
+  names(sharp_hypothesis) <- coefficient_names
 
-  null_distribution <- replicate(sims, ri_function())
-
+  sims_df <-
+    mapply(FUN = data.frame,
+           est_sim = null_distributions,
+           est_obs = coefs_obs,
+           SIMPLIFY = FALSE) %>%
+    bind_rows(.id = "coefficient")
 
   return(structure(
     list(
-      null_distribution = null_distribution,
-      est_obs = est_obs,
-      pos_mat = pos_mat,
-      ri_function = ri_function,
-      sharp_hypothesis = sharp_hypothesis
+      sims_df = sims_df
     ),
     class = "ri"
   ))
-
-
 }
 
 
 #' @export
 #' @import ggplot2
+#' @import dplyr
 #'
 #'
-plot.ri <- function(x, ...) {
-  ests_df <- data.frame(ests = x$null_distribution,
-                        extreme = as.factor(abs(x$null_distribution) >= abs(x$est_obs)))
+plot.ri <- function(x, p = "two-tailed", ...) {
 
-  results_df <- data.frame(est_obs = x$est_obs,
-                           Estimate = "Observed Value")
+  if (p == "two-tailed") {
+    x$sims_df <-
+      x$sims_df %>%
+      mutate(extreme = abs(est_sim) >= abs(est_obs))
 
-  ggplot(ests_df, aes(x = ests, alpha = extreme)) +
-    geom_histogram(bins = nrow(ests_df) / 20) +
+  } else if (p == "lower") {
+
+    x$sims_df <-
+      x$sims_df %>%
+      mutate(extreme = est_sim <= est_obs)
+
+  } else if (p == "upper") {
+    x$sims_df <-
+      x$sims_df %>%
+      mutate(extreme = est_sim >= est_obs)
+
+  } else {
+    stop('p must be either "two-tailed" (the default), "lower", or "upper".')
+  }
+
+  summary_df <-
+    x$sims_df %>%
+    group_by(coefficient) %>%
+    summarize(est_obs = unique(est_obs),
+              Estimate = "Observed Value")
+
+  ggplot(x$sims_df, aes(x = est_sim, alpha = extreme)) +
+    geom_histogram(bins = nrow(x$sims_df) / 20) +
     geom_vline(
-      data = results_df,
+      data = summary_df,
       aes(
         xintercept = est_obs,
         linetype = Estimate,
@@ -121,17 +177,8 @@ plot.ri <- function(x, ...) {
     ) +
     scale_alpha_manual(values = c(0.5, 1), guide = FALSE) +
     xlab("Simulated Estimates") +
-    ggtitle(
-      "Randomization Inference Under Sharp Null Hypothesis",
-      paste0(
-        "Hypothesized Value of Treatment Effect = ",
-        x$sharp_hypothesis,
-        "; Two-tailed p value = ",
-        round(mean(
-          abs(x$null_distribution) >= abs(x$est_obs)
-        ), 3)
-      )
-    ) +
+    ggtitle("Randomization Inference") +
+    facet_wrap(~coefficient) +
     theme_bw() +
     theme(legend.position = "bottom",
           axis.title.y = element_blank())
@@ -144,35 +191,35 @@ print.ri <- function(x, p = "two-tailed", ...) {
 }
 
 #' @export
+#' @import dplyr
 summary.ri <- function(object, p = "two-tailed", ...) {
   if (p == "two-tailed") {
-    return_vec <- c(
-      estimate = object$est,
-      p_value = mean(abs(object$null_distribution) >= abs(object$est)),
-      ci_lower = quantile(object$null_distribution, 0.025),
-      ci_upper = quantile(object$null_distribution, 0.975)
-    )
+    object$sims_df <-
+    object$sims_df %>%
+      mutate(extreme = abs(est_sim) >= abs(est_obs))
+
   } else if (p == "lower") {
-    return_vec <- c(
-      estimate = object$est,
-      p_value = mean(object$null_distribution <= object$est),
-      ci_lower = quantile(object$null_distribution, 0.025),
-      ci_upper = quantile(object$null_distribution, 0.975)
-    )
+
+    object$sims_df <-
+      object$sims_df %>%
+      mutate(extreme = est_sim <= est_obs)
+
+  } else if (p == "upper") {
+    object$sims_df <-
+      object$sims_df %>%
+      mutate(extreme = est_sim >= est_obs)
+
   } else {
-    return_vec <- c(
-      estimate = object$est,
-      p_value = mean(object$null_distribution >= object$est),
-      ci_lower = quantile(object$null_distribution, 0.025),
-      ci_upper = quantile(object$null_distribution, 0.975)
-    )
+    stop('p must be either "two-tailed" (the default), "lower", or "upper".')
   }
-  names(return_vec) <-
-    c(
-      "estimate",
-      "p_value",
-      "2.5th Percentile of Null Distribution",
-      "97.5th Percentile of Null Distribution"
-    )
-  return(return_vec)
+
+  return_df <-
+    object$sims_df %>%
+    group_by(coefficient) %>%
+    summarize(estimate = unique(est_obs),
+              p_value = mean(extreme),
+              null_ci_lower = quantile(est_sim, 0.025),
+              null_ci_upper = quantile(est_sim, 0.975))
+
+  return(return_df)
 }

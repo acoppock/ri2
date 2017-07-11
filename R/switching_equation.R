@@ -1,12 +1,13 @@
 
 #' @export
-switching_equation <- function(pos_mat, Z){
-  Y <- rep(NA, length(Z))
+switching_equation <- function(pos_mat, assignment_vec){
 
-  condition_names <- sort(unique(Z))
+  Y <- rep(NA, length(assignment_vec))
+
+  condition_names <- sort(unique(assignment_vec))
 
   for(cond in condition_names){
-    Y[Z == cond] <- pos_mat[Z == cond, paste(cond)]
+    Y[assignment_vec == cond] <- pos_mat[assignment_vec == cond, paste(cond)]
   }
 
   return(Y)
