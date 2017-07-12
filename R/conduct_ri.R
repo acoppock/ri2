@@ -1,132 +1,97 @@
-
-
-
 #' Conduct Randomization Inference
 #'
-#' @param formula an object of class formula, as in \code{\link{lm}}.
+#' This function makes it easy to conduct three kinds of randomization inference.
+#'
+#' 1. Conduct hypothesis tests under the sharp null when the test statistic is the difference-in-means or covariate-adjusted average treatment effect estimate.
+#' 2. Conduct "ANOVA" style hypothesis tests, where the f-statistic from two nested models is the test statistic. This procedure is especially helpful when testing interaction terms under null of constant effects.
+#' 3. Arbitrary (scalar) test statistics
+#'
+#' @param formula an object of class formula, as in \code{\link{lm}}. Use formula when conducting significance tests of an Average Treatment Effect estimate under a sharp null hypothesis. For the difference-in-means estimate, do not include covariates. For the OLS covariate-adjusted estimate, include covariates.
 #' @param data A data.frame.
 #' @param assignment a character string that indicates which variable is randomly assigned. Defaults to "Z".
+#' @param outcome a character string that indicates which variable is the outcome variable. Defaults to NULL.
 #' @param declaration A random assignment declaration, created by \code{\link{declare_ra}}.
+#' @param model_1 an object of class formula, as in \code{\link{lm}}. Models 1 and 2 must be "nested." model_1 should be the "restricted" model and model_2 should be the "unrestricted" model.
+#' @param model_2 an object of class formula, as in \code{\link{lm}}. Models 1 and 2 must be "nested." model_1 should be the "restricted" model and model_2 should be the "unrestricted" model.
+#' @param test_function A function that takes data and returns a scalar test statistic.
+#' @param sharp_hypothesis either a numeric scalar or a numeric vector of length k - 1, where k is the number of treatment conditions. In a two-arm trial, this number is the *hypothesized* difference between the treated and untreated potential potential outcomes for each unit.. In a multi-arm trial, each number in the vector is the hypothesized difference in potential outcomes between the baseline condition and each successive treatment condition.
+#' @param IPW logical, defaults to TRUE. Should inverse probability weights be calculated?
+#' @param IPW_weights a character string that indicates which variable is the existing inverse probability weights vector. Usually unnecessary, as IPW weights will be incorporated automatically if IPW = TRUE. Defaults to NULL.
+#' @param sampling_weights a character string that indicates which variable is the sampling weights vector. Optional, defaults to NULL. NOT YET IMPLEMENTED
+#' @param sims
 #'
 #' @export
 #'
 #' @import dplyr
 #' @importFrom randomizr conduct_ra obtain_condition_probabilities
 #'
-conduct_ri <- function(formula,
+conduct_ri <- function(formula = NULL,
+                       model_1 = NULL,
+                       model_2 = NULL,
+                       test_function = NULL,
                        assignment = "Z",
+                       outcome = NULL,
                        declaration,
-                       data,
-                       IPW = TRUE,
                        sharp_hypothesis = 0,
+                       IPW = TRUE,
+                       IPW_weights = NULL,
+                       sampling_weights = NULL,
+                       data,
                        sims = 1000) {
-  # setup
 
-  assignment_vec <- data[, assignment]
-  design_matrix <- model.matrix.default(formula, data = data)
-  outcome_vec <- data[, all.vars(formula[[2]])]
-  condition_names <- sort(unique(assignment_vec))
+# Case 1: ATE -------------------------------------------------------------
 
-  # Determine coefficient names
+  if(!is.null(formula)){
 
-  if (is.numeric(assignment_vec)) {
-    coefficient_names <- assignment
-  } else{
-    coefficient_names <- paste0(assignment, condition_names[-1])
+ri_out <- conduct_ri_ATE(formula = formula,
+                         assignment = assignment,
+                         declaration = declaration,
+                         sharp_hypothesis = sharp_hypothesis,
+                         IPW = IPW,
+                         IPW_weights = IPW_weights,
+                         sampling_weights = sampling_weights,
+                         data = data,
+                         sims = sims)
   }
 
-  if (length(sharp_hypothesis) != 1 &
-      length(sharp_hypothesis) != length(coefficient_names)) {
-    stop(
-      "If you supply multiple sharp hypotheses, you must supply a number of sharp hypotheses equal to the number of treatment conditions minus 1."
-    )
+# Case 2: F-test ----------------------------------------------------------
+
+  if(!is.null(model_1) & !is.null(model_2)){
+
+ri_out <- conduct_ri_f(model_1 = model_1,
+                       model_2 = model_2,
+                       assignment = assignment,
+                       declaration = declaration,
+                       sharp_hypothesis = sharp_hypothesis,
+                       IPW = IPW,
+                       IPW_weights = IPW_weights,
+                       sampling_weights = sampling_weights,
+                       data = data,
+                       sims = sims)
   }
 
-  if (length(sharp_hypothesis) == 1) {
-    sharp_hypothesis <-
-      rep(sharp_hypothesis, length(coefficient_names))
+# Case 3: Arbitrary Function ----------------------------------------------
+
+  if(!is.null(test_function)){
+
+ri_out <- conduct_ri_test_function(test_function = test_function,
+                                   assignment = assignment,
+                                   outcome = outcome,
+                                   declaration = declaration,
+                                   sharp_hypothesis = sharp_hypothesis,
+                                   IPW_weights = IPW_weights,
+                                   sampling_weights = sampling_weights,
+                                   data = data,
+                                   sims = sims)
   }
 
-
-  # The observed value ------------------------------------------------------
-
-  if (IPW) {
-    weights_vec <-
-      1 / obtain_condition_probabilities(declaration, assignment = assignment_vec)
-    design_matrix <- sqrt(weights_vec) * design_matrix
-    outcome_vec <- sqrt(weights_vec) * outcome_vec
+  if(is.null(formula) & is.null(model_1) & is.null(model_2) & is.null(test_function)){
+   stop("You must specify either a formula, models 1 and 2, or a test function.")
   }
 
-  coefs_obs <-
-    quick_lm(y = outcome_vec, X = design_matrix)$coefficients
-  rownames(coefs_obs) <- colnames(design_matrix)
-  coefs_obs <- as.list(coefs_obs[coefficient_names, ])
+return(ri_out)
 
-
-  # Obtain Hypothesized POs -------------------------------------------------
-
-  pos_mat <- generate_pos(Y = outcome_vec,
-                          assignment_vec = assignment_vec,
-                          sharp_hypothesis = sharp_hypothesis)
-
-
-  null_distributions <- vector("list",
-                               length = length(condition_names) - 1)
-
-  names(null_distributions) <- coefficient_names
-
-  for (i in 2:length(condition_names)) {
-    ri_function <- function() {
-      Z_sim <- conduct_conditional_ra(declaration,
-                                      assignment_vec = assignment_vec,
-                                      conditions = as.character(condition_names[c(1, i)]))
-
-      design_matrix[, coefficient_names] <- model.matrix.default(~ Z_sim)[,-1]
-
-      if (sharp_hypothesis[i - 1] == 0) {
-        outcome_vec_sim <- data[, all.vars(formula[[2]])]
-      } else{
-        outcome_vec_sim <-
-          switching_equation(pos_mat = pos_mat, assignment_vec = Z_sim)
-      }
-
-      if (IPW) {
-        weights_vec_sim <-
-          1 / obtain_condition_probabilities(declaration, assignment = Z_sim)
-        design_matrix <- sqrt(weights_vec_sim) * design_matrix
-        outcome_vec_sim <- sqrt(weights_vec_sim) * outcome_vec_sim
-      }
-
-
-      coefs_sim <-
-        quick_lm(y = outcome_vec_sim, X = design_matrix)$coefficients
-      rownames(coefs_sim) <- colnames(design_matrix)
-      coefs_sim[coefficient_names[i-1], ]
-    }
-
-    null_distributions[[i - 1]] <-
-      pbapply::pbreplicate(sims, ri_function())
-    #null_distribution <- replicate(sims, ri_function())
-  }
-
-  sharp_hypothesis <- as.list(sharp_hypothesis)
-  names(sharp_hypothesis) <- coefficient_names
-
-  sims_df <-
-    mapply(FUN = data.frame,
-           est_sim = null_distributions,
-           est_obs = coefs_obs,
-           SIMPLIFY = FALSE) %>%
-    bind_rows(.id = "coefficient")
-
-  return(structure(
-    list(
-      sims_df = sims_df
-    ),
-    class = "ri"
-  ))
 }
-
 
 #' @export
 #' @import ggplot2

@@ -4,18 +4,42 @@
 \alias{conduct_ri}
 \title{Conduct Randomization Inference}
 \usage{
-conduct_ri(formula, assignment = "Z", declaration, data, IPW = TRUE,
-  sharp_hypothesis = 0, sims = 1000)
+conduct_ri(formula, assignment = "Z", declaration, sharp_hypothesis = 0,
+  IPW = TRUE, IPW_weights = NULL, sampling_weights = NULL, data,
+  sims = 1000)
 }
 \arguments{
-\item{formula}{an object of class formula, as in \code{\link{lm}}.}
+\item{formula}{an object of class formula, as in \code{\link{lm}}. Use formula when conducting significance tests of an Average Treatment Effect estimate under a sharp null hypothesis. For the difference-in-means estimate, do not include covariates. For the OLS covariate-adjusted estimate, include covariates.}
 
 \item{assignment}{a character string that indicates which variable is randomly assigned. Defaults to "Z".}
 
 \item{declaration}{A random assignment declaration, created by \code{\link{declare_ra}}.}
 
+\item{sharp_hypothesis}{either a numeric scalar or a numeric vector of length k - 1, where k is the number of treatment conditions. In a two-arm trial, this number is the *hypothesized* difference between the treated and untreated potential potential outcomes for each unit.. In a multi-arm trial, each number in the vector is the hypothesized difference in potential outcomes between the baseline condition and each successive treatment condition.}
+
+\item{IPW}{logical, defaults to TRUE. Should inverse probability weights be calculated?}
+
+\item{IPW_weights}{a character string that indicates which variable is the existing inverse probability weights vector. Usually unnecessary, as IPW weights will be incorporated automatically if IPW = TRUE. Defaults to NULL.}
+
+\item{sampling_weights}{a character string that indicates which variable is the sampling weights vector. Optional, defaults to NULL. NOT YET IMPLEMENTED}
+
 \item{data}{A data.frame.}
+
+\item{sims}{}
+
+\item{outcome}{a character string that indicates which variable is the outcome variable. Defaults to NULL.}
+
+\item{model_1}{an object of class formula, as in \code{\link{lm}}. Models 1 and 2 must be "nested." model_1 should be the "restricted" model and model_2 should be the "unrestricted" model.}
+
+\item{model_2}{an object of class formula, as in \code{\link{lm}}. Models 1 and 2 must be "nested." model_1 should be the "restricted" model and model_2 should be the "unrestricted" model.}
+
+\item{test_function}{A function that takes data and returns a scalar test statistic.}
 }
 \description{
-Conduct Randomization Inference
+This function makes it easy to conduct three kinds of randomization inference.
+}
+\details{
+1. Conduct hypothesis tests under the sharp null when the test statistic is the difference-in-means or covariate-adjusted average treatment effect estimate.
+2. Conduct "ANOVA" style hypothesis tests, where the f-statistic from two nested models is the test statistic. This procedure is especially helpful when testing interaction terms under null of constant effects.
+3. Arbitrary (scalar) test statistics
 }

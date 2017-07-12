@@ -1,55 +1,13 @@
 
-
-
-
-#' @param data A data.frame.
-#' @param assignment a character string that indicates which variable is randomly assigned. Defaults to "Z".
-#' @param declaration A random assignment declaration, created by \code{\link{declare_ra}}.
-ri_internal <- function(declaration,
-                        assignment,
-                        ipw_weights,
-                        data,
-                        test_stat_function) {
-  test_stat_obs <- test_stat_function(data)
-
-  ri_function <- function() {
-    data[, assignment] <- conduct_ra(declaration)
-    data[, ipw_weights] <-
-      1 / obtain_condition_probabilities(declaration, assignment = data[, assignment])
-    test_stat_function(data)
-  }
-
-  test_stat_sim <- pbapply::pbreplicate(sims, ri_function())
-
-  return(list(test_stat_sim = test_stat_sim,
-              test_stat_obs = test_stat_obs))
-}
-
-
-
-
-#' F stat
-#'
-#' @param model_1
-#' @param model_2
-#' @param assignment
-#' @param declaration
-#' @param data
-#' @param IPW
-#' @param sharp_hypothesis
-#' @param sims
-#'
-#' @return
-#' @export
-#'
-#' @examples
 conduct_ri_f <- function(model_1,
                          model_2,
                          assignment = "Z",
                          declaration,
-                         data,
-                         IPW = TRUE,
                          sharp_hypothesis = 0,
+                         IPW = TRUE,
+                         IPW_weights = NULL,
+                         sampling_weights = NULL,
+                         data = data,
                          sims = 1000) {
   # setup
 
