@@ -4,13 +4,11 @@
 \alias{conduct_ri}
 \title{Conduct Randomization Inference}
 \usage{
-conduct_ri(formula, alpha = 0.05, assignment = "Z", declaration, data,
-  IPW = TRUE, sharp_hypothesis = 0, sims = 1000)
+conduct_ri(formula, assignment = "Z", declaration, data, IPW = TRUE,
+  sharp_hypothesis = 0, sims = 1000)
 }
 \arguments{
 \item{formula}{an object of class formula, as in \code{\link{lm}}.}
-
-\item{alpha}{The significance level, 0.05 by default.}
 
 \item{assignment}{a character string that indicates which variable is randomly assigned. Defaults to "Z".}
 

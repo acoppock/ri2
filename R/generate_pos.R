@@ -33,3 +33,10 @@ generate_pos <- function(Y,
 
   return(pos_mat)
 }
+
+
+
+
+
+
+

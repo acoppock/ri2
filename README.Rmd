@@ -13,7 +13,19 @@ knitr::opts_chunk$set(
 ```
 
 
-ri2 makes conducting randomization inference easy. The development of ri2 is supported by a Standards Grant from EGAP. ri2 is the successor package to ri.
+ri2 makes conducting randomization inference easy and (with the blessing of the original authors) is the successor package to [ri](https://cran.r-project.org/web/packages/ri/index.html).
+
+ri2 has specific support for the following:
+
+1. All randomization schemes in [randomizr](http://randomizr.declaredesign.org).
+2. Difference-in-means and OLS-adjusted estimates of ATE estimates using R-native formula syntax.
+3. Multi-arm trials.
+4. ANOVA-style hypothesis tests (e.g., testing interaction term under null of constant effects),
+
+Additionally, ri2 provides:
+
+1. Accommodation for arbitrary randomization schemes
+2. Accommodation for arbitrary (scalar) test statistics
 
 If you'd like to install the most current development release, use the following code:
 
@@ -23,18 +35,17 @@ install.packages("devtools")
 devtools::install_github("acoppock/ri2")
 ```
 
-Here is the basic syntax for a two-arm trial
+Here is the basic syntax for a two-arm trial:
 
 ```{r}
 library(ri2)
 N <- 100
-declaration <- randomizr::declare_ra(N = N, m = 50)
+declaration <- declare_ra(N = N, m = 50)
 
-Z <- randomizr::conduct_ra(declaration)
+Z <- conduct_ra(declaration)
 X <- rnorm(N)
 Y <- .9 * X + .2 * Z + rnorm(N)
-W <- runif(N)
-df <- data.frame(Y, X, Z, W)
+df <- data.frame(Y, X, Z)
 
 ri_out <-
   conduct_ri(
@@ -45,7 +56,8 @@ ri_out <-
     data = df
   )
 
-
 plot(ri_out)
 summary(ri_out)
 ```
+
+The development of ri2 is supported by a Standards Grant from [EGAP](http://egap.org).

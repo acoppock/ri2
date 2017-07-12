@@ -4,9 +4,7 @@
 #' Conduct Randomization Inference
 #'
 #' @param formula an object of class formula, as in \code{\link{lm}}.
-#'
 #' @param data A data.frame.
-#' @param alpha The significance level, 0.05 by default.
 #' @param assignment a character string that indicates which variable is randomly assigned. Defaults to "Z".
 #' @param declaration A random assignment declaration, created by \code{\link{declare_ra}}.
 #'
@@ -16,7 +14,6 @@
 #' @importFrom randomizr conduct_ra obtain_condition_probabilities
 #'
 conduct_ri <- function(formula,
-                       alpha = .05,
                        assignment = "Z",
                        declaration,
                        data,
@@ -90,7 +87,7 @@ conduct_ri <- function(formula,
         outcome_vec_sim <- data[, all.vars(formula[[2]])]
       } else{
         outcome_vec_sim <-
-          switching_equation(pos_mat = pos_mat, Z = Z_sim)
+          switching_equation(pos_mat = pos_mat, assignment_vec = Z_sim)
       }
 
       if (IPW) {
