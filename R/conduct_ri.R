@@ -7,18 +7,19 @@
 #' 3. Arbitrary (scalar) test statistics
 #'
 #' @param formula an object of class formula, as in \code{\link{lm}}. Use formula when conducting significance tests of an Average Treatment Effect estimate under a sharp null hypothesis. For the difference-in-means estimate, do not include covariates. For the OLS covariate-adjusted estimate, include covariates.
-#' @param data A data.frame.
-#' @param assignment a character string that indicates which variable is randomly assigned. Defaults to "Z".
-#' @param outcome a character string that indicates which variable is the outcome variable. Defaults to NULL.
-#' @param declaration A random assignment declaration, created by \code{\link{declare_ra}}.
 #' @param model_1 an object of class formula, as in \code{\link{lm}}. Models 1 and 2 must be "nested." model_1 should be the "restricted" model and model_2 should be the "unrestricted" model.
 #' @param model_2 an object of class formula, as in \code{\link{lm}}. Models 1 and 2 must be "nested." model_1 should be the "restricted" model and model_2 should be the "unrestricted" model.
 #' @param test_function A function that takes data and returns a scalar test statistic.
+#' @param assignment a character string that indicates which variable is randomly assigned. Defaults to "Z".
+#' @param outcome a character string that indicates which variable is the outcome variable. Defaults to NULL.
+#' @param declaration A random assignment declaration, created by \code{\link{declare_ra}}.
 #' @param sharp_hypothesis either a numeric scalar or a numeric vector of length k - 1, where k is the number of treatment conditions. In a two-arm trial, this number is the *hypothesized* difference between the treated and untreated potential potential outcomes for each unit.. In a multi-arm trial, each number in the vector is the hypothesized difference in potential outcomes between the baseline condition and each successive treatment condition.
 #' @param IPW logical, defaults to TRUE. Should inverse probability weights be calculated?
 #' @param IPW_weights a character string that indicates which variable is the existing inverse probability weights vector. Usually unnecessary, as IPW weights will be incorporated automatically if IPW = TRUE. Defaults to NULL.
 #' @param sampling_weights a character string that indicates which variable is the sampling weights vector. Optional, defaults to NULL. NOT YET IMPLEMENTED
-#' @param sims
+#' @param permutation_matrix An optional matrix of random assignmnets, typically created by \code{\link{obtain_permutation_matrix}}.
+#' @param data A data.frame.
+#' @param sims the number of simulations. Defaults to 1000.
 #'
 #' @export
 #'
@@ -36,6 +37,7 @@ conduct_ri <- function(formula = NULL,
                        IPW = TRUE,
                        IPW_weights = NULL,
                        sampling_weights = NULL,
+                       permutation_matrix = NULL,
                        data,
                        sims = 1000) {
 
@@ -50,6 +52,7 @@ ri_out <- conduct_ri_ATE(formula = formula,
                          IPW = IPW,
                          IPW_weights = IPW_weights,
                          sampling_weights = sampling_weights,
+                         permutation_matrix = permutation_matrix,
                          data = data,
                          sims = sims)
   }
@@ -66,6 +69,7 @@ ri_out <- conduct_ri_f(model_1 = model_1,
                        IPW = IPW,
                        IPW_weights = IPW_weights,
                        sampling_weights = sampling_weights,
+                       permutation_matrix = permutation_matrix,
                        data = data,
                        sims = sims)
   }
@@ -81,6 +85,7 @@ ri_out <- conduct_ri_test_function(test_function = test_function,
                                    sharp_hypothesis = sharp_hypothesis,
                                    IPW_weights = IPW_weights,
                                    sampling_weights = sampling_weights,
+                                   permutation_matrix = permutation_matrix,
                                    data = data,
                                    sims = sims)
   }

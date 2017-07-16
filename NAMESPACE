@@ -3,7 +3,6 @@
 S3method(plot,ri)
 S3method(print,ri)
 S3method(summary,ri)
-export(conduct_conditional_ra)
 export(conduct_ri)
 export(switching_equation)
 import(dplyr)

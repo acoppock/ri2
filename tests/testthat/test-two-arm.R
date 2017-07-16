@@ -36,5 +36,4 @@ test_that("Basic Two Arm Trial", {
   plot(ri_out)
   summary(ri_out)
 
-
 })

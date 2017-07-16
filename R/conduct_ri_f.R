@@ -7,6 +7,7 @@ conduct_ri_f <- function(model_1,
                          IPW = TRUE,
                          IPW_weights = NULL,
                          sampling_weights = NULL,
+                         permutation_matrix = NULL,
                          data = data,
                          sims = 1000) {
   # setup
@@ -52,8 +53,18 @@ conduct_ri_f <- function(model_1,
                           assignment_vec = assignment_vec,
                           sharp_hypothesis = sharp_hypothesis)
 
-  ri_function <- function() {
-    data[, assignment] <- conduct_ra(declaration)
+  if (is.null(permutation_matrix)) {
+    permutation_matrix <- obtain_permutation_matrix(declaration,
+                                                    maximum_permutations = sims)
+  }
+
+
+  ri_function <- function(Z_sim) {
+    if (is.factor(assignment_vec)) {
+      Z_sim <- factor(Z_sim, levels = levels(assignment_vec))
+    }
+
+    data[, assignment] <- Z_sim
 
     design_matrix_sim_1 <-
       model.matrix.default(model_1, data = data)
@@ -85,10 +96,12 @@ conduct_ri_f <- function(model_1,
 
     f_sim = (ssr_sim_1 - ssr_sim_2) / (ncol(design_matrix_sim_2) - ncol(design_matrix_sim_1)) /
       (ssr_sim_2 / (length(outcome_vec_sim) - ncol(design_matrix_sim_2)))
+
+
     return(f_sim)
   }
 
-  null_distribution <- pbapply::pbreplicate(sims, ri_function())
+  null_distribution <- pbapply::pbapply(permutation_matrix, 2, ri_function)
 
   sims_df <-
     data.frame(est_sim = null_distribution,

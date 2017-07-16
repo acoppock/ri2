@@ -12,6 +12,7 @@ test_that("Basic Multi Arm Trial", {
   df <- data.frame(Y, X, Z, W)
 
   #debugonce(conduct_ri)
+  #debugonce(ri2:::conduct_conditional_ra)
   ri_out <-
     conduct_ri(
       formula = Y ~ Z,
@@ -30,6 +31,5 @@ test_that("Basic Multi Arm Trial", {
 
   summary(ri_out, p = "upper")
   plot(ri_out, p = "upper")
-
 
 })

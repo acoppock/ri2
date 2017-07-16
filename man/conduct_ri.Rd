@@ -4,14 +4,23 @@
 \alias{conduct_ri}
 \title{Conduct Randomization Inference}
 \usage{
-conduct_ri(formula, assignment = "Z", declaration, sharp_hypothesis = 0,
-  IPW = TRUE, IPW_weights = NULL, sampling_weights = NULL, data,
-  sims = 1000)
+conduct_ri(formula = NULL, model_1 = NULL, model_2 = NULL,
+  test_function = NULL, assignment = "Z", outcome = NULL, declaration,
+  sharp_hypothesis = 0, IPW = TRUE, IPW_weights = NULL,
+  sampling_weights = NULL, permutation_matrix = NULL, data, sims = 1000)
 }
 \arguments{
 \item{formula}{an object of class formula, as in \code{\link{lm}}. Use formula when conducting significance tests of an Average Treatment Effect estimate under a sharp null hypothesis. For the difference-in-means estimate, do not include covariates. For the OLS covariate-adjusted estimate, include covariates.}
 
+\item{model_1}{an object of class formula, as in \code{\link{lm}}. Models 1 and 2 must be "nested." model_1 should be the "restricted" model and model_2 should be the "unrestricted" model.}
+
+\item{model_2}{an object of class formula, as in \code{\link{lm}}. Models 1 and 2 must be "nested." model_1 should be the "restricted" model and model_2 should be the "unrestricted" model.}
+
+\item{test_function}{A function that takes data and returns a scalar test statistic.}
+
 \item{assignment}{a character string that indicates which variable is randomly assigned. Defaults to "Z".}
+
+\item{outcome}{a character string that indicates which variable is the outcome variable. Defaults to NULL.}
 
 \item{declaration}{A random assignment declaration, created by \code{\link{declare_ra}}.}
 
@@ -23,17 +32,11 @@ conduct_ri(formula, assignment = "Z", declaration, sharp_hypothesis = 0,
 
 \item{sampling_weights}{a character string that indicates which variable is the sampling weights vector. Optional, defaults to NULL. NOT YET IMPLEMENTED}
 
+\item{permutation_matrix}{An optional matrix of random assignmnets, typically created by \code{\link{obtain_permutation_matrix}}.}
+
 \item{data}{A data.frame.}
 
-\item{sims}{}
-
-\item{outcome}{a character string that indicates which variable is the outcome variable. Defaults to NULL.}
-
-\item{model_1}{an object of class formula, as in \code{\link{lm}}. Models 1 and 2 must be "nested." model_1 should be the "restricted" model and model_2 should be the "unrestricted" model.}
-
-\item{model_2}{an object of class formula, as in \code{\link{lm}}. Models 1 and 2 must be "nested." model_1 should be the "restricted" model and model_2 should be the "unrestricted" model.}
-
-\item{test_function}{A function that takes data and returns a scalar test statistic.}
+\item{sims}{the number of simulations. Defaults to 1000.}
 }
 \description{
 This function makes it easy to conduct three kinds of randomization inference.

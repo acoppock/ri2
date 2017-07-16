@@ -27,7 +27,6 @@ test_that("test-function", {
   summary(ri_out)
 
 
-
   balance_fun <- function(data){
     summary(lm(Z ~ X, data = data))$f[1]
   }

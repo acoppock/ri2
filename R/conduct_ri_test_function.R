@@ -5,20 +5,33 @@ conduct_ri_test_function <- function(test_function,
                                      sharp_hypothesis = 0,
                                      IPW_weights = NULL,
                                      sampling_weights = NULL,
+                                     permutation_matrix = NULL,
                                      data,
                                      sims = 1000) {
   test_stat_obs <- test_function(data)
+  assignment_vec <- data[, assignment]
+
 
   if (!is.null(outcome)) {
     pos_mat <- generate_pos(
-      Y = outcome_vec,
+      Y = data[, outcome],
       assignment_vec = assignment_vec,
       sharp_hypothesis = sharp_hypothesis
     )
   }
 
-  ri_function <- function() {
-    data[, assignment] <- conduct_ra(declaration)
+  if (is.null(permutation_matrix)) {
+    permutation_matrix <- obtain_permutation_matrix(declaration,
+                                                    maximum_permutations = sims)
+  }
+
+
+  ri_function <- function(Z_sim) {
+    if (is.factor(assignment_vec)) {
+      Z_sim <- factor(Z_sim, levels = levels(assignment_vec))
+    }
+
+    data[, assignment] <- Z_sim
 
     if (!is.null(IPW_weights)) {
       data[, IPW_weights] <-
@@ -34,7 +47,7 @@ conduct_ri_test_function <- function(test_function,
     test_function(data)
   }
 
-  test_stat_sim <- pbapply::pbreplicate(sims, ri_function())
+  test_stat_sim <- pbapply::pbapply(permutation_matrix, 2, ri_function)
 
   sims_df <-
     data.frame(est_sim = test_stat_sim,

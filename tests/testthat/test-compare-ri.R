@@ -1,56 +1,70 @@
-# context("Compare to ri")
-#
-#
-# test_that("Compare to ri",{
-#   N <- 100
-#   declaration <- declare_ra(N = N, m = 50)
-#
-#   Z <- conduct_ra(declaration)
-#   X <- rnorm(N)
-#   Y <- .9*X + .2 * Z + rnorm(N)
-#   W <- runif(N)
-#   df <- data.frame(Y, X, Z, W)
-#
-#   ri_out <-
-#   conduct_ri(formula = Y~Z,
-#              declaration = declaration,
-#              assignment = "Z",
-#              sharp_hypothesis = 0,
-#              data = df,sims = 100000)
-#
-#   summary(ri_out)
-#
-#   # compare to ri
-#   library(ri)
-#
-#   perms <- genperms(Z, maxiter = 100000)
-#   probs <- genprobexact(Z)
-#   ate <- estate(Y, Z, prob = probs)
-#   Ys <- genouts(Y, Z, ate = 0)
-#   distout <- gendist(Ys, perms, prob = probs)
-#   dispdist(distout, ate)
-#
-#
-#   Ys <- genouts(y,Z,ate=ate) ## generate potential outcomes under tau = ATE
-#   distout <- gendist(Ys,perms, prob=probs) # generate sampling dist. under tau = ATE
-#   dispdist(distout, ate)  ## display characteristics of sampling dist. for inference
-#
-#
-#
-#
-#
-#   ri_out <-
-#     conduct_ri(formula = Y ~ Z + X,
-#                declaration = declaration,
-#                assignment = "Z",
-#                sharp_hypothesis = 0,
-#                data = df)
-#
-#
-#   plot(ri_out)
-#   summary(ri_out)
-#
-#
-#
-# })
-#
+context("Compare to ri")
+
+
+test_that("Compare to ri", {
+
+  # setup -------------------------------------------------------------------
+
+  y <- c(8, 6, 2, 0, 3, 1, 1, 1, 2, 2, 0, 1, 0, 2, 2, 4, 1, 1)
+  Z <- c(1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0)
+  cluster <- c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9)
+  block <- c(rep(1, 4), rep(2, 6), rep(3, 8))
+
+  # in ri -------------------------------------------------------------------
+  library(ri)
+
+  perms <-
+    genperms(Z, blockvar = block, clustvar = cluster)
+
+  probs <-
+    genprobexact(Z, blockvar = block, clustvar = cluster)
+
+  ate <- estate(y, Z, prob = probs)
+
+  Ys <-
+    genouts(y, Z, ate = 0)
+
+  distout <-
+    gendist(Ys, perms, prob = probs)
+
+  ri1_out <- dispdist(distout, ate)
+
+  # in ri2 ------------------------------------------------------------------
+
+  library(ri2)
+
+  declaration <- declare_ra(
+    block_var = block,
+    clust_var = cluster,
+    block_m = tapply(Z, block, sum) / 2
+  )
+
+  ri2_out <- conduct_ri(
+    y ~ Z,
+    sharp_hypothesis = 0,
+    declaration = declaration,
+    data = data.frame(y, Z)
+  )
+
+  # checks
+  expect_equal(probs, declaration$probabilities_matrix[, 2])
+
+  expect_equal(sort(distout), sort(ri2_out$sims_df$est_sim))
+
+  expect_equal(summary(ri2_out, p = "two-tailed")$p_value,
+               ri1_out$two.tailed.p.value.abs)
+
+  expect_equal(summary(ri2_out, p = "lower")$p_value,
+               ri1_out$lesser.p.value)
+
+  expect_equal(summary(ri2_out, p = "upper")$p_value,
+               ri1_out$greater.p.value)
+
+  expect_equivalent(summary(ri2_out)$null_ci_lower,
+               ri1_out$quantile[1])
+  expect_equivalent(summary(ri2_out)$null_ci_upper,
+               ri1_out$quantile[2])
+
+})
+
+

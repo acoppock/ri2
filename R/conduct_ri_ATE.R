@@ -1,12 +1,13 @@
 conduct_ri_ATE <- function(formula,
-                       assignment = "Z",
-                       declaration,
-                       sharp_hypothesis = 0,
-                       IPW = TRUE,
-                       IPW_weights = NULL,
-                       sampling_weights = NULL,
-                       data,
-                       sims = 1000) {
+                           assignment = "Z",
+                           declaration,
+                           sharp_hypothesis = 0,
+                           IPW = TRUE,
+                           IPW_weights = NULL,
+                           sampling_weights = NULL,
+                           permutation_matrix = NULL,
+                           data,
+                           sims = 1000) {
   # setup
 
   assignment_vec <- data[, assignment]
@@ -34,27 +35,30 @@ conduct_ri_ATE <- function(formula,
       rep(sharp_hypothesis, length(coefficient_names))
   }
 
+  pos_mat <- generate_pos(Y = outcome_vec,
+                          assignment_vec = assignment_vec,
+                          sharp_hypothesis = sharp_hypothesis)
+
 
   # The observed value ------------------------------------------------------
 
   if (IPW) {
     weights_vec <-
       1 / obtain_condition_probabilities(declaration, assignment = assignment_vec)
-    design_matrix <- sqrt(weights_vec) * design_matrix
-    outcome_vec <- sqrt(weights_vec) * outcome_vec
+    design_matrix_w <- sqrt(weights_vec) * design_matrix
+    outcome_vec_w <- sqrt(weights_vec) * outcome_vec
+    coefs_obs <-
+      quick_lm(y = outcome_vec_w, X = design_matrix_w)$coefficients
+  } else {
+    coefs_obs <-
+      quick_lm(y = outcome_vec, X = design_matrix)$coefficients
   }
 
-  coefs_obs <-
-    quick_lm(y = outcome_vec, X = design_matrix)$coefficients
   rownames(coefs_obs) <- colnames(design_matrix)
-  coefs_obs <- as.list(coefs_obs[coefficient_names,])
+  coefs_obs <- as.list(coefs_obs[coefficient_names, ])
 
 
-  # Obtain Hypothesized POs -------------------------------------------------
-
-  pos_mat <- generate_pos(Y = outcome_vec,
-                          assignment_vec = assignment_vec,
-                          sharp_hypothesis = sharp_hypothesis)
+  # set up functions --------------------------------------------------------
 
 
   null_distributions <- vector("list",
@@ -62,42 +66,62 @@ conduct_ri_ATE <- function(formula,
 
   names(null_distributions) <- coefficient_names
 
+
+  if (is.null(permutation_matrix) &
+      sims >= obtain_num_permutations(declaration)) {
+    permutation_matrix <- obtain_permutation_matrix(declaration,
+                                                    maximum_permutations = sims)
+  }
+
+
   for (i in 2:length(condition_names)) {
-    ri_function <- function() {
-      Z_sim <- conduct_conditional_ra(
-        declaration,
-        assignment_vec = assignment_vec,
-        conditions = as.character(condition_names[c(1, i)])
-      )
+    if (is.null(permutation_matrix)) {
+      permutation_matrix <-
+        replicate(
+          sims,
+          conduct_conditional_ra(
+            declaration,
+            assignment_vec = assignment_vec,
+            conditions = condition_names[c(1, i)]
+          )
+        )
+    }
+
+    ri_function <- function(Z_sim) {
+      if (is.factor(assignment_vec)) {
+        Z_sim <- factor(Z_sim, levels = levels(assignment_vec))
+      }
 
       design_matrix[, coefficient_names] <-
-        model.matrix.default( ~ Z_sim)[, -1]
+        model.matrix.default(~ Z_sim)[,-1]
 
       if (sharp_hypothesis[i - 1] == 0) {
-        outcome_vec_sim <- data[, all.vars(formula[[2]])]
+        outcome_vec_sim <- outcome_vec
       } else{
         outcome_vec_sim <-
           switching_equation(pos_mat = pos_mat, assignment_vec = Z_sim)
       }
 
       if (IPW) {
-        weights_vec_sim <-
+        weights_vec <-
           1 / obtain_condition_probabilities(declaration, assignment = Z_sim)
-        design_matrix <- sqrt(weights_vec_sim) * design_matrix
-        outcome_vec_sim <- sqrt(weights_vec_sim) * outcome_vec_sim
+        design_matrix_w <- sqrt(weights_vec) * design_matrix
+        outcome_vec_sim_w <- sqrt(weights_vec) * outcome_vec_sim
+        coefs_sim <-
+          quick_lm(y = outcome_vec_sim_w, X = design_matrix_w)$coefficients
+      } else {
+        coefs_sim <-
+          quick_lm(y = outcome_vec_sim, X = design_matrix)$coefficients
       }
 
-
-      coefs_sim <-
-        quick_lm(y = outcome_vec_sim, X = design_matrix)$coefficients
       rownames(coefs_sim) <- colnames(design_matrix)
-      coefs_sim[coefficient_names[i - 1],]
+      coefs_sim[coefficient_names[i - 1], ]
     }
 
     null_distributions[[i - 1]] <-
-      pbapply::pbreplicate(sims, ri_function())
-    #null_distribution <- replicate(sims, ri_function())
+      pbapply::pbapply(permutation_matrix, 2, ri_function)
   }
+
 
   sharp_hypothesis <- as.list(sharp_hypothesis)
   names(sharp_hypothesis) <- coefficient_names
