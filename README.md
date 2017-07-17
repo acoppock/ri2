@@ -53,7 +53,7 @@ summary(ri_out)
 #> # A tibble: 1 x 5
 #>   coefficient   estimate p_value null_ci_lower null_ci_upper
 #>         <chr>      <dbl>   <dbl>         <dbl>         <dbl>
-#> 1           Z -0.5123149   0.068    -0.5331893     0.5747277
+#> 1           Z 0.04673932   0.844    -0.5298881     0.5340019
 ```
 
 The development of ri2 is supported by a Standards Grant from [EGAP](http://egap.org).

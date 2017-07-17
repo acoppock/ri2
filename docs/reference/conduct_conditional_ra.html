@@ -6,7 +6,20 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • ri2</title>
+<title>#' Conduct Conditional Random Assignment
+#'
+#' Conditional random assignment is useful when conducting randomization inference in multi-arm trials. When conducting a hypothesis test under a sharp null hypothesis for a *pairwise* comparison, we want to consider only random assignments in which units assigned to *other* conditions remain in their original condidtions.
+#'
+#' For example, in a three-arm trial in which we want to conduct a hypothesis test under the sharp null hypothesis of exactly no difference in potential outcomes between conditions T1 and T2, we want to permute the random assignment for units that were assigned to T1 and T2, but we want to leave units assigned to T3 alone. We do this because our sharp null hypothesis does not say anything about potential outcomes under T3, so we do not want to have to imagine what the potential outcomes for units assigned to T3 *would have been* under alternative assignments.
+#'
+#' @param declaration A random assignment declaration, created by <code>declare_ra</code>.
+#' @param assignment_vec A vector of length N indicating the treatment conditions to which units were assigned.
+#' @param conditions A character vector of length 2 indicating which treatment conditions are to be permuted.
+#'
+#' @return
+#' @export
+#'
+#' @examples — conduct_conditional_ra • ri2</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -37,7 +50,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -85,35 +98,9 @@
       </header>
 
       <div class="row">
-  <div class="col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>
-        Reference
-        <small>version&nbsp;0.1.0</small>
-      </h1>
-    </div>
-
-    <div class="contents">
-      <table class="ref-index">
-
-      <colgroup>
-        <col class="alias" />
-        <col class="title" />
-      </colgroup>
-
-      <tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-            <p class="section-desc"></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="conduct_conditional_ra.html">conduct_conditional_ra</a></code> </p>
-          </td>
-          <td><p>#' Conduct Conditional Random Assignment
+    <h1>#' Conduct Conditional Random Assignment
 #'
 #' Conditional random assignment is useful when conducting randomization inference in multi-arm trials. When conducting a hypothesis test under a sharp null hypothesis for a *pairwise* comparison, we want to consider only random assignments in which units assigned to *other* conditions remain in their original condidtions.
 #'
@@ -126,30 +113,35 @@
 #' @return
 #' @export
 #'
-#' @examples</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="conduct_ri.html">conduct_ri</a></code> </p>
-          </td>
-          <td><p>Conduct Randomization Inference</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p></p>
-          </td>
-          <td><p>ri2 package</p></td>
-        </tr>
-      </tbody>
-      </table>
+#' @examples</h1>
     </div>
-  </div>
 
+    
+    <p>#' Conduct Conditional Random Assignment
+#'
+#' Conditional random assignment is useful when conducting randomization inference in multi-arm trials. When conducting a hypothesis test under a sharp null hypothesis for a *pairwise* comparison, we want to consider only random assignments in which units assigned to *other* conditions remain in their original condidtions.
+#'
+#' For example, in a three-arm trial in which we want to conduct a hypothesis test under the sharp null hypothesis of exactly no difference in potential outcomes between conditions T1 and T2, we want to permute the random assignment for units that were assigned to T1 and T2, but we want to leave units assigned to T3 alone. We do this because our sharp null hypothesis does not say anything about potential outcomes under T3, so we do not want to have to imagine what the potential outcomes for units assigned to T3 *would have been* under alternative assignments.
+#'
+#' @param declaration A random assignment declaration, created by <code>declare_ra</code>.
+#' @param assignment_vec A vector of length N indicating the treatment conditions to which units were assigned.
+#' @param conditions A character vector of length 2 indicating which treatment conditions are to be permuted.
+#'
+#' @return
+#' @export
+#'
+#' @examples</p>
+    
+
+    <pre class="usage"><span class='fu'>conduct_conditional_ra</span>(<span class='no'>declaration</span>, <span class='no'>assignment_vec</span>, <span class='no'>conditions</span>)</pre>
+        
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
-    </ul>
+                </ul>
+
   </div>
 </div>
 

@@ -29,7 +29,25 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
+  <a href="/index.html">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/ri2_vignette.html">Randomization Inference with ri2</a>
+    </li>
+  </ul>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
@@ -49,20 +67,32 @@
     
 <div class="contents">
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<p>ri2 makes conducting randomization inference easy. The development of ri2 is supported by a Standards Grant from EGAP. ri2 is the successor package to ri.</p>
+
+<p>ri2 has specific support for the following:</p>
+<ol style="list-style-type: decimal">
+<li>All randomization schemes in <a href="http://randomizr.declaredesign.org">randomizr</a>.</li>
+<li>Difference-in-means and OLS-adjusted estimates of ATE estimates using R-native formula syntax.</li>
+<li>Multi-arm trials.</li>
+<li>ANOVA-style hypothesis tests (e.g., testing interaction term under null of constant effects),</li>
+</ol>
+<p>Additionally, ri2 provides:</p>
+<ol style="list-style-type: decimal">
+<li>Accommodation for arbitrary randomization schemes</li>
+<li>Accommodation for arbitrary (scalar) test statistics</li>
+</ol>
 <p>If you’d like to install the most current development release, use the following code:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)
 devtools::<span class="kw">install_github</span>(<span class="st">"acoppock/ri2"</span>)</code></pre></div>
-<p>Here is the basic syntax for a two-arm trial</p>
+<p>Here is the basic syntax for a two-arm trial:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ri2)
+<span class="co">#&gt; Loading required package: randomizr</span>
 N &lt;-<span class="st"> </span><span class="dv">100</span>
-declaration &lt;-<span class="st"> </span>randomizr::<span class="kw">declare_ra</span>(<span class="dt">N =</span> N, <span class="dt">m =</span> <span class="dv">50</span>)
+declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N, <span class="dt">m =</span> <span class="dv">50</span>)
 
-Z &lt;-<span class="st"> </span>randomizr::<span class="kw">conduct_ra</span>(declaration)
+Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)
 X &lt;-<span class="st"> </span><span class="kw">rnorm</span>(N)
 Y &lt;-<span class="st"> </span>.<span class="dv">9</span> *<span class="st"> </span>X +<span class="st"> </span>.<span class="dv">2</span> *<span class="st"> </span>Z +<span class="st"> </span><span class="kw">rnorm</span>(N)
-W &lt;-<span class="st"> </span><span class="kw">runif</span>(N)
-df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, X, Z, W)
+df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, X, Z)
 
 ri_out &lt;-
 <span class="st">  </span><span class="kw"><a href="reference/conduct_ri.html">conduct_ri</a></span>(
@@ -73,18 +103,14 @@ ri_out &lt;-
     <span class="dt">data =</span> df
   )
 
-
 <span class="kw">plot</span>(ri_out)</code></pre></div>
 <p><img src="README-unnamed-chunk-3-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri_out)
-<span class="co">#&gt;                               estimate </span>
-<span class="co">#&gt;                              0.3208074 </span>
-<span class="co">#&gt;                                p_value </span>
-<span class="co">#&gt;                              0.2160000 </span>
-<span class="co">#&gt;  2.5th Percentile of Null Distribution </span>
-<span class="co">#&gt;                             -0.4913923 </span>
-<span class="co">#&gt; 97.5th Percentile of Null Distribution </span>
-<span class="co">#&gt;                              0.5085006</span></code></pre></div>
+<span class="co">#&gt; # A tibble: 1 x 5</span>
+<span class="co">#&gt;   coefficient  estimate p_value null_ci_lower null_ci_upper</span>
+<span class="co">#&gt;         &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;</span>
+<span class="co">#&gt; 1           Z 0.4133059   0.162    -0.5595984     0.5738424</span></code></pre></div>
+<p>The development of ri2 is supported by a Standards Grant from <a href="http://egap.org">EGAP</a>.</p>
 </div>
   </div>
 
@@ -95,6 +121,10 @@ ri_out &lt;-
 <h2>Developers</h2>
 <ul class="list-unstyled">
 <li>Alexander Coppock <br><small class="roles"> Author, maintainer </small> </li>
+</ul>
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://cran.r-project.org/web/packages/ri/index.html">ri</a></li>
 </ul>
 </div>
 
