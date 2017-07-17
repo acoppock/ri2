@@ -27,7 +27,7 @@ test_that("Compare to ri", {
   distout <-
     gendist(Ys, perms, prob = probs)
 
-  ri1_out <- dispdist(distout, ate)
+  ri1_out <- dispdist(distout, ate, display.plot = FALSE)
 
   # in ri2 ------------------------------------------------------------------
 
