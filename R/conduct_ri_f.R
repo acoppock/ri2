@@ -49,6 +49,11 @@ conduct_ri_f <- function(model_1,
 
   # Obtain Hypothesized POs -------------------------------------------------
 
+  if (length(sharp_hypothesis) == 1) {
+    sharp_hypothesis <-
+      rep(sharp_hypothesis, length(unique(assignment_vec)))
+  }
+
   pos_mat <- generate_pos(Y = outcome_vec,
                           assignment_vec = assignment_vec,
                           sharp_hypothesis = sharp_hypothesis)

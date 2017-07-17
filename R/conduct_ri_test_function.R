@@ -13,6 +13,12 @@ conduct_ri_test_function <- function(test_function,
 
 
   if (!is.null(outcome)) {
+
+    if (length(sharp_hypothesis) == 1) {
+      sharp_hypothesis <-
+        rep(sharp_hypothesis, length(unique(assignment_vec)))
+    }
+
     pos_mat <- generate_pos(
       Y = data[, outcome],
       assignment_vec = assignment_vec,

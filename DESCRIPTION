@@ -13,5 +13,8 @@ Imports: Rcpp (>= 0.12.10),
     dplyr
 Depends: randomizr    
 LinkingTo: Rcpp, RcppArmadillo
-Suggests: testthat
+Suggests: testthat,
+    knitr,
+    rmarkdown
 RoxygenNote: 6.0.1
+VignetteBuilder: knitr
