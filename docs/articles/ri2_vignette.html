@@ -204,9 +204,9 @@ ri2_out &lt;-
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
 <pre><code>## # A tibble: 1 x 5
-##   coefficient   estimate p_value null_ci_lower null_ci_upper
-##        &lt;fctr&gt;      &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1 F-statistic 0.07511485   0.929    0.03322868      3.886131</code></pre>
+##   coefficient estimate p_value null_ci_lower null_ci_upper
+##        &lt;fctr&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
+## 1 F-statistic  3.36322   0.035    0.03471928      3.842822</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for comparison</span>
 <span class="kw">anova</span>(<span class="kw">lm</span>(Y ~<span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> df), 
       <span class="kw">lm</span>(Y ~<span class="st"> </span>Z, <span class="dt">data =</span> df))</code></pre></div>
@@ -214,9 +214,11 @@ ri2_out &lt;-
 ## 
 ## Model 1: Y ~ 1
 ## Model 2: Y ~ Z
-##   Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
-## 1     99 150.70                           
-## 2     97 150.46  2   0.23303 0.0751 0.9277</code></pre>
+##   Res.Df     RSS Df Sum of Sq      F  Pr(&gt;F)  
+## 1     99 104.694                              
+## 2     97  97.905  2    6.7892 3.3632 0.03871 *
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div id="interaction-terms" class="section level2">
 <h2 class="hasAnchor">
@@ -234,7 +236,7 @@ df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(X, Y, Z)
 ate_hat &lt;-<span class="st"> </span><span class="kw">coef</span>(<span class="kw">lm</span>(Y ~<span class="st"> </span>Z, <span class="dt">data =</span> df))[<span class="dv">2</span>]
 ate_hat</code></pre></div>
 <pre><code>##         Z 
-## 0.4274541</code></pre>
+## 0.2452755</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
 <span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
     <span class="dt">model_1 =</span> Y ~<span class="st"> </span>Z +<span class="st"> </span>X, <span class="co"># restricted model</span>
@@ -250,7 +252,7 @@ ate_hat</code></pre></div>
 <pre><code>## # A tibble: 1 x 5
 ##   coefficient estimate p_value null_ci_lower null_ci_upper
 ##        &lt;fctr&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1 F-statistic 7.279862   0.022    0.00085199      6.806784</code></pre>
+## 1 F-statistic 4.768296   0.041   0.001151761      6.010491</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for comparison</span>
 <span class="kw">anova</span>(<span class="kw">lm</span>(Y ~<span class="st"> </span>Z +<span class="st"> </span>X, <span class="dt">data =</span> df),
       <span class="kw">lm</span>(Y ~<span class="st"> </span>Z +<span class="st"> </span>X +<span class="st"> </span>Z*X, <span class="dt">data =</span> df))</code></pre></div>
@@ -258,9 +260,9 @@ ate_hat</code></pre></div>
 ## 
 ## Model 1: Y ~ Z + X
 ## Model 2: Y ~ Z + X + Z * X
-##   Res.Df     RSS Df Sum of Sq      F   Pr(&gt;F)   
-## 1     97 100.996                                
-## 2     96  93.877  1    7.1189 7.2799 0.008239 **
+##   Res.Df    RSS Df Sum of Sq      F  Pr(&gt;F)  
+## 1     97 108.49                              
+## 2     96 103.35  1    5.1336 4.7683 0.03143 *
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -287,7 +289,7 @@ test_fun &lt;-<span class="st"> </span>function(data) {
 
 <span class="co"># confirm it works</span>
 <span class="kw">test_fun</span>(df)</code></pre></div>
-<pre><code>## [1] 0.3303045</code></pre>
+<pre><code>## [1] 0.2336569</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
 <span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
   <span class="dt">test_function =</span> test_fun,
@@ -304,7 +306,7 @@ test_fun &lt;-<span class="st"> </span>function(data) {
 <pre><code>## # A tibble: 1 x 5
 ##             coefficient  estimate p_value null_ci_lower null_ci_upper
 ##                  &lt;fctr&gt;     &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1 Custom Test Statistic 0.3303045       0    -0.1796312     0.1772805</code></pre>
+## 1 Custom Test Statistic 0.2336569       0    -0.1240153     0.1100524</code></pre>
 </div>
 <div id="balance-test" class="section level2">
 <h2 class="hasAnchor">
@@ -329,7 +331,7 @@ balance_fun &lt;-<span class="st"> </span>function(data) {
 <span class="co"># Confirm it works!</span>
 <span class="kw">balance_fun</span>(df)</code></pre></div>
 <pre><code>##     value 
-## 0.6289607</code></pre>
+## 0.4468818</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
 <span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
   <span class="dt">test_function =</span> balance_fun,
@@ -346,7 +348,7 @@ balance_fun &lt;-<span class="st"> </span>function(data) {
 <pre><code>## # A tibble: 1 x 5
 ##             coefficient  estimate p_value null_ci_lower null_ci_upper
 ##                  &lt;fctr&gt;     &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1 Custom Test Statistic 0.6289607   0.606    0.07672795      3.465091</code></pre>
+## 1 Custom Test Statistic 0.4468818   0.723    0.07651139      2.941943</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># For comparison</span>
 <span class="kw">summary</span>(<span class="kw">lm</span>(Z ~<span class="st"> </span>X1 +<span class="st"> </span>X2 +<span class="st"> </span>X3, <span class="dt">data =</span> df))</code></pre></div>
 <pre><code>## 
@@ -355,20 +357,20 @@ balance_fun &lt;-<span class="st"> </span>function(data) {
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -0.65291 -0.48469  0.02257  0.48890  0.62866 
+## -0.67002 -0.49711  0.03343  0.49662  0.60197 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)   
-## (Intercept)  0.38281    0.11417   3.353  0.00114 **
-## X1          -0.04629    0.05351  -0.865  0.38917   
-## X2           0.05515    0.10206   0.540  0.59018   
-## X3           0.03441    0.03108   1.107  0.27113   
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  0.512488   0.110029   4.658 1.03e-05 ***
+## X1          -0.053787   0.046509  -1.157    0.250    
+## X2          -0.013294   0.103047  -0.129    0.898    
+## X3          -0.003737   0.028881  -0.129    0.897    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.5054 on 96 degrees of freedom
-## Multiple R-squared:  0.01928,    Adjusted R-squared:  -0.01137 
-## F-statistic: 0.629 on 3 and 96 DF,  p-value: 0.5981</code></pre>
+## Residual standard error: 0.5068 on 96 degrees of freedom
+## Multiple R-squared:  0.01377,    Adjusted R-squared:  -0.01705 
+## F-statistic: 0.4469 on 3 and 96 DF,  p-value: 0.7201</code></pre>
 </div>
 </div>
 <div id="conclusion" class="section level1">

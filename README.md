@@ -14,7 +14,12 @@ Additionally, ri2 provides:
 1.  Accommodation for arbitrary randomization schemes
 2.  Accommodation for arbitrary (scalar) test statistics
 
-If you'd like to install the most current development release, use the following code:
+If you'd like to install the most current development release, you can do so using the `devtools` package. Since there's some `Rcpp` in `ri2`, you'll need some development tools as described on the [devtools page](https://www.rstudio.com/products/rpackages/devtools/).
+
+-   on a Mac, you have to first install Xcode (from the app store is easiest!)
+-   on Windows, install `Rtools` with `install.packages("Rtools")`.
+
+Then use the following code:
 
 ``` r
 install.packages("devtools")
@@ -52,9 +57,9 @@ plot(ri_out)
 ``` r
 summary(ri_out)
 #> # A tibble: 1 x 5
-#>   coefficient   estimate p_value null_ci_lower null_ci_upper
-#>         <chr>      <dbl>   <dbl>         <dbl>         <dbl>
-#> 1           Z -0.3115602   0.309    -0.6334962     0.5842738
+#>   coefficient  estimate p_value null_ci_lower null_ci_upper
+#>         <chr>     <dbl>   <dbl>         <dbl>         <dbl>
+#> 1           Z 0.3463238   0.144    -0.4767303      0.471311
 ```
 
 The development of ri2 is supported by a Standards Grant from [EGAP](http://egap.org).
