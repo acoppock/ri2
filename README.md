@@ -52,9 +52,9 @@ plot(ri_out)
 ``` r
 summary(ri_out)
 #> # A tibble: 1 x 5
-#>   coefficient  estimate p_value null_ci_lower null_ci_upper
-#>         <chr>     <dbl>   <dbl>         <dbl>         <dbl>
-#> 1           Z 0.1333054   0.563    -0.4648467     0.4498284
+#>   coefficient   estimate p_value null_ci_lower null_ci_upper
+#>         <chr>      <dbl>   <dbl>         <dbl>         <dbl>
+#> 1           Z -0.3115602   0.309    -0.6334962     0.5842738
 ```
 
 The development of ri2 is supported by a Standards Grant from [EGAP](http://egap.org).
