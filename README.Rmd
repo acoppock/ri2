@@ -32,6 +32,7 @@ If you'd like to install the most current development release, use the following
 
 ```{r,eval=FALSE}
 install.packages("devtools")
+devtools::install_github("DeclareDesign/randomizr")
 devtools::install_github("acoppock/ri2")
 ```
 

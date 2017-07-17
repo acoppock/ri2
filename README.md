@@ -18,6 +18,7 @@ If you'd like to install the most current development release, use the following
 
 ``` r
 install.packages("devtools")
+devtools::install_github("DeclareDesign/randomizr")
 devtools::install_github("acoppock/ri2")
 ```
 
@@ -51,9 +52,9 @@ plot(ri_out)
 ``` r
 summary(ri_out)
 #> # A tibble: 1 x 5
-#>   coefficient   estimate p_value null_ci_lower null_ci_upper
-#>         <chr>      <dbl>   <dbl>         <dbl>         <dbl>
-#> 1           Z 0.04673932   0.844    -0.5298881     0.5340019
+#>   coefficient  estimate p_value null_ci_lower null_ci_upper
+#>         <chr>     <dbl>   <dbl>         <dbl>         <dbl>
+#> 1           Z 0.1333054   0.563    -0.4648467     0.4498284
 ```
 
 The development of ri2 is supported by a Standards Grant from [EGAP](http://egap.org).

@@ -82,6 +82,7 @@
 </ol>
 <p>If you’d like to install the most current development release, use the following code:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)
+devtools::<span class="kw">install_github</span>(<span class="st">"DeclareDesign/randomizr"</span>)
 devtools::<span class="kw">install_github</span>(<span class="st">"acoppock/ri2"</span>)</code></pre></div>
 <p>Here is the basic syntax for a two-arm trial:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ri2)
@@ -109,7 +110,7 @@ ri_out &lt;-
 <span class="co">#&gt; # A tibble: 1 x 5</span>
 <span class="co">#&gt;   coefficient  estimate p_value null_ci_lower null_ci_upper</span>
 <span class="co">#&gt;         &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;</span>
-<span class="co">#&gt; 1           Z 0.4133059   0.162    -0.5595984     0.5738424</span></code></pre></div>
+<span class="co">#&gt; 1           Z 0.3099899   0.307    -0.5365926     0.5838292</span></code></pre></div>
 <p>The development of ri2 is supported by a Standards Grant from <a href="http://egap.org">EGAP</a>.</p>
 </div>
   </div>
