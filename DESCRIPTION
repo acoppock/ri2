@@ -11,7 +11,8 @@ Imports: Rcpp (>= 0.12.10),
     ggplot2,
     pbapply,
     dplyr
-Depends: randomizr    
+Depends: randomizr,
+    estimatr
 LinkingTo: Rcpp, RcppArmadillo
 Suggests: testthat,
     knitr,

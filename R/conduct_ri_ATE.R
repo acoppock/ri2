@@ -2,6 +2,7 @@ conduct_ri_ATE <- function(formula,
                            assignment = "Z",
                            declaration,
                            sharp_hypothesis = 0,
+                           studentize = FALSE,
                            IPW = TRUE,
                            IPW_weights = NULL,
                            sampling_weights = NULL,
@@ -40,6 +41,12 @@ conduct_ri_ATE <- function(formula,
                           sharp_hypothesis = sharp_hypothesis)
 
 
+  if(studentize){
+    se_type <- "HC2"
+  } else {
+    se_type <- "none"
+  }
+
   # The observed value ------------------------------------------------------
 
   if (IPW) {
@@ -47,11 +54,17 @@ conduct_ri_ATE <- function(formula,
       1 / obtain_condition_probabilities(declaration, assignment = assignment_vec)
     design_matrix_w <- sqrt(weights_vec) * design_matrix
     outcome_vec_w <- sqrt(weights_vec) * outcome_vec
-    coefs_obs <-
-      quick_lm(y = outcome_vec_w, X = design_matrix_w)$coefficients
+    fit_obs <-
+      estimatr:::lm_robust_helper(y = outcome_vec_w, X = design_matrix_w, type = se_type)
   } else {
-    coefs_obs <-
-      quick_lm(y = outcome_vec, X = design_matrix)$coefficients
+    fit_obs <-
+      estimatr:::lm_robust_helper(y = outcome_vec, X = design_matrix, type = se_type)
+  }
+
+  if(se_type == "none"){
+    coefs_obs <- fit_obs$beta_hat
+  } else {
+    coefs_obs <- fit_obs$beta_hat / sqrt(diag(fit_obs$Vcov_hat))
   }
 
   rownames(coefs_obs) <- colnames(design_matrix)
@@ -107,11 +120,17 @@ conduct_ri_ATE <- function(formula,
           1 / obtain_condition_probabilities(declaration, assignment = Z_sim)
         design_matrix_w <- sqrt(weights_vec) * design_matrix
         outcome_vec_sim_w <- sqrt(weights_vec) * outcome_vec_sim
-        coefs_sim <-
-          quick_lm(y = outcome_vec_sim_w, X = design_matrix_w)$coefficients
+        fit_sim <-
+        estimatr:::lm_robust_helper(y = outcome_vec_sim_w, X = design_matrix_w, type = se_type)
       } else {
-        coefs_sim <-
-          quick_lm(y = outcome_vec_sim, X = design_matrix)$coefficients
+        fit_sim <-
+          estimatr:::lm_robust_helper(y = outcome_vec_sim, X = design_matrix, type = se_type)
+      }
+
+      if(se_type == "none"){
+        coefs_sim <- fit_sim$beta_hat
+      } else {
+        coefs_sim <- fit_sim$beta_hat / sqrt(diag(fit_sim$Vcov_hat))
       }
 
       rownames(coefs_sim) <- colnames(design_matrix)
@@ -134,6 +153,10 @@ conduct_ri_ATE <- function(formula,
       SIMPLIFY = FALSE
     ) %>%
     bind_rows(.id = "coefficient")
+
+  if(studentize){
+    sims_df$coefficient <- paste0(sims_df$coefficient, " (studentized)")
+  }
 
   return(structure(list(sims_df = sims_df),
                    class = "ri"))

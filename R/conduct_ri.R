@@ -14,6 +14,7 @@
 #' @param outcome a character string that indicates which variable is the outcome variable. Defaults to NULL.
 #' @param declaration A random assignment declaration, created by \code{\link{declare_ra}}.
 #' @param sharp_hypothesis either a numeric scalar or a numeric vector of length k - 1, where k is the number of treatment conditions. In a two-arm trial, this number is the *hypothesized* difference between the treated and untreated potential potential outcomes for each unit.. In a multi-arm trial, each number in the vector is the hypothesized difference in potential outcomes between the baseline condition and each successive treatment condition.
+#' @param studentize logical, defaults to FALSE. Should the test statistic be the t-ratio rather than the estimated ATE? T-ratios will be calculated using HC2 robust standard errors or their clustered equivalent. CLUSTERING NOT YET IMPLEMENTED.
 #' @param IPW logical, defaults to TRUE. Should inverse probability weights be calculated?
 #' @param IPW_weights a character string that indicates which variable is the existing inverse probability weights vector. Usually unnecessary, as IPW weights will be incorporated automatically if IPW = TRUE. Defaults to NULL.
 #' @param sampling_weights a character string that indicates which variable is the sampling weights vector. Optional, defaults to NULL. NOT YET IMPLEMENTED
@@ -34,6 +35,7 @@ conduct_ri <- function(formula = NULL,
                        outcome = NULL,
                        declaration,
                        sharp_hypothesis = 0,
+                       studentize = FALSE,
                        IPW = TRUE,
                        IPW_weights = NULL,
                        sampling_weights = NULL,
@@ -49,6 +51,7 @@ ri_out <- conduct_ri_ATE(formula = formula,
                          assignment = assignment,
                          declaration = declaration,
                          sharp_hypothesis = sharp_hypothesis,
+                         studentize = studentize,
                          IPW = IPW,
                          IPW_weights = IPW_weights,
                          sampling_weights = sampling_weights,

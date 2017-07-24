@@ -11,7 +11,7 @@ vignette: >
   
 Randomization inference (RI) is procedure for conducting hypothesis tests in randomized experiments. RI is useful for calculating the the probability that:
   
-  - a **test statistic** would be extreme or more as observed...
+  - a **test statistic** would be as extreme or more as observed...
   - if a particular **null hypothesis** were true...
   - over the all the possible randomizations that could have occurred acccording to the **design**.
   
@@ -58,7 +58,7 @@ plot(ri2_out)
 
 # More complex designs
 
-The `ri2` package has specific support for all the randomization procedures that can be described be the `randomizr` package:
+The `ri2` package has specific support for all the randomization procedures that can be described by the `randomizr` package:
 
 1. Simple
 2. Complete
@@ -108,7 +108,7 @@ plot(ri2_out)
 
 A traditional ANOVA hypothesis testing framework (implicitly or explicitly) compares two models, a restricted model and an unrestricted model, where the restricted model can be said to "nest" within the unrestricted model. The difference between models is summarized as an $F$-statistic. We then compare the observed $F$-statistic to a hypothetical null distribution that, under some possibly wrong assumptions can be said to follow an $F$-distribution.
 
-In a randomization inference framework, we're happy to use the $F$-statistic, but we want to construct a null distribution that correspondes to the distribution of $F$-statistics that we would obtain if a particular (typically sharp) null hypothesis were true and we cycled through all the possible random assignments.
+In a randomization inference framework, we're happy to use the $F$-statistic, but we want to construct a null distribution that corresponds to the distribution of $F$-statistics that we would obtain if a particular (typically sharp) null hypothesis were true and we cycled through all the possible random assignments.
 
 To do this in the `ri2` package, we need to supply model formulae to the `model_1` and `model_2` arguments of `conduct_ri`. 
 
