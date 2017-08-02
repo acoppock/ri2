@@ -1,0 +1,124 @@
+---
+title: "Comparing ri and ri2"
+author: "Alexander Coppock, Yale University"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Comparing ri and ri2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+  
+The `ri2` package is the successor package to `ri`. The two packages use entirely different syntax. This guide shows how the same tasks would be accomplished in each.
+
+# Basic example
+
+Consider a two-arm trial in which exactly 3 of 10 units are assigned to treatment and the remainder is assigned to control. We want to conduct a hypothesis test under the sharp null hypothesis of no effect for any unit.
+
+Here are the data:
+```{r}
+Y <- c(1, 1, 1, 1, 1, 0, 0, 0, 0, 0)
+Z <- c(1, 1, 1, 0, 0, 0, 0, 0, 0, 0)
+df <- data.frame(Y, Z)
+```
+
+In `ri`, you use the observed treatment assignment (`Z`) to tell the computer the experimental design in `genprobexact` and `genperms`.  `estate` calculates the observed ATE estimate, `genouts` builds hypothetical potential outcomes under the sharp null hypothesis, and `gendist` cycles through all the permutations to calculate the sampling distribution of the estimator under the null.
+
+```{r}
+library(ri)
+
+probs <- genprobexact(Z)
+perms <- genperms(Z)
+ate <- estate(Y, Z, prob = probs)
+
+Ys <- genouts(Y, Z)
+distout <- gendist(Ys, perms, prob = probs)
+ri_out <- dispdist(distout, ate, display.plot = FALSE)
+```
+
+In `ri2`, you explictly describe the random assignment procedure with the `declare_ra` function. The `conduct_ri` then combines a test statistic function, the data, and the declaration to calculate the sampling distribution under the null (which by default is the sharp null hypothesis of no effect).
+
+```{r}
+library(ri2)
+
+declaration <- declare_ra(N = 10, m = 3)
+ri2_out <- conduct_ri(Y ~ Z, 
+                      data = df, 
+                      declaration = declaration)
+
+```
+
+The two programs obtain the same answers:
+
+```{r}
+ri_out$two.tailed.p.value.abs
+summary(ri2_out)$p_value
+```
+
+
+# Complex example
+
+More complex two-arm designs sometimes incorporate cluster and block information into the random assignment procedure. The `ri` helpfile uses this example:
+
+```{r}
+y <- c(8, 6, 2, 0, 3, 1, 1, 1, 2, 2, 0, 1, 0, 2, 2, 4, 1, 1)
+Z <- c(1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0)
+cluster <- c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9)
+block <- c(rep(1, 4), rep(2, 6), rep(3, 8))
+
+df <- data.frame(y, Z, cluster, block)
+```
+
+In `ri`, you supply cluster and block information to `genperms` and `genprobexact`, and the rest of the code stays the same as the basic example. 
+
+```{r}
+perms <- genperms(Z, blockvar = block, clustvar = cluster)
+probs <- genprobexact(Z, blockvar = block, clustvar = cluster)
+ate <- estate(y, Z, prob = probs)
+  
+Ys <- genouts(y, Z, ate = 0)
+distout <- gendist(Ys, perms, prob = probs)
+ri_out <- dispdist(distout, ate, display.plot = FALSE)
+```
+
+The `ri` package guesses the number of clusters in each block to treatment based on the realized random assignment. In `ri2`, we need to explicitly declare the number of clusters to treat in each block with `block_m`.
+
+```{r}
+block_m <- tapply(Z, block, sum) / 2
+declaration <- declare_ra(block_var = block, clust_var = cluster, block_m = block_m)
+ri2_out <- conduct_ri(y ~ Z, declaration = declaration, data = df)
+```
+
+Again, the two programs obtain the same answers:
+
+```{r}
+ri_out$two.tailed.p.value.abs
+summary(ri2_out)$p_value
+```
+
+# The need for explicit random assignment declaration
+
+The `ri` package infers the random assignment procedure from the observed random assignment and the blocking and clustering variables, if applicable. It can do this by assuming complete random assignment. Complete random assignment is a procedure in which exactly $m$ of $N$ units are assigned to treatment. There are clustered and blocked variants of complete random assignment. In a clustered design, exactly $m$ of $N$ **clusters** is assigned to to treatment; in a blocked design, we do complete random assignment block by block.
+
+But complete random assignment is strict. Imagine we have 3 units and we want to assign "half" to treatment. 
+
+- Option 1: assign 1 of 3 to treatment (assignment probability: 1/3)
+- Option 2: assign 2 of 3 to treatment (assignment probability: 2/3)
+- Option 3: randomize between options 1 and 2 with probability 0.5 (assignment probability: 1/2)
+
+Options 1 and 2 aren't particularly appealing. But option 3 isn't actually complete random assignment -- it's a mixture of two complete random assignment designs. In total, there are 6 possible random assignments:
+
+```{r}
+declaration <- declare_ra(3)
+obtain_permutation_matrix(declaration)
+```
+
+But in `ri`, we could never sample from all six, because the **realized** assignment would only have 1 or 2 units treated:
+
+```{r}
+genperms(Z = c(0, 0, 1))
+genperms(Z = c(0, 1, 1))
+```
+
+The `declare_ra` function can accomodate all of the random assignment procedures that the `ri` package can understand and mixtures of those procedures. There are of course random assignment procedures beyond those that can be declared in `declare_ra`. 
+
