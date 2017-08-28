@@ -1,3 +1,5 @@
+#' @importFrom randomizr obtain_permutation_matrix obtain_num_permutations
+#' @importFrom estimatr lm_fit
 conduct_ri_ATE <- function(formula,
                            assignment = "Z",
                            declaration,
@@ -40,8 +42,7 @@ conduct_ri_ATE <- function(formula,
                           assignment_vec = assignment_vec,
                           sharp_hypothesis = sharp_hypothesis)
 
-
-  if(studentize){
+  if (studentize) {
     se_type <- "HC2"
   } else {
     se_type <- "none"
@@ -52,30 +53,35 @@ conduct_ri_ATE <- function(formula,
   if (IPW) {
     weights_vec <-
       1 / obtain_condition_probabilities(declaration, assignment = assignment_vec)
-    design_matrix_w <- sqrt(weights_vec) * design_matrix
-    outcome_vec_w <- sqrt(weights_vec) * outcome_vec
-    fit_obs <-
-      estimatr:::lm_robust_helper(y = outcome_vec_w, X = design_matrix_w, type = se_type)
   } else {
-    fit_obs <-
-      estimatr:::lm_robust_helper(y = outcome_vec, X = design_matrix, type = se_type)
+    weights_vec <- NULL
   }
 
-  if(se_type == "none"){
-    coefs_obs <- fit_obs$beta_hat
-  } else {
-    coefs_obs <- fit_obs$beta_hat / sqrt(diag(fit_obs$Vcov_hat))
-  }
+    fit_obs <- estimatr:::lm_fit(y = outcome_vec,
+                                 design_matrix = design_matrix,
+                                 weights = weights_vec,
+                                 ci = FALSE,
+                                 coefficient_name = coefficient_names,
+                                 cluster = NULL,
+                                 alpha = 0.05,
+                                 se_type = se_type)
 
-  rownames(coefs_obs) <- colnames(design_matrix)
-  coefs_obs <- as.list(coefs_obs[coefficient_names, ])
+    if (studentize) {
+      coefs_obs <- fit_obs$est / fit_obs$se
+    } else {
+      coefs_obs <- fit_obs$est
+    }
 
+  #rownames(coefs_obs) <- colnames(design_matrix[coefficient_names,])
+  #coefs_obs <- as.list(coefs_obs[coefficient_names, ])
+
+    names(coefs_obs) <- coefficient_names
+    coefs_obs <- as.list(coefs_obs)
 
   # set up functions --------------------------------------------------------
 
 
-  null_distributions <- vector("list",
-                               length = length(condition_names) - 1)
+  null_distributions <- vector("list", length = length(condition_names) - 1)
 
   names(null_distributions) <- coefficient_names
 
@@ -115,32 +121,36 @@ conduct_ri_ATE <- function(formula,
           switching_equation(pos_mat = pos_mat, assignment_vec = Z_sim)
       }
 
-      if (IPW) {
-        weights_vec <-
-          1 / obtain_condition_probabilities(declaration, assignment = Z_sim)
-        design_matrix_w <- sqrt(weights_vec) * design_matrix
-        outcome_vec_sim_w <- sqrt(weights_vec) * outcome_vec_sim
-        fit_sim <-
-        estimatr:::lm_robust_helper(y = outcome_vec_sim_w, X = design_matrix_w, type = se_type)
-      } else {
-        fit_sim <-
-          estimatr:::lm_robust_helper(y = outcome_vec_sim, X = design_matrix, type = se_type)
-      }
-
-      if(se_type == "none"){
-        coefs_sim <- fit_sim$beta_hat
-      } else {
-        coefs_sim <- fit_sim$beta_hat / sqrt(diag(fit_sim$Vcov_hat))
-      }
-
-      rownames(coefs_sim) <- colnames(design_matrix)
-      coefs_sim[coefficient_names[i - 1], ]
+    if (IPW) {
+      weights_vec <-
+        1 / obtain_condition_probabilities(declaration, assignment = Z_sim)
+    } else {
+      weights_vec <- NULL
     }
+
+    fit_sim <- estimatr:::lm_fit(y = outcome_vec_sim,
+                                 design_matrix = design_matrix,
+                                 weights = weights_vec,
+                                 ci = FALSE,
+                                 coefficient_name = coefficient_names[i - 1],
+                                 cluster = NULL,
+                                 alpha = 0.05,
+                                 se_type = se_type)
+
+    if (studentize) {
+      coefs_sim <- fit_sim$est / fit_sim$se
+    } else {
+      coefs_sim <- fit_sim$est
+    }
+
+
+    names(coefs_sim) <- coefficient_names[i - 1]
+    return(coefs_sim)
+  }
 
     null_distributions[[i - 1]] <-
       pbapply::pbapply(permutation_matrix, 2, ri_function)
   }
-
 
   sharp_hypothesis <- as.list(sharp_hypothesis)
   names(sharp_hypothesis) <- coefficient_names
@@ -154,7 +164,7 @@ conduct_ri_ATE <- function(formula,
     ) %>%
     bind_rows(.id = "coefficient")
 
-  if(studentize){
+  if (studentize) {
     sims_df$coefficient <- paste0(sims_df$coefficient, " (studentized)")
   }
 

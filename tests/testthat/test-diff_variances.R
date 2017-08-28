@@ -28,7 +28,9 @@ test_that("test-function", {
 
 
   balance_fun <- function(data){
-    summary(lm(Z ~ X, data = data))$f[1]
+    f_stat <- summary(lm(Z ~ X, data = data))$f[1]
+    names(f_stat) <- NULL
+    return(f_stat)
   }
   balance_fun(df)
 
