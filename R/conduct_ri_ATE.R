@@ -13,9 +13,9 @@ conduct_ri_ATE <- function(formula,
                            sims = 1000) {
   # setup
 
-  assignment_vec <- data[, assignment]
+  assignment_vec <- data[[assignment]]
   design_matrix <- model.matrix.default(formula, data = data)
-  outcome_vec <- data[, all.vars(formula[[2]])]
+  outcome_vec <- data[[all.vars(formula[[2]])]]
   condition_names <- sort(unique(assignment_vec))
 
   # Determine coefficient names
