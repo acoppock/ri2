@@ -57,31 +57,34 @@ conduct_ri_ATE <- function(formula,
     weights_vec <- NULL
   }
 
-    fit_obs <- estimatr:::lm_fit(y = outcome_vec,
-                                 design_matrix = design_matrix,
-                                 weights = weights_vec,
-                                 ci = FALSE,
-                                 coefficient_name = coefficient_names,
-                                 cluster = NULL,
-                                 alpha = 0.05,
-                                 se_type = se_type)
+  fit_obs <- lm_fit(
+    y = outcome_vec,
+    design_matrix = design_matrix,
+    weights = weights_vec,
+    ci = FALSE,
+    coefficient_name = coefficient_names,
+    cluster = NULL,
+    alpha = 0.05,
+    se_type = se_type
+  )
 
-    if (studentize) {
-      coefs_obs <- fit_obs$est / fit_obs$se
-    } else {
-      coefs_obs <- fit_obs$est
-    }
+  if (studentize) {
+    coefs_obs <- fit_obs$est / fit_obs$se
+  } else {
+    coefs_obs <- fit_obs$est
+  }
 
   #rownames(coefs_obs) <- colnames(design_matrix[coefficient_names,])
   #coefs_obs <- as.list(coefs_obs[coefficient_names, ])
 
-    names(coefs_obs) <- coefficient_names
-    coefs_obs <- as.list(coefs_obs)
+  names(coefs_obs) <- coefficient_names
+  coefs_obs <- as.list(coefs_obs)
 
   # set up functions --------------------------------------------------------
 
 
-  null_distributions <- vector("list", length = length(condition_names) - 1)
+  null_distributions <-
+    vector("list", length = length(condition_names) - 1)
 
   names(null_distributions) <- coefficient_names
 
@@ -112,7 +115,7 @@ conduct_ri_ATE <- function(formula,
       }
 
       design_matrix[, coefficient_names] <-
-        model.matrix.default(~ Z_sim)[,-1]
+        model.matrix.default( ~ Z_sim)[, -1]
 
       if (sharp_hypothesis[i - 1] == 0) {
         outcome_vec_sim <- outcome_vec
@@ -121,32 +124,34 @@ conduct_ri_ATE <- function(formula,
           switching_equation(pos_mat = pos_mat, assignment_vec = Z_sim)
       }
 
-    if (IPW) {
-      weights_vec <-
-        1 / obtain_condition_probabilities(declaration, assignment = Z_sim)
-    } else {
-      weights_vec <- NULL
+      if (IPW) {
+        weights_vec <-
+          1 / obtain_condition_probabilities(declaration, assignment = Z_sim)
+      } else {
+        weights_vec <- NULL
+      }
+
+      fit_sim <- lm_fit(
+        y = outcome_vec_sim,
+        design_matrix = design_matrix,
+        weights = weights_vec,
+        ci = FALSE,
+        coefficient_name = coefficient_names[i - 1],
+        cluster = NULL,
+        alpha = 0.05,
+        se_type = se_type
+      )
+
+      if (studentize) {
+        coefs_sim <- fit_sim$est / fit_sim$se
+      } else {
+        coefs_sim <- fit_sim$est
+      }
+
+
+      names(coefs_sim) <- coefficient_names[i - 1]
+      return(coefs_sim)
     }
-
-    fit_sim <- estimatr:::lm_fit(y = outcome_vec_sim,
-                                 design_matrix = design_matrix,
-                                 weights = weights_vec,
-                                 ci = FALSE,
-                                 coefficient_name = coefficient_names[i - 1],
-                                 cluster = NULL,
-                                 alpha = 0.05,
-                                 se_type = se_type)
-
-    if (studentize) {
-      coefs_sim <- fit_sim$est / fit_sim$se
-    } else {
-      coefs_sim <- fit_sim$est
-    }
-
-
-    names(coefs_sim) <- coefficient_names[i - 1]
-    return(coefs_sim)
-  }
 
     null_distributions[[i - 1]] <-
       pbapply::pbapply(permutation_matrix, 2, ri_function)

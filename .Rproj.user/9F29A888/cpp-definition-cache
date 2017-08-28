@@ -1,17 +1,2 @@
 [
-    {
-        "definitions" : [
-            {
-                "column" : 6,
-                "file" : "/Users/ac2595/git_projects/ri2/src/quick_lm.cpp",
-                "kind" : 6,
-                "line" : 7,
-                "name" : "quick_lm(const arma::vec &, const arma::mat &)",
-                "parent_name" : "",
-                "usr" : "c:@F@quick_lm#&1$@N@arma@C@Col>#d#&1$@N@arma@C@Mat>#d#"
-            }
-        ],
-        "file" : "/Users/ac2595/git_projects/ri2/src/quick_lm.cpp",
-        "file_last_write" : 1493826489
-    }
 ]

@@ -30,15 +30,32 @@ conduct_ri_f <- function(model_1,
   if (IPW) {
     weights_vec <-
       1 / obtain_condition_probabilities(declaration, assignment = assignment_vec)
-    design_matrix_1 <- sqrt(weights_vec) * design_matrix_1
-    design_matrix_2 <- sqrt(weights_vec) * design_matrix_2
-    outcome_vec <- sqrt(weights_vec) * outcome_vec
+  } else {
+    weights_vec <- NULL
   }
 
   coefs_obs_1 <-
-    quick_lm(y = outcome_vec, X = design_matrix_1)$coefficients
+    lm_fit(
+      y = outcome_vec,
+      design_matrix = design_matrix_1,
+      weights = weights_vec,
+      ci = FALSE,
+      coefficient_name = names(design_matrix_1),
+      cluster = NULL,
+      alpha = 0.05,
+      se_type = "none"
+    )$est
   coefs_obs_2 <-
-    quick_lm(y = outcome_vec, X = design_matrix_2)$coefficients
+    lm_fit(
+      y = outcome_vec,
+      design_matrix = design_matrix_2,
+      weights = weights_vec,
+      ci = FALSE,
+      coefficient_name = names(design_matrix_2),
+      cluster = NULL,
+      alpha = 0.05,
+      se_type = "none"
+    )$est
 
   ssr_1 <- sum((outcome_vec - design_matrix_1 %*% coefs_obs_1) ^ 2)
   ssr_2 <- sum((outcome_vec - design_matrix_2 %*% coefs_obs_2) ^ 2)
@@ -80,19 +97,34 @@ conduct_ri_f <- function(model_1,
       switching_equation(pos_mat = pos_mat, assignment_vec = data[, assignment])
 
     if (IPW) {
-      weights_vec_sim <-
-        1 / obtain_condition_probabilities(declaration, assignment = data[, assignment])
-      design_matrix_sim_1 <-
-        sqrt(weights_vec_sim) * design_matrix_sim_1
-      design_matrix_sim_2 <-
-        sqrt(weights_vec_sim) * design_matrix_sim_2
-      outcome_vec_sim <- sqrt(weights_vec_sim) * outcome_vec_sim
+      weights_vec <-
+        1 / obtain_condition_probabilities(declaration, assignment = Z_sim)
+    } else {
+      weights_vec <- NULL
     }
 
     coefs_sim_1 <-
-      quick_lm(y = outcome_vec_sim, X = design_matrix_sim_1)$coefficients
+      lm_fit(
+        y = outcome_vec_sim,
+        design_matrix = design_matrix_sim_1,
+        weights = weights_vec,
+        ci = FALSE,
+        coefficient_name = names(design_matrix_sim_1),
+        cluster = NULL,
+        alpha = 0.05,
+        se_type = "none"
+      )$est
     coefs_sim_2 <-
-      quick_lm(y = outcome_vec_sim, X = design_matrix_sim_2)$coefficients
+      lm_fit(
+        y = outcome_vec_sim,
+        design_matrix = design_matrix_sim_2,
+        weights = weights_vec,
+        ci = FALSE,
+        coefficient_name = names(design_matrix_sim_2),
+        cluster = NULL,
+        alpha = 0.05,
+        se_type = "none"
+      )$est
 
     ssr_sim_1 <-
       sum((outcome_vec_sim - design_matrix_sim_1 %*% coefs_sim_1) ^ 2)
