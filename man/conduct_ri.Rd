@@ -6,8 +6,9 @@
 \usage{
 conduct_ri(formula = NULL, model_1 = NULL, model_2 = NULL,
   test_function = NULL, assignment = "Z", outcome = NULL, declaration,
-  sharp_hypothesis = 0, IPW = TRUE, IPW_weights = NULL,
-  sampling_weights = NULL, permutation_matrix = NULL, data, sims = 1000)
+  sharp_hypothesis = 0, studentize = FALSE, IPW = TRUE,
+  IPW_weights = NULL, sampling_weights = NULL, permutation_matrix = NULL,
+  data, sims = 1000)
 }
 \arguments{
 \item{formula}{an object of class formula, as in \code{\link{lm}}. Use formula when conducting significance tests of an Average Treatment Effect estimate under a sharp null hypothesis. For the difference-in-means estimate, do not include covariates. For the OLS covariate-adjusted estimate, include covariates.}
@@ -25,6 +26,8 @@ conduct_ri(formula = NULL, model_1 = NULL, model_2 = NULL,
 \item{declaration}{A random assignment declaration, created by \code{\link{declare_ra}}.}
 
 \item{sharp_hypothesis}{either a numeric scalar or a numeric vector of length k - 1, where k is the number of treatment conditions. In a two-arm trial, this number is the *hypothesized* difference between the treated and untreated potential potential outcomes for each unit.. In a multi-arm trial, each number in the vector is the hypothesized difference in potential outcomes between the baseline condition and each successive treatment condition.}
+
+\item{studentize}{logical, defaults to FALSE. Should the test statistic be the t-ratio rather than the estimated ATE? T-ratios will be calculated using HC2 robust standard errors or their clustered equivalent. CLUSTERING NOT YET IMPLEMENTED.}
 
 \item{IPW}{logical, defaults to TRUE. Should inverse probability weights be calculated?}
 
