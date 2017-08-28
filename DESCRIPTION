@@ -4,16 +4,14 @@ Title: Randomization Inference for Randomized Experiments
 Version: 0.1.0
 Authors@R: person("Alexander", "Coppock", email = "acoppock@gmail.com", role = c("aut", "cre"))
 Description: Randomization Inference for Randomized Experiments
-License: All rights reserved
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: Rcpp (>= 0.12.10),
-    ggplot2,
+Imports: ggplot2,
     pbapply,
     dplyr
 Depends: randomizr,
     estimatr
-LinkingTo: Rcpp, RcppArmadillo
 Suggests: testthat,
     knitr,
     rmarkdown
