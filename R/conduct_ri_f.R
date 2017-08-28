@@ -134,7 +134,6 @@ conduct_ri_f <- function(model_1,
     f_sim = (ssr_sim_1 - ssr_sim_2) / (ncol(design_matrix_sim_2) - ncol(design_matrix_sim_1)) /
       (ssr_sim_2 / (length(outcome_vec_sim) - ncol(design_matrix_sim_2)))
 
-
     return(f_sim)
   }
 

@@ -47,6 +47,9 @@
 <li>
       <a href="../articles/ri2_vignette.html">Randomization Inference with ri2</a>
     </li>
+    <li>
+      <a href="../articles/ri2_vs_ri.html">Comparing ri and ri2</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -65,7 +68,7 @@
       <h1>Randomization Inference with ri2</h1>
                         <h4 class="author">Alexander Coppock, Yale University</h4>
             
-            <h4 class="date">2017-07-17</h4>
+            <h4 class="date">2017-08-28</h4>
           </div>
 
     
@@ -73,7 +76,7 @@
 <div class="contents">
 <p>Randomization inference (RI) is procedure for conducting hypothesis tests in randomized experiments. RI is useful for calculating the the probability that:</p>
 <ul>
-<li>a <strong>test statistic</strong> would be extreme or more as observed…</li>
+<li>a <strong>test statistic</strong> would be as extreme or more as observed…</li>
 <li>if a particular <strong>null hypothesis</strong> were true…</li>
 <li>over the all the possible randomizations that could have occurred acccording to the <strong>design</strong>.</li>
 </ul>
@@ -84,7 +87,7 @@
 <h1 class="hasAnchor">
 <a href="#basic-syntax" class="anchor"></a>Basic syntax</h1>
 <p>Gerber and Green (2012) describe a hypothetical experiment in which 2 of 7 villages are assigned a female council head and the outcome is the share of the local budget allocated to water sanitation. Their table 2.2 describes one way the experiment could have come out.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">table_2_2 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Z =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">table_2_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Z =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),
                         <span class="dt">Y =</span> <span class="kw">c</span>(<span class="dv">15</span>, <span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">20</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">30</span>))</code></pre></div>
 <p>In order to conduct randomization inference, we need to supply 1) a test statistic, 2) a null hypothesis, and 3) a randomization procedure.</p>
 <ol style="list-style-type: decimal">
@@ -94,15 +97,16 @@
 </ol>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ri2)</code></pre></div>
 <pre><code>## Loading required package: randomizr</code></pre>
+<pre><code>## Loading required package: estimatr</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Declare randomization procedure</span>
 declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> <span class="dv">7</span>, <span class="dt">m =</span> <span class="dv">2</span>)
 
 <span class="co"># Conduct Randomization Inference</span>
 ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
-  <span class="dt">formula =</span> Y ~<span class="st"> </span>Z,
+  <span class="dt">formula =</span> Y <span class="op">~</span><span class="st"> </span>Z,
   <span class="dt">declaration =</span> declaration,
   <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
-  <span class="dt">data =</span> table_2_2
+  <span class="dt">data =</span> table_2_<span class="dv">2</span>
 )
 
 <span class="kw">summary</span>(ri2_out)</code></pre></div>
@@ -116,7 +120,7 @@ ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/con
 <div id="more-complex-designs" class="section level1">
 <h1 class="hasAnchor">
 <a href="#more-complex-designs" class="anchor"></a>More complex designs</h1>
-<p>The <code>ri2</code> package has specific support for all the randomization procedures that can be described be the <code>randomizr</code> package:</p>
+<p>The <code>ri2</code> package has specific support for all the randomization procedures that can be described by the <code>randomizr</code> package:</p>
 <ol style="list-style-type: decimal">
 <li>Simple</li>
 <li>Complete</li>
@@ -141,7 +145,7 @@ ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/con
 ##     1 2 2
 ##     2 2 4
 ##     3 4 4</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">block_m &lt;-<span class="st"> </span><span class="kw">with</span>(df, <span class="kw">tapply</span>(Z, block, sum) /<span class="st"> </span><span class="dv">2</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">block_m &lt;-<span class="st"> </span><span class="kw">with</span>(df, <span class="kw">tapply</span>(Z, block, sum) <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)
 
 declaration &lt;-<span class="st"> </span>
 <span class="st">  </span><span class="kw">with</span>(df,{
@@ -160,7 +164,7 @@ declaration</code></pre></div>
 ## The possible treatment categories are 0 and 1.
 ## The probabilities of assignment are NOT constant across units. Your analysis strategy must account for differential probabilities of assignment, typically by employing inverse probability weights.</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
-  Y ~<span class="st"> </span>Z,
+  Y <span class="op">~</span><span class="st"> </span>Z,
   <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
   <span class="dt">declaration =</span> declaration,
   <span class="dt">data =</span> df
@@ -177,7 +181,7 @@ declaration</code></pre></div>
 <h1 class="hasAnchor">
 <a href="#comparing-nested-models" class="anchor"></a>Comparing nested models</h1>
 <p>A traditional ANOVA hypothesis testing framework (implicitly or explicitly) compares two models, a restricted model and an unrestricted model, where the restricted model can be said to “nest” within the unrestricted model. The difference between models is summarized as an <span class="math inline">\(F\)</span>-statistic. We then compare the observed <span class="math inline">\(F\)</span>-statistic to a hypothetical null distribution that, under some possibly wrong assumptions can be said to follow an <span class="math inline">\(F\)</span>-distribution.</p>
-<p>In a randomization inference framework, we’re happy to use the <span class="math inline">\(F\)</span>-statistic, but we want to construct a null distribution that correspondes to the distribution of <span class="math inline">\(F\)</span>-statistics that we would obtain if a particular (typically sharp) null hypothesis were true and we cycled through all the possible random assignments.</p>
+<p>In a randomization inference framework, we’re happy to use the <span class="math inline">\(F\)</span>-statistic, but we want to construct a null distribution that corresponds to the distribution of <span class="math inline">\(F\)</span>-statistics that we would obtain if a particular (typically sharp) null hypothesis were true and we cycled through all the possible random assignments.</p>
 <p>To do this in the <code>ri2</code> package, we need to supply model formulae to the <code>model_1</code> and <code>model_2</code> arguments of <code>conduct_ri</code>.</p>
 <div id="three-arm-trial" class="section level2">
 <h2 class="hasAnchor">
@@ -188,13 +192,13 @@ declaration</code></pre></div>
 declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N, <span class="dt">num_arms =</span> <span class="dv">3</span>)
 
 Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)
-Y &lt;-<span class="st"> </span>.<span class="dv">9</span> *<span class="st"> </span>.<span class="dv">2</span> *<span class="st"> </span>(Z ==<span class="st"> "T2"</span>) +<span class="st"> </span>-.<span class="dv">1</span> *<span class="st"> </span>(Z ==<span class="st"> "T3"</span>) +<span class="st"> </span><span class="kw">rnorm</span>(N)
+Y &lt;-<span class="st"> </span>.<span class="dv">9</span> <span class="op">*</span><span class="st"> </span>.<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>(Z <span class="op">==</span><span class="st"> "T2"</span>) <span class="op">+</span><span class="st"> </span><span class="op">-</span>.<span class="dv">1</span> <span class="op">*</span><span class="st"> </span>(Z <span class="op">==</span><span class="st"> "T3"</span>) <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N)
 df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, Z)
 
 ri2_out &lt;-
 <span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
-    <span class="dt">model_1 =</span> Y ~<span class="st"> </span><span class="dv">1</span>, <span class="co"># restricted model</span>
-    <span class="dt">model_2 =</span> Y ~<span class="st"> </span>Z, <span class="co"># unrestricted model</span>
+    <span class="dt">model_1 =</span> Y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="co"># restricted model</span>
+    <span class="dt">model_2 =</span> Y <span class="op">~</span><span class="st"> </span>Z, <span class="co"># unrestricted model</span>
     <span class="dt">declaration =</span> declaration,
     <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
     <span class="dt">data =</span> df
@@ -204,21 +208,19 @@ ri2_out &lt;-
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
 <pre><code>## # A tibble: 1 x 5
-##   coefficient estimate p_value null_ci_lower null_ci_upper
-##        &lt;fctr&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1 F-statistic  3.36322   0.035    0.03471928      3.842822</code></pre>
+##   coefficient  estimate p_value null_ci_lower null_ci_upper
+##        &lt;fctr&gt;     &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
+## 1 F-statistic 0.6374479   0.512     0.0262509       3.65659</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for comparison</span>
-<span class="kw">anova</span>(<span class="kw">lm</span>(Y ~<span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> df), 
-      <span class="kw">lm</span>(Y ~<span class="st"> </span>Z, <span class="dt">data =</span> df))</code></pre></div>
+<span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> df), 
+      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> df))</code></pre></div>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Model 1: Y ~ 1
 ## Model 2: Y ~ Z
-##   Res.Df     RSS Df Sum of Sq      F  Pr(&gt;F)  
-## 1     99 104.694                              
-## 2     97  97.905  2    6.7892 3.3632 0.03871 *
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+##   Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+## 1     99 108.61                           
+## 2     97 107.20  2     1.409 0.6374 0.5308</code></pre>
 </div>
 <div id="interaction-terms" class="section level2">
 <h2 class="hasAnchor">
@@ -229,18 +231,18 @@ ri2_out &lt;-
 declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N)
 X &lt;-<span class="st"> </span><span class="kw">rnorm</span>(N)
 Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)
-Y &lt;-<span class="st"> </span>.<span class="dv">9</span> *<span class="st"> </span>.<span class="dv">2</span> *<span class="st"> </span>Z +<span class="st"> </span>.<span class="dv">1</span> *<span class="st"> </span>X +<span class="st"> </span>-.<span class="dv">5</span> *<span class="st"> </span>Z *<span class="st"> </span>X +<span class="st"> </span><span class="kw">rnorm</span>(N)
+Y &lt;-<span class="st"> </span>.<span class="dv">9</span> <span class="op">*</span><span class="st"> </span>.<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>.<span class="dv">1</span> <span class="op">*</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span><span class="op">-</span>.<span class="dv">5</span> <span class="op">*</span><span class="st"> </span>Z <span class="op">*</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N)
 df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(X, Y, Z)
 
 <span class="co"># Observed ATE</span>
-ate_hat &lt;-<span class="st"> </span><span class="kw">coef</span>(<span class="kw">lm</span>(Y ~<span class="st"> </span>Z, <span class="dt">data =</span> df))[<span class="dv">2</span>]
+ate_hat &lt;-<span class="st"> </span><span class="kw">coef</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> df))[<span class="dv">2</span>]
 ate_hat</code></pre></div>
 <pre><code>##         Z 
-## 0.2452755</code></pre>
+## 0.3362066</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
 <span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
-    <span class="dt">model_1 =</span> Y ~<span class="st"> </span>Z +<span class="st"> </span>X, <span class="co"># restricted model</span>
-    <span class="dt">model_2 =</span> Y ~<span class="st"> </span>Z +<span class="st"> </span>X +<span class="st"> </span>Z*X, <span class="co"># unrestricted model</span>
+    <span class="dt">model_1 =</span> Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="co"># restricted model</span>
+    <span class="dt">model_2 =</span> Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span>Z<span class="op">*</span>X, <span class="co"># unrestricted model</span>
     <span class="dt">declaration =</span> declaration,
     <span class="dt">sharp_hypothesis =</span> ate_hat,
     <span class="dt">data =</span> df
@@ -252,17 +254,17 @@ ate_hat</code></pre></div>
 <pre><code>## # A tibble: 1 x 5
 ##   coefficient estimate p_value null_ci_lower null_ci_upper
 ##        &lt;fctr&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1 F-statistic 4.768296   0.041   0.001151761      6.010491</code></pre>
+## 1 F-statistic  6.71081   0.026  0.0006255895      6.776974</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for comparison</span>
-<span class="kw">anova</span>(<span class="kw">lm</span>(Y ~<span class="st"> </span>Z +<span class="st"> </span>X, <span class="dt">data =</span> df),
-      <span class="kw">lm</span>(Y ~<span class="st"> </span>Z +<span class="st"> </span>X +<span class="st"> </span>Z*X, <span class="dt">data =</span> df))</code></pre></div>
+<span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="dt">data =</span> df),
+      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span>Z<span class="op">*</span>X, <span class="dt">data =</span> df))</code></pre></div>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Model 1: Y ~ Z + X
 ## Model 2: Y ~ Z + X + Z * X
 ##   Res.Df    RSS Df Sum of Sq      F  Pr(&gt;F)  
-## 1     97 108.49                              
-## 2     96 103.35  1    5.1336 4.7683 0.03143 *
+## 1     97 89.579                              
+## 2     96 83.726  1    5.8528 6.7108 0.01108 *
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -279,17 +281,17 @@ ate_hat</code></pre></div>
 declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N, <span class="dt">m =</span> <span class="dv">50</span>)
 
 Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)
-Y &lt;-<span class="st"> </span>.<span class="dv">9</span> +<span class="st"> </span><span class="kw">rnorm</span>(N, <span class="dt">sd =</span> .<span class="dv">25</span> +<span class="st"> </span>.<span class="dv">25</span>*Z)
+Y &lt;-<span class="st"> </span>.<span class="dv">9</span> <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N, <span class="dt">sd =</span> .<span class="dv">25</span> <span class="op">+</span><span class="st"> </span>.<span class="dv">25</span><span class="op">*</span>Z)
 df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, Z)
 
 <span class="co"># arbitrary function of data</span>
-test_fun &lt;-<span class="st"> </span>function(data) {
-  <span class="kw">with</span>(data, <span class="kw">var</span>(Y[Z ==<span class="st"> </span><span class="dv">1</span>]) -<span class="st"> </span><span class="kw">var</span>(Y[Z ==<span class="st"> </span><span class="dv">0</span>]))
+test_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
+  <span class="kw">with</span>(data, <span class="kw">var</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span><span class="kw">var</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">0</span>]))
 }
 
 <span class="co"># confirm it works</span>
 <span class="kw">test_fun</span>(df)</code></pre></div>
-<pre><code>## [1] 0.2336569</code></pre>
+<pre><code>## [1] 0.2092878</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
 <span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
   <span class="dt">test_function =</span> test_fun,
@@ -306,7 +308,7 @@ test_fun &lt;-<span class="st"> </span>function(data) {
 <pre><code>## # A tibble: 1 x 5
 ##             coefficient  estimate p_value null_ci_lower null_ci_upper
 ##                  &lt;fctr&gt;     &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1 Custom Test Statistic 0.2336569       0    -0.1240153     0.1100524</code></pre>
+## 1 Custom Test Statistic 0.2092878       0     -0.117856     0.1144246</code></pre>
 </div>
 <div id="balance-test" class="section level2">
 <h2 class="hasAnchor">
@@ -324,14 +326,14 @@ df &lt;-
   <span class="dt">Z =</span> <span class="kw">conduct_ra</span>(declaration)
   )
   
-balance_fun &lt;-<span class="st"> </span>function(data) {
-  <span class="kw">summary</span>(<span class="kw">lm</span>(Z ~<span class="st"> </span>X1 +<span class="st"> </span>X2 +<span class="st"> </span>X3, <span class="dt">data =</span> data))$f[<span class="dv">1</span>]
+balance_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
+  <span class="kw">summary</span>(<span class="kw">lm</span>(Z <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>X3, <span class="dt">data =</span> data))<span class="op">$</span>f[<span class="dv">1</span>]
 }
 
 <span class="co"># Confirm it works!</span>
 <span class="kw">balance_fun</span>(df)</code></pre></div>
-<pre><code>##     value 
-## 0.4468818</code></pre>
+<pre><code>##    value 
+## 1.376454</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
 <span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
   <span class="dt">test_function =</span> balance_fun,
@@ -346,31 +348,31 @@ balance_fun &lt;-<span class="st"> </span>function(data) {
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
 <pre><code>## # A tibble: 1 x 5
-##             coefficient  estimate p_value null_ci_lower null_ci_upper
-##                  &lt;fctr&gt;     &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1 Custom Test Statistic 0.4468818   0.723    0.07651139      2.941943</code></pre>
+##             coefficient estimate p_value null_ci_lower null_ci_upper
+##                  &lt;fctr&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
+## 1 Custom Test Statistic 1.376454   0.281    0.09788095      3.694031</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># For comparison</span>
-<span class="kw">summary</span>(<span class="kw">lm</span>(Z ~<span class="st"> </span>X1 +<span class="st"> </span>X2 +<span class="st"> </span>X3, <span class="dt">data =</span> df))</code></pre></div>
+<span class="kw">summary</span>(<span class="kw">lm</span>(Z <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>X3, <span class="dt">data =</span> df))</code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = Z ~ X1 + X2 + X3, data = df)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -0.67002 -0.49711  0.03343  0.49662  0.60197 
+## -0.69528 -0.47769 -0.06934  0.47862  0.71365 
 ## 
 ## Coefficients:
-##              Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  0.512488   0.110029   4.658 1.03e-05 ***
-## X1          -0.053787   0.046509  -1.157    0.250    
-## X2          -0.013294   0.103047  -0.129    0.898    
-## X3          -0.003737   0.028881  -0.129    0.897    
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  0.37402    0.10614   3.524 0.000653 ***
+## X1          -0.06130    0.04435  -1.382 0.170127    
+## X2          -0.01182    0.10026  -0.118 0.906401    
+## X3           0.04460    0.02865   1.557 0.122758    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.5068 on 96 degrees of freedom
-## Multiple R-squared:  0.01377,    Adjusted R-squared:  -0.01705 
-## F-statistic: 0.4469 on 3 and 96 DF,  p-value: 0.7201</code></pre>
+## Residual standard error: 0.4997 on 96 degrees of freedom
+## Multiple R-squared:  0.04124,    Adjusted R-squared:  0.01128 
+## F-statistic: 1.376 on 3 and 96 DF,  p-value: 0.2546</code></pre>
 </div>
 </div>
 <div id="conclusion" class="section level1">

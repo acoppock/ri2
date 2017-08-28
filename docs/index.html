@@ -47,6 +47,9 @@
 <li>
       <a href="articles/ri2_vignette.html">Randomization Inference with ri2</a>
     </li>
+    <li>
+      <a href="articles/ri2_vs_ri.html">Comparing ri and ri2</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -87,22 +90,23 @@
 </ul>
 <p>Then use the following code:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)
-devtools::<span class="kw">install_github</span>(<span class="st">"DeclareDesign/randomizr"</span>)
-devtools::<span class="kw">install_github</span>(<span class="st">"acoppock/ri2"</span>)</code></pre></div>
+devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"DeclareDesign/randomizr"</span>)
+devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"acoppock/ri2"</span>)</code></pre></div>
 <p>Here is the basic syntax for a two-arm trial:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ri2)
 <span class="co">#&gt; Loading required package: randomizr</span>
+<span class="co">#&gt; Loading required package: estimatr</span>
 N &lt;-<span class="st"> </span><span class="dv">100</span>
 declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N, <span class="dt">m =</span> <span class="dv">50</span>)
 
 Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)
 X &lt;-<span class="st"> </span><span class="kw">rnorm</span>(N)
-Y &lt;-<span class="st"> </span>.<span class="dv">9</span> *<span class="st"> </span>X +<span class="st"> </span>.<span class="dv">2</span> *<span class="st"> </span>Z +<span class="st"> </span><span class="kw">rnorm</span>(N)
+Y &lt;-<span class="st"> </span>.<span class="dv">9</span> <span class="op">*</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span>.<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N)
 df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, X, Z)
 
 ri_out &lt;-
 <span class="st">  </span><span class="kw"><a href="reference/conduct_ri.html">conduct_ri</a></span>(
-    <span class="dt">formula =</span> Y ~<span class="st"> </span>Z,
+    <span class="dt">formula =</span> Y <span class="op">~</span><span class="st"> </span>Z,
     <span class="dt">declaration =</span> declaration,
     <span class="dt">assignment =</span> <span class="st">"Z"</span>,
     <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
@@ -115,7 +119,7 @@ ri_out &lt;-
 <span class="co">#&gt; # A tibble: 1 x 5</span>
 <span class="co">#&gt;   coefficient estimate p_value null_ci_lower null_ci_upper</span>
 <span class="co">#&gt;         &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;</span>
-<span class="co">#&gt; 1           Z 0.129583   0.645    -0.5543382     0.5218571</span></code></pre></div>
+<span class="co">#&gt; 1           Z 0.524235   0.049    -0.5185801     0.5250169</span></code></pre></div>
 <p>The development of ri2 is supported by a Standards Grant from <a href="http://egap.org">EGAP</a>.</p>
 </div>
   </div>
@@ -123,7 +127,7 @@ ri_out &lt;-
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2 class="hasAnchor">
 <a href="#sidebar" class="anchor"></a>License</h2>
-<p>All rights reserved</p>
+<p><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE.html">LICENSE</a></p>
 <h2>Developers</h2>
 <ul class="list-unstyled">
 <li>Alexander Coppock <br><small class="roles"> Author, maintainer </small> </li>

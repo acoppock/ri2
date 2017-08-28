@@ -32,6 +32,7 @@ Here is the basic syntax for a two-arm trial:
 ``` r
 library(ri2)
 #> Loading required package: randomizr
+#> Loading required package: estimatr
 N <- 100
 declaration <- declare_ra(N = N, m = 50)
 
@@ -57,9 +58,9 @@ plot(ri_out)
 ``` r
 summary(ri_out)
 #> # A tibble: 1 x 5
-#>   coefficient  estimate p_value null_ci_lower null_ci_upper
-#>         <chr>     <dbl>   <dbl>         <dbl>         <dbl>
-#> 1           Z 0.3463238   0.144    -0.4767303      0.471311
+#>   coefficient    estimate p_value null_ci_lower null_ci_upper
+#>         <chr>       <dbl>   <dbl>         <dbl>         <dbl>
+#> 1           Z -0.02348029   0.936    -0.6029264     0.5557554
 ```
 
 The development of ri2 is supported by a Standards Grant from [EGAP](http://egap.org).

@@ -70,6 +70,9 @@
     <li>
       <a href="../articles/ri2_vignette.html">Randomization Inference with ri2</a>
     </li>
+    <li>
+      <a href="../articles/ri2_vs_ri.html">Comparing ri and ri2</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -96,8 +99,9 @@
 
     <pre class="usage"><span class='fu'>conduct_ri</span>(<span class='kw'>formula</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>model_1</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>model_2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>test_function</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>assignment</span> <span class='kw'>=</span> <span class='st'>"Z"</span>, <span class='kw'>outcome</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>declaration</span>,
-  <span class='kw'>sharp_hypothesis</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>IPW</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>IPW_weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>sampling_weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>permutation_matrix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>data</span>, <span class='kw'>sims</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</pre>
+  <span class='kw'>sharp_hypothesis</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>studentize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>IPW</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>IPW_weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>sampling_weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>permutation_matrix</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>data</span>, <span class='kw'>sims</span> <span class='kw'>=</span> <span class='fl'>1000</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -133,6 +137,10 @@
     <tr>
       <th>sharp_hypothesis</th>
       <td><p>either a numeric scalar or a numeric vector of length k - 1, where k is the number of treatment conditions. In a two-arm trial, this number is the *hypothesized* difference between the treated and untreated potential potential outcomes for each unit.. In a multi-arm trial, each number in the vector is the hypothesized difference in potential outcomes between the baseline condition and each successive treatment condition.</p></td>
+    </tr>
+    <tr>
+      <th>studentize</th>
+      <td><p>logical, defaults to FALSE. Should the test statistic be the t-ratio rather than the estimated ATE? T-ratios will be calculated using HC2 robust standard errors or their clustered equivalent. CLUSTERING NOT YET IMPLEMENTED.</p></td>
     </tr>
     <tr>
       <th>IPW</th>
