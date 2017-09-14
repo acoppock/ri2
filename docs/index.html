@@ -83,13 +83,10 @@
 <li>Accommodation for arbitrary randomization schemes</li>
 <li>Accommodation for arbitrary (scalar) test statistics</li>
 </ol>
-<p>If you’d like to install the most current development release, you can do so using the <code>devtools</code> package. Since there’s some <code>Rcpp</code> in <code>ri2</code>, you’ll need some development tools as described on the <a href="https://www.rstudio.com/products/rpackages/devtools/">devtools page</a>.</p>
-<ul>
-<li>on a Mac, you have to first install Xcode (from the app store is easiest!)</li>
-<li>on Windows, install <code>Rtools</code> with <code>install.packages("Rtools")</code>.</li>
-</ul>
-<p>Then use the following code:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)
+<p>If you’d like to install the most current development release, you can use the following code:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"estimatr"</span>, <span class="dt">dependencies =</span> <span class="ot">TRUE</span>,
+  <span class="dt">repos =</span> <span class="kw">c</span>(<span class="st">"http://install.declaredesign.org"</span>, <span class="st">"https://cloud.r-project.org"</span>))
+<span class="kw">install.packages</span>(<span class="st">"devtools"</span>)
 devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"DeclareDesign/randomizr"</span>)
 devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"acoppock/ri2"</span>)</code></pre></div>
 <p>Here is the basic syntax for a two-arm trial:</p>
@@ -117,9 +114,9 @@ ri_out &lt;-
 <p><img src="README-unnamed-chunk-3-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri_out)
 <span class="co">#&gt; # A tibble: 1 x 5</span>
-<span class="co">#&gt;   coefficient estimate p_value null_ci_lower null_ci_upper</span>
-<span class="co">#&gt;         &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;</span>
-<span class="co">#&gt; 1           Z 0.524235   0.049    -0.5185801     0.5250169</span></code></pre></div>
+<span class="co">#&gt;   coefficient  estimate p_value null_ci_lower null_ci_upper</span>
+<span class="co">#&gt;         &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;</span>
+<span class="co">#&gt; 1           Z 0.2100802   0.468    -0.5585896     0.5440098</span></code></pre></div>
 <p>The development of ri2 is supported by a Standards Grant from <a href="http://egap.org">EGAP</a>.</p>
 </div>
   </div>

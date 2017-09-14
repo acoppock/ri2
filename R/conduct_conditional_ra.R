@@ -1,3 +1,4 @@
+#' @importFrom randomizr simple_ra complete_ra block_ra cluster_ra block_and_cluster_ra
 conduct_conditional_ra <-
   function(declaration, assignment_vec, conditions) {
 

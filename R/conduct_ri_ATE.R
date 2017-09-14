@@ -1,5 +1,6 @@
 #' @importFrom randomizr obtain_permutation_matrix obtain_num_permutations
 #' @importFrom estimatr lm_fit
+#' @importFrom stats model.matrix.default
 conduct_ri_ATE <- function(formula,
                            assignment = "Z",
                            declaration,

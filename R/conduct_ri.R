@@ -162,6 +162,7 @@ print.ri <- function(x, p = "two-tailed", ...) {
 
 #' @export
 #' @import dplyr
+#' @importFrom stats quantile
 summary.ri <- function(object, p = "two-tailed", ...) {
   if (p == "two-tailed") {
     object$sims_df <-
