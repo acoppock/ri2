@@ -35,27 +35,29 @@ conduct_ri_f <- function(model_1,
   }
 
   coefs_obs_1 <-
-    lm_fit(
+    tidy(lm_robust_fit(
       y = outcome_vec,
-      design_matrix = design_matrix_1,
+      X = design_matrix_1,
       weights = weights_vec,
       ci = FALSE,
       coefficient_name = names(design_matrix_1),
       cluster = NULL,
       alpha = 0.05,
-      se_type = "none"
-    )$est
+      se_type = "none",
+      return_vcov = FALSE
+    ))$est
   coefs_obs_2 <-
-    lm_fit(
+    tidy(lm_robust_fit(
       y = outcome_vec,
-      design_matrix = design_matrix_2,
+      X = design_matrix_2,
       weights = weights_vec,
       ci = FALSE,
       coefficient_name = names(design_matrix_2),
       cluster = NULL,
       alpha = 0.05,
-      se_type = "none"
-    )$est
+      se_type = "none",
+      return_vcov = FALSE
+    ))$est
 
   ssr_1 <- sum((outcome_vec - design_matrix_1 %*% coefs_obs_1) ^ 2)
   ssr_2 <- sum((outcome_vec - design_matrix_2 %*% coefs_obs_2) ^ 2)
@@ -104,27 +106,29 @@ conduct_ri_f <- function(model_1,
     }
 
     coefs_sim_1 <-
-      lm_fit(
+      tidy(lm_robust_fit(
         y = outcome_vec_sim,
-        design_matrix = design_matrix_sim_1,
+        X = design_matrix_sim_1,
         weights = weights_vec,
         ci = FALSE,
         coefficient_name = names(design_matrix_sim_1),
         cluster = NULL,
         alpha = 0.05,
-        se_type = "none"
-      )$est
+        se_type = "none",
+        return_vcov = FALSE
+      ))$est
     coefs_sim_2 <-
-      lm_fit(
+      tidy(lm_robust_fit(
         y = outcome_vec_sim,
-        design_matrix = design_matrix_sim_2,
+        X = design_matrix_sim_2,
         weights = weights_vec,
         ci = FALSE,
         coefficient_name = names(design_matrix_sim_2),
         cluster = NULL,
         alpha = 0.05,
-        se_type = "none"
-      )$est
+        se_type = "none",
+        return_vcov = FALSE
+      ))$est
 
     ssr_sim_1 <-
       sum((outcome_vec_sim - design_matrix_sim_1 %*% coefs_sim_1) ^ 2)

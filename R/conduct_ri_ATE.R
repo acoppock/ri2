@@ -1,5 +1,5 @@
 #' @importFrom randomizr obtain_permutation_matrix obtain_num_permutations
-#' @importFrom estimatr lm_fit
+#' @importFrom estimatr lm_robust_fit
 #' @importFrom stats model.matrix.default
 conduct_ri_ATE <- function(formula,
                            assignment = "Z",
@@ -58,16 +58,19 @@ conduct_ri_ATE <- function(formula,
     weights_vec <- NULL
   }
 
-  fit_obs <- lm_fit(
+  fit_obs <- lm_robust_fit(
     y = outcome_vec,
-    design_matrix = design_matrix,
+    X = design_matrix,
     weights = weights_vec,
     ci = FALSE,
     coefficient_name = coefficient_names,
     cluster = NULL,
     alpha = 0.05,
-    se_type = se_type
+    se_type = se_type,
+    return_vcov = FALSE
   )
+
+  fit_obs <- tidy(fit_obs)
 
   if (studentize) {
     coefs_obs <- fit_obs$est / fit_obs$se
@@ -132,16 +135,19 @@ conduct_ri_ATE <- function(formula,
         weights_vec <- NULL
       }
 
-      fit_sim <- lm_fit(
+      fit_sim <- lm_robust_fit(
         y = outcome_vec_sim,
-        design_matrix = design_matrix,
+        X = design_matrix,
         weights = weights_vec,
         ci = FALSE,
         coefficient_name = coefficient_names[i - 1],
         cluster = NULL,
         alpha = 0.05,
-        se_type = se_type
+        se_type = se_type,
+        return_vcov = FALSE
       )
+
+      fit_sim <- tidy(fit_sim)
 
       if (studentize) {
         coefs_sim <- fit_sim$est / fit_sim$se
