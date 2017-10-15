@@ -12,6 +12,9 @@ conduct_ri_f <- function(model_1,
                          sims = 1000) {
   # setup
 
+  model_1 <- as.formula(model_1)
+  model_2 <- as.formula(model_2)
+
   design_matrix_1 <- model.matrix.default(model_1, data = data)
   design_matrix_2 <- model.matrix.default(model_2, data = data)
 

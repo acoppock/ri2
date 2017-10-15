@@ -9,7 +9,7 @@ conduct_ri_test_function <- function(test_function,
                                      data,
                                      sims = 1000) {
   test_stat_obs <- test_function(data)
-  assignment_vec <- data[, assignment]
+  assignment_vec <- data[[assignment]]
 
 
   if (!is.null(outcome)) {
@@ -20,7 +20,7 @@ conduct_ri_test_function <- function(test_function,
     }
 
     pos_mat <- generate_pos(
-      Y = data[, outcome],
+      Y = data[[outcome]],
       assignment_vec = assignment_vec,
       sharp_hypothesis = sharp_hypothesis
     )
@@ -41,12 +41,12 @@ conduct_ri_test_function <- function(test_function,
 
     if (!is.null(IPW_weights)) {
       data[, IPW_weights] <-
-        1 / obtain_condition_probabilities(declaration, assignment = data[, assignment])
+        1 / obtain_condition_probabilities(declaration, assignment = data[[assignment]])
     }
 
     if (!is.null(outcome)) {
       data[, outcome] <-
-        switching_equation(pos_mat = pos_mat, assignment_vec = data[, assignment])
+        switching_equation(pos_mat = pos_mat, assignment_vec = data[[assignment]])
 
     }
 

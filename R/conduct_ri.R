@@ -33,7 +33,7 @@ conduct_ri <- function(formula = NULL,
                        test_function = NULL,
                        assignment = "Z",
                        outcome = NULL,
-                       declaration,
+                       declaration = NULL,
                        sharp_hypothesis = 0,
                        studentize = FALSE,
                        IPW = TRUE,
@@ -42,62 +42,77 @@ conduct_ri <- function(formula = NULL,
                        permutation_matrix = NULL,
                        data,
                        sims = 1000) {
+  # some error checking -----------------------------------------------------
 
-# Case 1: ATE -------------------------------------------------------------
-
-  if(!is.null(formula)){
-
-ri_out <- conduct_ri_ATE(formula = formula,
-                         assignment = assignment,
-                         declaration = declaration,
-                         sharp_hypothesis = sharp_hypothesis,
-                         studentize = studentize,
-                         IPW = IPW,
-                         IPW_weights = IPW_weights,
-                         sampling_weights = sampling_weights,
-                         permutation_matrix = permutation_matrix,
-                         data = data,
-                         sims = sims)
+  if (is.null(declaration) &
+      is.null(permutation_matrix)) {
+    stop("Please supply either a random assignment declaration or a permutation matrix")
+  }
+  if (is.null(declaration) & !is.null(permutation_matrix)) {
+    declaration <- declare_ra(permutation_matrix = permutation_matrix)
+    permutation_matrix <- NULL
   }
 
-# Case 2: F-test ----------------------------------------------------------
 
-  if(!is.null(model_1) & !is.null(model_2)){
+  # Case 1: ATE -------------------------------------------------------------
 
-ri_out <- conduct_ri_f(model_1 = model_1,
-                       model_2 = model_2,
-                       assignment = assignment,
-                       declaration = declaration,
-                       sharp_hypothesis = sharp_hypothesis,
-                       IPW = IPW,
-                       IPW_weights = IPW_weights,
-                       sampling_weights = sampling_weights,
-                       permutation_matrix = permutation_matrix,
-                       data = data,
-                       sims = sims)
+  if (!is.null(formula)) {
+    ri_out <- conduct_ri_ATE(
+      formula = formula,
+      assignment = assignment,
+      declaration = declaration,
+      sharp_hypothesis = sharp_hypothesis,
+      studentize = studentize,
+      IPW = IPW,
+      IPW_weights = IPW_weights,
+      sampling_weights = sampling_weights,
+      permutation_matrix = permutation_matrix,
+      data = data,
+      sims = sims
+    )
   }
 
-# Case 3: Arbitrary Function ----------------------------------------------
+  # Case 2: F-test ----------------------------------------------------------
 
-  if(!is.null(test_function)){
-
-ri_out <- conduct_ri_test_function(test_function = test_function,
-                                   assignment = assignment,
-                                   outcome = outcome,
-                                   declaration = declaration,
-                                   sharp_hypothesis = sharp_hypothesis,
-                                   IPW_weights = IPW_weights,
-                                   sampling_weights = sampling_weights,
-                                   permutation_matrix = permutation_matrix,
-                                   data = data,
-                                   sims = sims)
+  if (!is.null(model_1) & !is.null(model_2)) {
+    ri_out <- conduct_ri_f(
+      model_1 = model_1,
+      model_2 = model_2,
+      assignment = assignment,
+      declaration = declaration,
+      sharp_hypothesis = sharp_hypothesis,
+      IPW = IPW,
+      IPW_weights = IPW_weights,
+      sampling_weights = sampling_weights,
+      permutation_matrix = permutation_matrix,
+      data = data,
+      sims = sims
+    )
   }
 
-  if(is.null(formula) & is.null(model_1) & is.null(model_2) & is.null(test_function)){
-   stop("You must specify either a formula, models 1 and 2, or a test function.")
+  # Case 3: Arbitrary Function ----------------------------------------------
+
+  if (!is.null(test_function)) {
+    ri_out <- conduct_ri_test_function(
+      test_function = test_function,
+      assignment = assignment,
+      outcome = outcome,
+      declaration = declaration,
+      sharp_hypothesis = sharp_hypothesis,
+      IPW_weights = IPW_weights,
+      sampling_weights = sampling_weights,
+      permutation_matrix = permutation_matrix,
+      data = data,
+      sims = sims
+    )
   }
 
-return(ri_out)
+  if (is.null(formula) &
+      is.null(model_1) & is.null(model_2) & is.null(test_function)) {
+    stop("You must specify either a formula, models 1 and 2, or a test function.")
+  }
+
+  return(ri_out)
 
 }
 
@@ -107,14 +122,12 @@ return(ri_out)
 #'
 #'
 plot.ri <- function(x, p = "two-tailed", ...) {
-
   if (p == "two-tailed") {
     x$sims_df <-
       x$sims_df %>%
       mutate(extreme = abs(est_sim) >= abs(est_obs))
 
   } else if (p == "lower") {
-
     x$sims_df <-
       x$sims_df %>%
       mutate(extreme = est_sim <= est_obs)
@@ -148,7 +161,7 @@ plot.ri <- function(x, p = "two-tailed", ...) {
     scale_alpha_manual(values = c(0.5, 1), guide = FALSE) +
     xlab("Simulated Estimates") +
     ggtitle("Randomization Inference") +
-    facet_wrap(~coefficient) +
+    facet_wrap( ~ coefficient) +
     theme_bw() +
     theme(legend.position = "bottom",
           axis.title.y = element_blank())
@@ -166,11 +179,10 @@ print.ri <- function(x, p = "two-tailed", ...) {
 summary.ri <- function(object, p = "two-tailed", ...) {
   if (p == "two-tailed") {
     object$sims_df <-
-    object$sims_df %>%
+      object$sims_df %>%
       mutate(extreme = abs(est_sim) >= abs(est_obs))
 
   } else if (p == "lower") {
-
     object$sims_df <-
       object$sims_df %>%
       mutate(extreme = est_sim <= est_obs)
@@ -187,10 +199,21 @@ summary.ri <- function(object, p = "two-tailed", ...) {
   return_df <-
     object$sims_df %>%
     group_by(coefficient) %>%
-    summarize(estimate = unique(est_obs),
-              p_value = mean(extreme),
-              null_ci_lower = quantile(est_sim, 0.025),
-              null_ci_upper = quantile(est_sim, 0.975))
+    summarize(
+      estimate = unique(est_obs),
+      p_value = mean(extreme),
+      null_ci_lower = quantile(est_sim, 0.025),
+      null_ci_upper = quantile(est_sim, 0.975)
+    )
 
-  return(return_df)
+  if (p == "two-tailed") {
+    colnames(return_df)[3] <- "two_tailed_p_value"
+  } else if (p == "lower") {
+    colnames(return_df)[3] <- "lower_p_value"
+
+  } else if (p == "upper") {
+    colnames(return_df)[3] <- "upper_p_value"
+
+  }
+    return(return_df)
 }

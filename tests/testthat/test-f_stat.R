@@ -18,7 +18,7 @@ test_that("main effect f test", {
       declaration = declaration,
       assignment = "Z",
       sharp_hypothesis = 0,
-      data = df
+      data = df, sims = 100
     )
 
   plot(ri_out)
@@ -47,7 +47,7 @@ test_that("interaction test under constant fx", {
       declaration = declaration,
       assignment = "Z",
       sharp_hypothesis = ate_obs,
-      data = df
+      data = df, sims = 100
     )
 
   plot(ri_out)

@@ -14,6 +14,7 @@ conduct_ri_ATE <- function(formula,
                            sims = 1000) {
   # setup
 
+  formula <- as.formula(formula)
   assignment_vec <- data[[assignment]]
   design_matrix <- model.matrix.default(formula, data = data)
   outcome_vec <- data[[all.vars(formula[[2]])]]

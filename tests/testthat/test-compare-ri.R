@@ -51,13 +51,13 @@ test_that("Compare to ri", {
 
   expect_equal(sort(distout), sort(ri2_out$sims_df$est_sim))
 
-  expect_equal(summary(ri2_out, p = "two-tailed")$p_value,
+  expect_equal(summary(ri2_out, p = "two-tailed")$two_tailed_p_value,
                ri1_out$two.tailed.p.value.abs)
 
-  expect_equal(summary(ri2_out, p = "lower")$p_value,
+  expect_equal(summary(ri2_out, p = "lower")$lower_p_value,
                ri1_out$lesser.p.value)
 
-  expect_equal(summary(ri2_out, p = "upper")$p_value,
+  expect_equal(summary(ri2_out, p = "upper")$upper_p_value,
                ri1_out$greater.p.value)
 
   expect_equivalent(summary(ri2_out)$null_ci_lower,

@@ -20,7 +20,7 @@ test_that("test-function", {
       declaration = declaration,
       assignment = "Z",
       sharp_hypothesis = 0,
-      data = df
+      data = df, sims = 100
     )
 
   plot(ri_out)
@@ -41,7 +41,7 @@ test_that("test-function", {
       declaration = declaration,
       assignment = "Z",
       sharp_hypothesis = 0,
-      data = df
+      data = df, sims = 100
     )
 
   plot(ri_out)
