@@ -5,10 +5,10 @@
 \title{Conduct Randomization Inference}
 \usage{
 conduct_ri(formula = NULL, model_1 = NULL, model_2 = NULL,
-  test_function = NULL, assignment = "Z", outcome = NULL, declaration,
-  sharp_hypothesis = 0, studentize = FALSE, IPW = TRUE,
-  IPW_weights = NULL, sampling_weights = NULL, permutation_matrix = NULL,
-  data, sims = 1000)
+  test_function = NULL, assignment = "Z", outcome = NULL,
+  declaration = NULL, sharp_hypothesis = 0, studentize = FALSE,
+  IPW = TRUE, IPW_weights = NULL, sampling_weights = NULL,
+  permutation_matrix = NULL, data, sims = 1000)
 }
 \arguments{
 \item{formula}{an object of class formula, as in \code{\link{lm}}. Use formula when conducting significance tests of an Average Treatment Effect estimate under a sharp null hypothesis. For the difference-in-means estimate, do not include covariates. For the OLS covariate-adjusted estimate, include covariates.}
@@ -48,4 +48,91 @@ This function makes it easy to conduct three kinds of randomization inference.
 1. Conduct hypothesis tests under the sharp null when the test statistic is the difference-in-means or covariate-adjusted average treatment effect estimate.
 2. Conduct "ANOVA" style hypothesis tests, where the f-statistic from two nested models is the test statistic. This procedure is especially helpful when testing interaction terms under null of constant effects.
 3. Arbitrary (scalar) test statistics
+}
+\examples{
+
+# Data from Gerber and Green Table 2.2
+
+
+# Randomization Inference for the Average Treatment Effect
+
+table_2.2 <-
+    data.frame(d = c(1, 0, 0, 0, 0, 0, 1),
+               y = c(15, 15, 20, 20, 10, 15, 30))
+
+## Declare randomization procedure
+declaration <- declare_ra(N = 7, m = 2)
+
+## Conduct Randomization Inference
+out <- conduct_ri(y ~ d,
+                      declaration = declaration,
+                      assignment = "d",
+                      sharp_hypothesis = 0,
+                      data = table_2.2)
+
+summary(out)
+plot(out)
+
+# Randomization Inference for an Interaction
+
+
+N <- 100
+declaration <- randomizr::declare_ra(N = N, m = 50)
+
+Z <- randomizr::conduct_ra(declaration)
+X <- rnorm(N)
+Y <- .9 * X + .2 * Z + 1 * X * Z + rnorm(N)
+dat <- data.frame(Y, X, Z)
+
+ate_obs <- coef(lm(Y ~ Z, data = dat))[2]
+
+out <-
+  conduct_ri(
+    model_1 = Y ~ Z + X,
+    model_2 = Y ~ Z + X + Z * X,
+    declaration = declaration,
+    assignment = "Z",
+    sharp_hypothesis = ate_obs,
+    data = dat, sims = 100
+  )
+
+plot(out)
+summary(out)
+
+
+# Randomization Inference for arbitrary test statistics
+
+## In this example we're conducting a randomization check (in this case, a balance test).
+
+N <- 100
+declaration <- randomizr::declare_ra(N = N, m = 50)
+
+Z <- randomizr::conduct_ra(declaration)
+X <- rnorm(N)
+Y <- .9 * X + .2 * Z + rnorm(N)
+dat <- data.frame(Y, X, Z)
+
+balance_fun <- function(data) {
+    f_stat <- summary(lm(Z ~ X, data = data))$f[1]
+    names(f_stat) <- NULL
+    return(f_stat)
+}
+
+## confirm function works as expected
+balance_fun(dat)
+
+## conduct randomization inference
+
+out <-
+  conduct_ri(
+    test_function = balance_fun,
+    declaration = declaration,
+    assignment = "Z",
+    sharp_hypothesis = 0,
+    data = dat, sims = 100
+  )
+
+plot(out)
+summary(out)
+
 }

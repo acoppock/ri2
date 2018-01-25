@@ -1,5 +1,4 @@
-switching_equation <- function(pos_mat, assignment_vec){
-
+switching_equation <- function(pos_mat, assignment_vec) {
   Y <- rep(NA, length(assignment_vec))
 
   condition_names <- sort(unique(assignment_vec))

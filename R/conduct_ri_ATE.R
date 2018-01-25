@@ -1,6 +1,6 @@
 #' @importFrom randomizr obtain_permutation_matrix obtain_num_permutations
 #' @importFrom estimatr lm_robust_fit
-#' @importFrom stats model.matrix.default
+#' @importFrom stats model.matrix.default as.formula
 conduct_ri_ATE <- function(formula,
                            assignment = "Z",
                            declaration,
@@ -24,12 +24,12 @@ conduct_ri_ATE <- function(formula,
 
   if (is.numeric(assignment_vec)) {
     coefficient_names <- assignment
-  } else{
+  } else {
     coefficient_names <- paste0(assignment, condition_names[-1])
   }
 
   if (length(sharp_hypothesis) != 1 &
-      length(sharp_hypothesis) != length(coefficient_names)) {
+    length(sharp_hypothesis) != length(coefficient_names)) {
     stop(
       "If you supply multiple sharp hypotheses, you must supply a number of sharp hypotheses equal to the number of treatment conditions minus 1."
     )
@@ -40,9 +40,11 @@ conduct_ri_ATE <- function(formula,
       rep(sharp_hypothesis, length(coefficient_names))
   }
 
-  pos_mat <- generate_pos(Y = outcome_vec,
-                          assignment_vec = assignment_vec,
-                          sharp_hypothesis = sharp_hypothesis)
+  pos_mat <- generate_pos(
+    Y = outcome_vec,
+    assignment_vec = assignment_vec,
+    sharp_hypothesis = sharp_hypothesis
+  )
 
   if (studentize) {
     se_type <- "HC2"
@@ -64,29 +66,27 @@ conduct_ri_ATE <- function(formula,
     X = design_matrix,
     weights = weights_vec,
     ci = FALSE,
-    coefficient_name = coefficient_names,
     cluster = NULL,
     alpha = 0.05,
     se_type = se_type,
-    return_vcov = FALSE
+    return_vcov = FALSE,
+    try_cholesky = FALSE,
+    has_int = TRUE
   )
 
-  fit_obs <- tidy(fit_obs)
+  fit_obs <- estimatr::tidy.lm_robust(fit_obs)
+  fit_obs <- fit_obs[fit_obs$coefficient_name %in% coefficient_names, , drop = FALSE]
 
   if (studentize) {
-    coefs_obs <- fit_obs$est / fit_obs$se
+    coefs_obs <- fit_obs$coefficients / fit_obs$se
   } else {
-    coefs_obs <- fit_obs$est
+    coefs_obs <- fit_obs$coefficients
   }
-
-  #rownames(coefs_obs) <- colnames(design_matrix[coefficient_names,])
-  #coefs_obs <- as.list(coefs_obs[coefficient_names, ])
 
   names(coefs_obs) <- coefficient_names
   coefs_obs <- as.list(coefs_obs)
 
   # set up functions --------------------------------------------------------
-
 
   null_distributions <-
     vector("list", length = length(condition_names) - 1)
@@ -95,11 +95,11 @@ conduct_ri_ATE <- function(formula,
 
 
   if (is.null(permutation_matrix) &
-      sims >= obtain_num_permutations(declaration)) {
+    sims >= obtain_num_permutations(declaration)) {
     permutation_matrix <- obtain_permutation_matrix(declaration,
-                                                    maximum_permutations = sims)
+      maximum_permutations = sims
+    )
   }
-
 
   for (i in 2:length(condition_names)) {
     if (is.null(permutation_matrix)) {
@@ -120,11 +120,11 @@ conduct_ri_ATE <- function(formula,
       }
 
       design_matrix[, coefficient_names] <-
-        model.matrix.default( ~ Z_sim)[, -1]
+        model.matrix.default(~ Z_sim)[, -1]
 
       if (sharp_hypothesis[i - 1] == 0) {
         outcome_vec_sim <- outcome_vec
-      } else{
+      } else {
         outcome_vec_sim <-
           switching_equation(pos_mat = pos_mat, assignment_vec = Z_sim)
       }
@@ -141,21 +141,22 @@ conduct_ri_ATE <- function(formula,
         X = design_matrix,
         weights = weights_vec,
         ci = FALSE,
-        coefficient_name = coefficient_names[i - 1],
         cluster = NULL,
         alpha = 0.05,
         se_type = se_type,
-        return_vcov = FALSE
+        return_vcov = FALSE,
+        try_cholesky = FALSE,
+        has_int = TRUE
       )
 
-      fit_sim <- tidy(fit_sim)
+      fit_sim <- estimatr::tidy.lm_robust(fit_sim)
+      fit_sim <- fit_sim[fit_sim$coefficient_name %in% coefficient_names[i - 1], , drop = FALSE]
 
       if (studentize) {
-        coefs_sim <- fit_sim$est / fit_sim$se
+        coefs_sim <- fit_sim$coefficients / fit_sim$se
       } else {
-        coefs_sim <- fit_sim$est
+        coefs_sim <- fit_sim$coefficients
       }
-
 
       names(coefs_sim) <- coefficient_names[i - 1]
       return(coefs_sim)
@@ -168,19 +169,22 @@ conduct_ri_ATE <- function(formula,
   sharp_hypothesis <- as.list(sharp_hypothesis)
   names(sharp_hypothesis) <- coefficient_names
 
-  sims_df <-
+  sims_list <-
     mapply(
       FUN = data.frame,
       est_sim = null_distributions,
       est_obs = coefs_obs,
       SIMPLIFY = FALSE
-    ) %>%
-    bind_rows(.id = "coefficient")
+    )
+
+  sims_df <- do.call("rbind", sims_list)
+  sims_df$coefficient <- rep(names(sims_list), sapply(sims_list, nrow))
 
   if (studentize) {
     sims_df$coefficient <- paste0(sims_df$coefficient, " (studentized)")
   }
 
   return(structure(list(sims_df = sims_df),
-                   class = "ri"))
+    class = "ri"
+  ))
 }

@@ -12,7 +12,7 @@ test_that("Studentize", {
   df <- data.frame(Y, X, Z, W)
 
 
-  #debugonce(ri2:::conduct_ri_ATE)
+  # debugonce(ri2:::conduct_ri_ATE)
   ri_out <-
     conduct_ri(
       formula = Y ~ Z,
@@ -38,5 +38,4 @@ test_that("Studentize", {
 
   plot(ri_out)
   summary(ri_out)
-
 })

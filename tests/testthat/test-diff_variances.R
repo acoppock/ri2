@@ -10,7 +10,7 @@ test_that("test-function", {
   Y <- .9 * X + .2 * Z + rnorm(N)
   df <- data.frame(Y, X, Z)
 
-  test_fun <- function(data){
+  test_fun <- function(data) {
     with(data, var(Y[Z == 1]) - var(Y[Z == 0]))
   }
 
@@ -27,7 +27,7 @@ test_that("test-function", {
   summary(ri_out)
 
 
-  balance_fun <- function(data){
+  balance_fun <- function(data) {
     f_stat <- summary(lm(Z ~ X, data = data))$f[1]
     names(f_stat) <- NULL
     return(f_stat)
@@ -47,5 +47,4 @@ test_that("test-function", {
   plot(ri_out)
   summary(ri_out)
   summary(lm(Z ~ X, data = df))
-
 })

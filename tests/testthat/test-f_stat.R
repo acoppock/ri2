@@ -24,7 +24,6 @@ test_that("main effect f test", {
   plot(ri_out)
   summary(ri_out)
   anova(lm(Y ~ Z, data = df))
-
 })
 
 
@@ -35,7 +34,7 @@ test_that("interaction test under constant fx", {
 
   Z <- randomizr::conduct_ra(declaration)
   X <- rnorm(N)
-  Y <- .9 * X + .2 * Z  + 1*X*Z + rnorm(N)
+  Y <- .9 * X + .2 * Z + 1 * X * Z + rnorm(N)
   df <- data.frame(Y, X, Z)
 
   ate_obs <- coef(lm(Y ~ Z, data = df))[2]
@@ -43,7 +42,7 @@ test_that("interaction test under constant fx", {
   ri_out <-
     conduct_ri(
       model_1 = Y ~ Z + X,
-      model_2 = Y ~ Z + X + Z*X,
+      model_2 = Y ~ Z + X + Z * X,
       declaration = declaration,
       assignment = "Z",
       sharp_hypothesis = ate_obs,
@@ -52,9 +51,10 @@ test_that("interaction test under constant fx", {
 
   plot(ri_out)
   summary(ri_out)
-  anova(lm(Y ~ Z + X, data = df),
-        lm(Y ~ Z + X + Z*X, data = df))
-
+  anova(
+    lm(Y ~ Z + X, data = df),
+    lm(Y ~ Z + X + Z * X, data = df)
+  )
 })
 
 
@@ -85,9 +85,4 @@ test_that("Balance Test", {
   # summary(ri_out)
   # anova(lm(Y ~ Z + X, data = df),
   #       lm(Y ~ Z + X + Z*X, data = df))
-
 })
-
-
-
-

@@ -71,7 +71,7 @@ See the [randomizr vignette](http://randomizr.declaredesign.org/articles/randomi
 By way of illustration, let's take the blocked-and-clustered design from the `ri` package help files as an example. The call to `conduct_ri` is the same as it was before, but we need to change the random assignment declaration to accomodate the fact that clusters of two units are assigned to treatment and control (within three separate blocks).  Note that in this design, the probabilities of assignment to treatment are **not** constant across units, but the `conduct_ri` function by default incorporates inverse probability weights to account for this design feature.
 
 ```{r}
-df <- data.frame(
+dat <- data.frame(
   Y = c(8, 6, 2, 0, 3, 1, 1, 1, 2, 2, 0, 1, 0, 2, 2, 4, 1, 1),
   Z = c(1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0),
   cluster = c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9),
@@ -80,15 +80,15 @@ df <- data.frame(
 
 # clusters in blocks 1 and 3 have a 1/2 probability of treatment
 # but clusters in block 2 have a 2/3 probability of treatment
-with(df, table(block, Z))
+with(dat, table(block, Z))
 
-block_m <- with(df, tapply(Z, block, sum) / 2)
+block_m <- with(dat, tapply(Z, block, sum) / 2)
 
 declaration <- 
-  with(df,{
+  with(dat,{
     declare_ra(
-      block_var = block,
-      clust_var = cluster,
+      blocks = block,
+      clusters = cluster,
       block_m = block_m)
   })
 
@@ -98,7 +98,7 @@ ri2_out <- conduct_ri(
   Y ~ Z,
   sharp_hypothesis = 0,
   declaration = declaration,
-  data = df
+  data = dat
 )
 summary(ri2_out)
 plot(ri2_out)
@@ -124,7 +124,7 @@ declaration <- declare_ra(N = N, num_arms = 3)
 
 Z <- conduct_ra(declaration)
 Y <- .9 * .2 * (Z == "T2") + -.1 * (Z == "T3") + rnorm(N)
-df <- data.frame(Y, Z)
+dat <- data.frame(Y, Z)
 
 ri2_out <-
   conduct_ri(
@@ -132,15 +132,15 @@ ri2_out <-
     model_2 = Y ~ Z, # unrestricted model
     declaration = declaration,
     sharp_hypothesis = 0,
-    data = df
+    data = dat
   )
 
 plot(ri2_out)
 summary(ri2_out)
 
 # for comparison
-anova(lm(Y ~ 1, data = df), 
-      lm(Y ~ Z, data = df))
+anova(lm(Y ~ 1, data = dat), 
+      lm(Y ~ Z, data = dat))
 ```
 
 ## Interaction terms
@@ -155,10 +155,10 @@ declaration <- declare_ra(N = N)
 X <- rnorm(N)
 Z <- conduct_ra(declaration)
 Y <- .9 * .2 * Z + .1 * X + -.5 * Z * X + rnorm(N)
-df <- data.frame(X, Y, Z)
+dat <- data.frame(X, Y, Z)
 
 # Observed ATE
-ate_hat <- coef(lm(Y ~ Z, data = df))[2]
+ate_hat <- coef(lm(Y ~ Z, data = dat))[2]
 ate_hat
 
 ri2_out <-
@@ -167,15 +167,15 @@ ri2_out <-
     model_2 = Y ~ Z + X + Z*X, # unrestricted model
     declaration = declaration,
     sharp_hypothesis = ate_hat,
-    data = df
+    data = dat
   )
 
 plot(ri2_out)
 summary(ri2_out)
 
 # for comparison
-anova(lm(Y ~ Z + X, data = df),
-      lm(Y ~ Z + X + Z*X, data = df))
+anova(lm(Y ~ Z + X, data = dat),
+      lm(Y ~ Z + X + Z*X, data = dat))
 ```
 
 # Arbitrary test statistics
@@ -192,7 +192,7 @@ declaration <- declare_ra(N = N, m = 50)
 
 Z <- conduct_ra(declaration)
 Y <- .9 + rnorm(N, sd = .25 + .25*Z)
-df <- data.frame(Y, Z)
+dat <- data.frame(Y, Z)
 
 # arbitrary function of data
 test_fun <- function(data) {
@@ -200,7 +200,7 @@ test_fun <- function(data) {
 }
 
 # confirm it works
-test_fun(df)
+test_fun(dat)
 
 ri2_out <-
 conduct_ri(
@@ -209,7 +209,7 @@ conduct_ri(
   assignment = "Z",
   outcome = "Y",
   sharp_hypothesis = 0,
-  data = df
+  data = dat
 )
 
 plot(ri2_out)
@@ -227,7 +227,7 @@ Imagine we've got three covariates `X1`, `X2`, and `X3`. We'll get a summary bal
 N <- 100
 declaration <- declare_ra(N = N)
 
-df <-
+dat <-
   data.frame(
   X1 = rnorm(N),
   X2 = rbinom(N, 1, .5),
@@ -240,7 +240,7 @@ balance_fun <- function(data) {
 }
 
 # Confirm it works!
-balance_fun(df)
+balance_fun(dat)
 
 ri2_out <-
   conduct_ri(
@@ -248,14 +248,14 @@ ri2_out <-
   declaration = declaration,
   assignment = "Z",
   sharp_hypothesis = 0,
-  data = df
+  data = dat
   )
 
 plot(ri2_out)
 summary(ri2_out)
 
 # For comparison
-summary(lm(Z ~ X1 + X2 + X3, data = df))
+summary(lm(Z ~ X1 + X2 + X3, data = dat))
 ```
 
 # Conclusion

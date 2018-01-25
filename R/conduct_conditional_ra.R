@@ -16,7 +16,7 @@ conduct_conditional_ra <-
 
     assignment_vec_new <- assignment_vec
 
-    if (declaration$ra_type == "simple")  {
+    if (declaration$ra_type == "simple") {
       prob_each_local <-
         declaration$probabilities_matrix[1, paste0("prob_", conditions)]
       prob_each_local <- prob_each_local / (sum(prob_each_local))
@@ -29,7 +29,6 @@ conduct_conditional_ra <-
           condition_names = conditions,
           check_inputs = FALSE
         )
-
     }
 
     if (declaration$ra_type == "complete") {
@@ -49,7 +48,7 @@ conduct_conditional_ra <-
     if (declaration$ra_type == "blocked") {
       block_prob_each_local <- by(
         declaration$probabilities_matrix,
-        INDICES = declaration$block_var,
+        INDICES = declaration$blocks,
         FUN = function(x) {
           x[1, paste0("prob_", conditions)]
         }
@@ -60,7 +59,7 @@ conduct_conditional_ra <-
 
       assignment_vec_new[assignment_vec %in% conditions] <-
         block_ra(
-          block_var = declaration$block_var[assignment_vec %in% conditions],
+          blocks = declaration$blocks[assignment_vec %in% conditions],
           block_prob_each = block_prob_each_local,
           condition_names = conditions,
           check_inputs = FALSE
@@ -74,7 +73,7 @@ conduct_conditional_ra <-
 
       assignment_vec_new[assignment_vec %in% conditions] <-
         cluster_ra(
-          clust_var = declaration$clust_var[assignment_vec %in% conditions],
+          clusters = declaration$clusters[assignment_vec %in% conditions],
           prob_each = prob_each_local,
           condition_names = conditions,
           check_inputs = FALSE
@@ -84,7 +83,7 @@ conduct_conditional_ra <-
     if (declaration$ra_type == "blocked_and_clustered") {
       block_prob_each_local <- by(
         declaration$probabilities_matrix,
-        INDICES = declaration$block_var,
+        INDICES = declaration$blocks,
         FUN = function(x) {
           x[1, paste0("prob_", conditions), drop = FALSE]
         },
@@ -97,8 +96,8 @@ conduct_conditional_ra <-
 
       assignment_vec_new[assignment_vec %in% conditions] <-
         block_and_cluster_ra(
-          block_var = declaration$block_var[assignment_vec %in% conditions],
-          clust_var = declaration$clust_var[assignment_vec %in% conditions],
+          blocks = declaration$blocks[assignment_vec %in% conditions],
+          clusters = declaration$clusters[assignment_vec %in% conditions],
           block_prob_each = block_prob_each_local,
           condition_names = conditions,
           check_inputs = FALSE
@@ -106,5 +105,4 @@ conduct_conditional_ra <-
     }
 
     return(assignment_vec_new)
-
   }

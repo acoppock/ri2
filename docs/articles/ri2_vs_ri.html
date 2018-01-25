@@ -127,7 +127,7 @@ distout &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocu
 ri_out &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ri/topics/dispdist">dispdist</a></span>(distout, ate, <span class="dt">display.plot =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <p>The <code>ri</code> package guesses the number of clusters in each block to treatment based on the realized random assignment. In <code>ri2</code>, we need to explicitly declare the number of clusters to treat in each block with <code>block_m</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">block_m &lt;-<span class="st"> </span><span class="kw">tapply</span>(Z, block, sum) <span class="op">/</span><span class="st"> </span><span class="dv">2</span>
-declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">block_var =</span> block, <span class="dt">clust_var =</span> cluster, <span class="dt">block_m =</span> block_m)
+declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">blocks =</span> block, <span class="dt">clusters =</span> cluster, <span class="dt">block_m =</span> block_m)
 ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">declaration =</span> declaration, <span class="dt">data =</span> df)</code></pre></div>
 <p>Again, the two programs obtain the same answers:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri_out<span class="op">$</span>two.tailed.p.value.abs</code></pre></div>

@@ -34,11 +34,12 @@ test_that("Compare to ri", {
   library(ri2)
 
   declaration <- declare_ra(
-    block_var = block,
-    clust_var = cluster,
+    blocks = block,
+    clusters = cluster,
     block_m = tapply(Z, block, sum) / 2
   )
 
+  # debugonce(conduct_ri)
   ri2_out <- conduct_ri(
     y ~ Z,
     sharp_hypothesis = 0,
@@ -51,20 +52,27 @@ test_that("Compare to ri", {
 
   expect_equal(sort(distout), sort(ri2_out$sims_df$est_sim))
 
-  expect_equal(summary(ri2_out, p = "two-tailed")$two_tailed_p_value,
-               ri1_out$two.tailed.p.value.abs)
+  expect_equal(
+    summary(ri2_out, p = "two-tailed")$two_tailed_p_value,
+    ri1_out$two.tailed.p.value.abs
+  )
 
-  expect_equal(summary(ri2_out, p = "lower")$lower_p_value,
-               ri1_out$lesser.p.value)
+  expect_equal(
+    summary(ri2_out, p = "lower")$lower_p_value,
+    ri1_out$lesser.p.value
+  )
 
-  expect_equal(summary(ri2_out, p = "upper")$upper_p_value,
-               ri1_out$greater.p.value)
+  expect_equal(
+    summary(ri2_out, p = "upper")$upper_p_value,
+    ri1_out$greater.p.value
+  )
 
-  expect_equivalent(summary(ri2_out)$null_ci_lower,
-               ri1_out$quantile[1])
-  expect_equivalent(summary(ri2_out)$null_ci_upper,
-               ri1_out$quantile[2])
-
+  expect_equivalent(
+    summary(ri2_out)$null_ci_lower,
+    ri1_out$quantile[1]
+  )
+  expect_equivalent(
+    summary(ri2_out)$null_ci_upper,
+    ri1_out$quantile[2]
+  )
 })
-
-

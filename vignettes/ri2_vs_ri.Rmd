@@ -19,7 +19,7 @@ Here are the data:
 ```{r}
 Y <- c(1, 1, 1, 1, 1, 0, 0, 0, 0, 0)
 Z <- c(1, 1, 1, 0, 0, 0, 0, 0, 0, 0)
-df <- data.frame(Y, Z)
+dat <- data.frame(Y, Z)
 ```
 
 In `ri`, you use the observed treatment assignment (`Z`) to tell the computer the experimental design in `genprobexact` and `genperms`.  `estate` calculates the observed ATE estimate, `genouts` builds hypothetical potential outcomes under the sharp null hypothesis, and `gendist` cycles through all the permutations to calculate the sampling distribution of the estimator under the null.
@@ -43,7 +43,7 @@ library(ri2)
 
 declaration <- declare_ra(N = 10, m = 3)
 ri2_out <- conduct_ri(Y ~ Z, 
-                      data = df, 
+                      data = dat, 
                       declaration = declaration)
 
 ```
@@ -66,7 +66,7 @@ Z <- c(1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0)
 cluster <- c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9)
 block <- c(rep(1, 4), rep(2, 6), rep(3, 8))
 
-df <- data.frame(y, Z, cluster, block)
+dat <- data.frame(y, Z, cluster, block)
 ```
 
 In `ri`, you supply cluster and block information to `genperms` and `genprobexact`, and the rest of the code stays the same as the basic example. 
@@ -85,8 +85,8 @@ The `ri` package guesses the number of clusters in each block to treatment based
 
 ```{r}
 block_m <- tapply(Z, block, sum) / 2
-declaration <- declare_ra(block_var = block, clust_var = cluster, block_m = block_m)
-ri2_out <- conduct_ri(y ~ Z, declaration = declaration, data = df)
+declaration <- declare_ra(blocks = block, clusters = cluster, block_m = block_m)
+ri2_out <- conduct_ri(y ~ Z, declaration = declaration, data = dat)
 ```
 
 Again, the two programs obtain the same answers:

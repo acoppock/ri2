@@ -24,8 +24,93 @@
 #'
 #' @export
 #'
-#' @import dplyr
-#' @importFrom randomizr conduct_ra obtain_condition_probabilities
+#' @importFrom randomizr declare_ra conduct_ra obtain_condition_probabilities
+#'
+#' @examples
+#'
+#' # Data from Gerber and Green Table 2.2
+#'
+#'
+#' # Randomization Inference for the Average Treatment Effect
+#'
+#' table_2.2 <-
+#'     data.frame(d = c(1, 0, 0, 0, 0, 0, 1),
+#'                y = c(15, 15, 20, 20, 10, 15, 30))
+#'
+#' ## Declare randomization procedure
+#' declaration <- declare_ra(N = 7, m = 2)
+#'
+#' ## Conduct Randomization Inference
+#' out <- conduct_ri(y ~ d,
+#'                       declaration = declaration,
+#'                       assignment = "d",
+#'                       sharp_hypothesis = 0,
+#'                       data = table_2.2)
+#'
+#' summary(out)
+#' plot(out)
+#'
+#' # Randomization Inference for an Interaction
+#'
+#'
+#' N <- 100
+#' declaration <- randomizr::declare_ra(N = N, m = 50)
+#'
+#' Z <- randomizr::conduct_ra(declaration)
+#' X <- rnorm(N)
+#' Y <- .9 * X + .2 * Z + 1 * X * Z + rnorm(N)
+#' dat <- data.frame(Y, X, Z)
+#'
+#' ate_obs <- coef(lm(Y ~ Z, data = dat))[2]
+#'
+#' out <-
+#'   conduct_ri(
+#'     model_1 = Y ~ Z + X,
+#'     model_2 = Y ~ Z + X + Z * X,
+#'     declaration = declaration,
+#'     assignment = "Z",
+#'     sharp_hypothesis = ate_obs,
+#'     data = dat, sims = 100
+#'   )
+#'
+#' plot(out)
+#' summary(out)
+#'
+#'
+#' # Randomization Inference for arbitrary test statistics
+#'
+#' ## In this example we're conducting a randomization check (in this case, a balance test).
+#'
+#' N <- 100
+#' declaration <- randomizr::declare_ra(N = N, m = 50)
+#'
+#' Z <- randomizr::conduct_ra(declaration)
+#' X <- rnorm(N)
+#' Y <- .9 * X + .2 * Z + rnorm(N)
+#' dat <- data.frame(Y, X, Z)
+#'
+#' balance_fun <- function(data) {
+#'     f_stat <- summary(lm(Z ~ X, data = data))$f[1]
+#'     names(f_stat) <- NULL
+#'     return(f_stat)
+#' }
+#'
+#' ## confirm function works as expected
+#' balance_fun(dat)
+#'
+#' ## conduct randomization inference
+#'
+#' out <-
+#'   conduct_ri(
+#'     test_function = balance_fun,
+#'     declaration = declaration,
+#'     assignment = "Z",
+#'     sharp_hypothesis = 0,
+#'     data = dat, sims = 100
+#'   )
+#'
+#' plot(out)
+#' summary(out)
 #'
 conduct_ri <- function(formula = NULL,
                        model_1 = NULL,
@@ -45,14 +130,13 @@ conduct_ri <- function(formula = NULL,
   # some error checking -----------------------------------------------------
 
   if (is.null(declaration) &
-      is.null(permutation_matrix)) {
+    is.null(permutation_matrix)) {
     stop("Please supply either a random assignment declaration or a permutation matrix")
   }
   if (is.null(declaration) & !is.null(permutation_matrix)) {
-    declaration <- declare_ra(permutation_matrix = permutation_matrix)
+    declaration <- randomizr::declare_ra(permutation_matrix = permutation_matrix)
     permutation_matrix <- NULL
   }
-
 
   # Case 1: ATE -------------------------------------------------------------
 
@@ -108,44 +192,64 @@ conduct_ri <- function(formula = NULL,
   }
 
   if (is.null(formula) &
-      is.null(model_1) & is.null(model_2) & is.null(test_function)) {
+    is.null(model_1) & is.null(model_2) & is.null(test_function)) {
     stop("You must specify either a formula, models 1 and 2, or a test function.")
   }
 
-  return(ri_out)
+  # deal with numerical instability
+  ri_out$sims_df <-
+    within(ri_out$sims_df, {
+      est_sim <- round(est_sim, 10)
+      est_obs <- round(est_obs, 10)
+    })
 
+  return(ri_out)
 }
 
 #' @export
 #' @import ggplot2
-#' @import dplyr
 #'
 #'
 plot.ri <- function(x, p = "two-tailed", ...) {
   if (p == "two-tailed") {
     x$sims_df <-
-      x$sims_df %>%
-      mutate(extreme = abs(est_sim) >= abs(est_obs))
-
+      within(
+        x$sims_df,
+        extreme <- abs(est_sim) >= abs(est_obs)
+      )
   } else if (p == "lower") {
     x$sims_df <-
-      x$sims_df %>%
-      mutate(extreme = est_sim <= est_obs)
-
+      within(
+        x$sims_df,
+        extreme <- est_sim <= est_obs
+      )
   } else if (p == "upper") {
     x$sims_df <-
-      x$sims_df %>%
-      mutate(extreme = est_sim >= est_obs)
-
+      within(
+        x$sims_df,
+        extreme <- est_sim >= est_obs
+      )
   } else {
     stop('p must be either "two-tailed" (the default), "lower", or "upper".')
   }
 
-  summary_df <-
-    x$sims_df %>%
-    group_by(coefficient) %>%
-    summarize(est_obs = unique(est_obs),
-              Estimate = "Observed Value")
+  summary_fun <-
+    function(dat) {
+      with(
+        dat,
+        data.frame(
+          est_obs = unique(est_obs),
+          Estimate = "Observed Value"
+        )
+      )
+    }
+
+
+  summary_df <- split(x$sims_df, x$sims_df$coefficient)
+  summary_df <- lapply(summary_df[lapply(summary_df, nrow) != 0], FUN = summary_fun)
+  summary_df <- do.call(rbind, summary_df)
+
+  summary_df$coefficient <- rownames(summary_df)
 
   ggplot(x$sims_df, aes(x = est_sim, alpha = extreme)) +
     geom_histogram(bins = max(30, nrow(x$sims_df) / 20)) +
@@ -161,10 +265,12 @@ plot.ri <- function(x, p = "two-tailed", ...) {
     scale_alpha_manual(values = c(0.5, 1), guide = FALSE) +
     xlab("Simulated Estimates") +
     ggtitle("Randomization Inference") +
-    facet_wrap( ~ coefficient) +
+    facet_wrap(~ coefficient) +
     theme_bw() +
-    theme(legend.position = "bottom",
-          axis.title.y = element_blank())
+    theme(
+      legend.position = "bottom",
+      axis.title.y = element_blank()
+    )
 }
 
 #' @export
@@ -174,46 +280,65 @@ print.ri <- function(x, p = "two-tailed", ...) {
 }
 
 #' @export
-#' @import dplyr
 #' @importFrom stats quantile
 summary.ri <- function(object, p = "two-tailed", ...) {
   if (p == "two-tailed") {
     object$sims_df <-
-      object$sims_df %>%
-      mutate(extreme = abs(est_sim) >= abs(est_obs))
-
+      within(
+        object$sims_df,
+        extreme <- abs(est_sim) >= abs(est_obs)
+      )
   } else if (p == "lower") {
     object$sims_df <-
-      object$sims_df %>%
-      mutate(extreme = est_sim <= est_obs)
-
+      within(
+        object$sims_df,
+        extreme <- est_sim <= est_obs
+      )
   } else if (p == "upper") {
     object$sims_df <-
-      object$sims_df %>%
-      mutate(extreme = est_sim >= est_obs)
-
+      within(
+        object$sims_df,
+        extreme <- est_sim >= est_obs
+      )
   } else {
     stop('p must be either "two-tailed" (the default), "lower", or "upper".')
   }
 
+
+  summary_fun <-
+    function(dat) {
+      with(
+        dat,
+        data.frame(
+          estimate = unique(est_obs),
+          p_value = mean(extreme),
+          null_ci_lower = quantile(est_sim, 0.025),
+          null_ci_upper = quantile(est_sim, 0.975)
+        )
+      )
+    }
+
+  return_df <- split(object$sims_df, object$sims_df$coefficient)
+  return_df <- lapply(return_df[lapply(return_df, nrow) != 0], FUN = summary_fun)
+  return_df <- do.call(rbind, return_df)
+  return_df$coefficient <- rownames(return_df)
+  rownames(return_df) <- NULL
   return_df <-
-    object$sims_df %>%
-    group_by(coefficient) %>%
-    summarize(
-      estimate = unique(est_obs),
-      p_value = mean(extreme),
-      null_ci_lower = quantile(est_sim, 0.025),
-      null_ci_upper = quantile(est_sim, 0.975)
-    )
+    return_df[, c(
+      "coefficient",
+      "estimate",
+      "p_value",
+      "null_ci_lower",
+      "null_ci_upper"
+    )]
+
 
   if (p == "two-tailed") {
     colnames(return_df)[3] <- "two_tailed_p_value"
   } else if (p == "lower") {
     colnames(return_df)[3] <- "lower_p_value"
-
   } else if (p == "upper") {
     colnames(return_df)[3] <- "upper_p_value"
-
   }
-    return(return_df)
+  return(return_df)
 }

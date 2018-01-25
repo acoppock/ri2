@@ -1,6 +1,36 @@
 {
     "debugBreakpointsState" : {
         "breakpoints" : [
+            {
+                "editor_line_number" : 77,
+                "editor_state" : 1,
+                "function_name" : "conduct_ri_ATE",
+                "function_steps" : "14",
+                "id" : 0,
+                "is_package_breakpoint" : true,
+                "is_pending_debug_completion" : false,
+                "line_number" : 77,
+                "needs_updated_steps" : false,
+                "package_name" : "ri2",
+                "path" : "~/git_projects/ri2/R/conduct_ri_ATE.R",
+                "state" : 1,
+                "type" : 0
+            },
+            {
+                "editor_line_number" : 54,
+                "editor_state" : 1,
+                "function_name" : "conduct_ri_f",
+                "function_steps" : "12",
+                "id" : 1,
+                "is_package_breakpoint" : true,
+                "is_pending_debug_completion" : false,
+                "line_number" : 54,
+                "needs_updated_steps" : false,
+                "package_name" : "ri2",
+                "path" : "~/git_projects/ri2/R/conduct_ri_f.R",
+                "state" : 1,
+                "type" : 0
+            }
         ]
     }
 }

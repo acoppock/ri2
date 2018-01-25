@@ -8,11 +8,11 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: ggplot2,
-    pbapply,
-    dplyr
+    pbapply
 Depends: randomizr,
     estimatr
-Suggests: testthat,
+Suggests: 
+    testthat,
     knitr,
     rmarkdown,
     ri

@@ -13,7 +13,6 @@ conduct_ri_test_function <- function(test_function,
 
 
   if (!is.null(outcome)) {
-
     if (length(sharp_hypothesis) == 1) {
       sharp_hypothesis <-
         rep(sharp_hypothesis, length(unique(assignment_vec)))
@@ -28,9 +27,9 @@ conduct_ri_test_function <- function(test_function,
 
   if (is.null(permutation_matrix)) {
     permutation_matrix <- obtain_permutation_matrix(declaration,
-                                                    maximum_permutations = sims)
+      maximum_permutations = sims
+    )
   }
-
 
   ri_function <- function(Z_sim) {
     if (is.factor(assignment_vec)) {
@@ -47,7 +46,6 @@ conduct_ri_test_function <- function(test_function,
     if (!is.null(outcome)) {
       data[, outcome] <-
         switching_equation(pos_mat = pos_mat, assignment_vec = data[[assignment]])
-
     }
 
     test_function(data)
@@ -56,10 +54,13 @@ conduct_ri_test_function <- function(test_function,
   test_stat_sim <- pbapply::pbapply(permutation_matrix, 2, ri_function)
 
   sims_df <-
-    data.frame(est_sim = test_stat_sim,
-               est_obs = test_stat_obs,
-               coefficient = "Custom Test Statistic")
+    data.frame(
+      est_sim = test_stat_sim,
+      est_obs = test_stat_obs,
+      coefficient = "Custom Test Statistic"
+    )
 
   return(structure(list(sims_df = sims_df),
-                   class = "ri"))
+    class = "ri"
+  ))
 }
