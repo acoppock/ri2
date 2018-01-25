@@ -29,7 +29,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -68,7 +68,7 @@
       <h1>Randomization Inference with ri2</h1>
                         <h4 class="author">Alexander Coppock, Yale University</h4>
             
-            <h4 class="date">2017-09-14</h4>
+            <h4 class="date">2018-01-25</h4>
           </div>
 
     
@@ -110,10 +110,8 @@ ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/con
 )
 
 <span class="kw">summary</span>(ri2_out)</code></pre></div>
-<pre><code>## # A tibble: 1 x 5
-##   coefficient estimate   p_value null_ci_lower null_ci_upper
-##         &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1           Z      6.5 0.3809524          -7.5            10</code></pre>
+<pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
+## 1           Z      6.5          0.3809524          -7.5            10</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ri2_out)</code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-2-1.png" width="672"></p>
 </div>
@@ -130,7 +128,7 @@ ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/con
 </ol>
 <p>See the <a href="http://randomizr.declaredesign.org/articles/randomizr_vignette.html">randomizr vignette</a> for specifics on each of these procedures.</p>
 <p>By way of illustration, let’s take the blocked-and-clustered design from the <code>ri</code> package help files as an example. The call to <code>conduct_ri</code> is the same as it was before, but we need to change the random assignment declaration to accomodate the fact that clusters of two units are assigned to treatment and control (within three separate blocks). Note that in this design, the probabilities of assignment to treatment are <strong>not</strong> constant across units, but the <code>conduct_ri</code> function by default incorporates inverse probability weights to account for this design feature.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
   <span class="dt">Y =</span> <span class="kw">c</span>(<span class="dv">8</span>, <span class="dv">6</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>),
   <span class="dt">Z =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>),
   <span class="dt">cluster =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">9</span>),
@@ -139,16 +137,16 @@ ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/con
 
 <span class="co"># clusters in blocks 1 and 3 have a 1/2 probability of treatment</span>
 <span class="co"># but clusters in block 2 have a 2/3 probability of treatment</span>
-<span class="kw">with</span>(df, <span class="kw">table</span>(block, Z))</code></pre></div>
+<span class="kw">with</span>(dat, <span class="kw">table</span>(block, Z))</code></pre></div>
 <pre><code>##      Z
 ## block 0 1
 ##     1 2 2
 ##     2 2 4
 ##     3 4 4</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">block_m &lt;-<span class="st"> </span><span class="kw">with</span>(df, <span class="kw">tapply</span>(Z, block, sum) <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">block_m &lt;-<span class="st"> </span><span class="kw">with</span>(dat, <span class="kw">tapply</span>(Z, block, sum) <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)
 
 declaration &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">with</span>(df,{
+<span class="st">  </span><span class="kw">with</span>(dat,{
     <span class="kw">declare_ra</span>(
       <span class="dt">blocks =</span> block,
       <span class="dt">clusters =</span> cluster,
@@ -167,13 +165,11 @@ declaration</code></pre></div>
   Y <span class="op">~</span><span class="st"> </span>Z,
   <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
   <span class="dt">declaration =</span> declaration,
-  <span class="dt">data =</span> df
+  <span class="dt">data =</span> dat
 )
 <span class="kw">summary</span>(ri2_out)</code></pre></div>
-<pre><code>## # A tibble: 1 x 5
-##   coefficient estimate   p_value null_ci_lower null_ci_upper
-##         &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1           Z        2 0.1944444     -2.055556      2.222222</code></pre>
+<pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
+## 1           Z        2          0.1944444     -2.055556      2.222222</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ri2_out)</code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-3-1.png" width="672"></p>
 </div>
@@ -193,7 +189,7 @@ declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<sp
 
 Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)
 Y &lt;-<span class="st"> </span>.<span class="dv">9</span> <span class="op">*</span><span class="st"> </span>.<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>(Z <span class="op">==</span><span class="st"> "T2"</span>) <span class="op">+</span><span class="st"> </span><span class="op">-</span>.<span class="dv">1</span> <span class="op">*</span><span class="st"> </span>(Z <span class="op">==</span><span class="st"> "T3"</span>) <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N)
-df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, Z)
+dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, Z)
 
 ri2_out &lt;-
 <span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
@@ -201,26 +197,24 @@ ri2_out &lt;-
     <span class="dt">model_2 =</span> Y <span class="op">~</span><span class="st"> </span>Z, <span class="co"># unrestricted model</span>
     <span class="dt">declaration =</span> declaration,
     <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
-    <span class="dt">data =</span> df
+    <span class="dt">data =</span> dat
   )
 
 <span class="kw">plot</span>(ri2_out)</code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
-<pre><code>## # A tibble: 1 x 5
-##   coefficient   estimate p_value null_ci_lower null_ci_upper
-##        &lt;fctr&gt;      &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1 F-statistic 0.03575746   0.967    0.03115186      3.777025</code></pre>
+<pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
+## 1 F-statistic 2.138675              0.106    0.02779253       3.44893</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for comparison</span>
-<span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> df), 
-      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> df))</code></pre></div>
+<span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> dat), 
+      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat))</code></pre></div>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Model 1: Y ~ 1
 ## Model 2: Y ~ Z
 ##   Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
-## 1     99 60.514                           
-## 2     97 60.469  2  0.044582 0.0358 0.9649</code></pre>
+## 1     99 84.360                           
+## 2     97 80.797  2    3.5629 2.1387 0.1233</code></pre>
 </div>
 <div id="interaction-terms" class="section level2">
 <h2 class="hasAnchor">
@@ -232,39 +226,37 @@ declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<sp
 X &lt;-<span class="st"> </span><span class="kw">rnorm</span>(N)
 Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)
 Y &lt;-<span class="st"> </span>.<span class="dv">9</span> <span class="op">*</span><span class="st"> </span>.<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>.<span class="dv">1</span> <span class="op">*</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span><span class="op">-</span>.<span class="dv">5</span> <span class="op">*</span><span class="st"> </span>Z <span class="op">*</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N)
-df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(X, Y, Z)
+dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(X, Y, Z)
 
 <span class="co"># Observed ATE</span>
-ate_hat &lt;-<span class="st"> </span><span class="kw">coef</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> df))[<span class="dv">2</span>]
+ate_hat &lt;-<span class="st"> </span><span class="kw">coef</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat))[<span class="dv">2</span>]
 ate_hat</code></pre></div>
-<pre><code>##          Z 
-## 0.06309207</code></pre>
+<pre><code>##         Z 
+## 0.2595114</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
 <span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
     <span class="dt">model_1 =</span> Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="co"># restricted model</span>
     <span class="dt">model_2 =</span> Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span>Z<span class="op">*</span>X, <span class="co"># unrestricted model</span>
     <span class="dt">declaration =</span> declaration,
     <span class="dt">sharp_hypothesis =</span> ate_hat,
-    <span class="dt">data =</span> df
+    <span class="dt">data =</span> dat
   )
 
 <span class="kw">plot</span>(ri2_out)</code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-5-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
-<pre><code>## # A tibble: 1 x 5
-##   coefficient estimate p_value null_ci_lower null_ci_upper
-##        &lt;fctr&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1 F-statistic 6.088812   0.052   0.002238011      8.785482</code></pre>
+<pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
+## 1 F-statistic 4.946396              0.029  0.0004855334      5.108403</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for comparison</span>
-<span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="dt">data =</span> df),
-      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span>Z<span class="op">*</span>X, <span class="dt">data =</span> df))</code></pre></div>
+<span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="dt">data =</span> dat),
+      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span>Z<span class="op">*</span>X, <span class="dt">data =</span> dat))</code></pre></div>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Model 1: Y ~ Z + X
 ## Model 2: Y ~ Z + X + Z * X
-##   Res.Df     RSS Df Sum of Sq      F  Pr(&gt;F)  
-## 1     97 104.126                              
-## 2     96  97.915  1    6.2103 6.0888 0.01537 *
+##   Res.Df    RSS Df Sum of Sq      F  Pr(&gt;F)  
+## 1     97 107.62                              
+## 2     96 102.34  1    5.2733 4.9464 0.02849 *
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -282,7 +274,7 @@ declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<sp
 
 Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)
 Y &lt;-<span class="st"> </span>.<span class="dv">9</span> <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N, <span class="dt">sd =</span> .<span class="dv">25</span> <span class="op">+</span><span class="st"> </span>.<span class="dv">25</span><span class="op">*</span>Z)
-df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, Z)
+dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, Z)
 
 <span class="co"># arbitrary function of data</span>
 test_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
@@ -290,8 +282,8 @@ test_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
 }
 
 <span class="co"># confirm it works</span>
-<span class="kw">test_fun</span>(df)</code></pre></div>
-<pre><code>## [1] 0.2327424</code></pre>
+<span class="kw">test_fun</span>(dat)</code></pre></div>
+<pre><code>## [1] 0.2648293</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
 <span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
   <span class="dt">test_function =</span> test_fun,
@@ -299,16 +291,16 @@ test_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
   <span class="dt">assignment =</span> <span class="st">"Z"</span>,
   <span class="dt">outcome =</span> <span class="st">"Y"</span>,
   <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
-  <span class="dt">data =</span> df
+  <span class="dt">data =</span> dat
 )
 
 <span class="kw">plot</span>(ri2_out)</code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-6-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
-<pre><code>## # A tibble: 1 x 5
-##             coefficient  estimate p_value null_ci_lower null_ci_upper
-##                  &lt;fctr&gt;     &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1 Custom Test Statistic 0.2327424       0     -0.110723     0.1126451</code></pre>
+<pre><code>##             coefficient  estimate two_tailed_p_value null_ci_lower
+## 1 Custom Test Statistic 0.2648293                  0    -0.1369953
+##   null_ci_upper
+## 1     0.1308495</code></pre>
 </div>
 <div id="balance-test" class="section level2">
 <h2 class="hasAnchor">
@@ -318,7 +310,7 @@ test_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">100</span>
 declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N)
 
-df &lt;-
+dat &lt;-
 <span class="st">  </span><span class="kw">data.frame</span>(
   <span class="dt">X1 =</span> <span class="kw">rnorm</span>(N),
   <span class="dt">X2 =</span> <span class="kw">rbinom</span>(N, <span class="dv">1</span>, .<span class="dv">5</span>),
@@ -331,48 +323,48 @@ balance_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data)
 }
 
 <span class="co"># Confirm it works!</span>
-<span class="kw">balance_fun</span>(df)</code></pre></div>
+<span class="kw">balance_fun</span>(dat)</code></pre></div>
 <pre><code>##     value 
-## 0.3701178</code></pre>
+## 0.7931478</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
 <span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
   <span class="dt">test_function =</span> balance_fun,
   <span class="dt">declaration =</span> declaration,
   <span class="dt">assignment =</span> <span class="st">"Z"</span>,
   <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
-  <span class="dt">data =</span> df
+  <span class="dt">data =</span> dat
   )</code></pre></div>
 <pre><code>## Warning in data.frame(est_sim = test_stat_sim, est_obs = test_stat_obs, :
 ## row names were found from a short variable and have been discarded</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ri2_out)</code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
-<pre><code>## # A tibble: 1 x 5
-##             coefficient  estimate p_value null_ci_lower null_ci_upper
-##                  &lt;fctr&gt;     &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
-## 1 Custom Test Statistic 0.3701178   0.774    0.07562666      3.485668</code></pre>
+<pre><code>##             coefficient  estimate two_tailed_p_value null_ci_lower
+## 1 Custom Test Statistic 0.7931478              0.496    0.08187195
+##   null_ci_upper
+## 1      3.074904</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># For comparison</span>
-<span class="kw">summary</span>(<span class="kw">lm</span>(Z <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>X3, <span class="dt">data =</span> df))</code></pre></div>
+<span class="kw">summary</span>(<span class="kw">lm</span>(Z <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>X3, <span class="dt">data =</span> dat))</code></pre></div>
 <pre><code>## 
 ## Call:
-## lm(formula = Z ~ X1 + X2 + X3, data = df)
+## lm(formula = Z ~ X1 + X2 + X3, data = dat)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -0.58420 -0.47716  0.00748  0.47023  0.58331 
+## -0.64337 -0.49483  0.06908  0.48850  0.67276 
 ## 
 ## Coefficients:
-##              Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  0.461366   0.114007   4.047 0.000105 ***
-## X1           0.019338   0.053661   0.360 0.719366    
-## X2           0.092797   0.103371   0.898 0.371590    
-## X3          -0.003244   0.028543  -0.114 0.909748    
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  0.58508    0.10962   5.337 6.29e-07 ***
+## X1          -0.01709    0.05156  -0.331    0.741    
+## X2           0.06306    0.10196   0.619    0.538    
+## X3          -0.03622    0.02621  -1.382    0.170    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.5074 on 96 degrees of freedom
-## Multiple R-squared:  0.01143,    Adjusted R-squared:  -0.01946 
-## F-statistic: 0.3701 on 3 and 96 DF,  p-value: 0.7747</code></pre>
+## Residual standard error: 0.5041 on 96 degrees of freedom
+## Multiple R-squared:  0.02419,    Adjusted R-squared:  -0.006308 
+## F-statistic: 0.7931 on 3 and 96 DF,  p-value: 0.5006</code></pre>
 </div>
 </div>
 <div id="conclusion" class="section level1">
@@ -428,7 +420,7 @@ balance_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data)
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>

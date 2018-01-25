@@ -52,7 +52,7 @@ The two programs obtain the same answers:
 
 ```{r}
 ri_out$two.tailed.p.value.abs
-summary(ri2_out)$p_value
+summary(ri2_out)$two_tailed_p_value
 ```
 
 
@@ -93,7 +93,7 @@ Again, the two programs obtain the same answers:
 
 ```{r}
 ri_out$two.tailed.p.value.abs
-summary(ri2_out)$p_value
+summary(ri2_out)$two_tailed_p_value
 ```
 
 # The need for explicit random assignment declaration

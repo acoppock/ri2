@@ -29,7 +29,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -68,7 +68,7 @@
       <h1>Comparing ri and ri2</h1>
                         <h4 class="author">Alexander Coppock, Yale University</h4>
             
-            <h4 class="date">2017-09-14</h4>
+            <h4 class="date">2018-01-25</h4>
           </div>
 
     
@@ -82,7 +82,7 @@
 <p>Here are the data:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Y &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)
 Z &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>)
-df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, Z)</code></pre></div>
+dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, Z)</code></pre></div>
 <p>In <code>ri</code>, you use the observed treatment assignment (<code>Z</code>) to tell the computer the experimental design in <code>genprobexact</code> and <code>genperms</code>. <code>estate</code> calculates the observed ATE estimate, <code>genouts</code> builds hypothetical potential outcomes under the sharp null hypothesis, and <code>gendist</code> cycles through all the permutations to calculate the sampling distribution of the estimator under the null.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ri)
 
@@ -99,12 +99,12 @@ ri_out &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocum
 <pre><code>## Loading required package: estimatr</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> <span class="dv">10</span>, <span class="dt">m =</span> <span class="dv">3</span>)
 ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(Y <span class="op">~</span><span class="st"> </span>Z, 
-                      <span class="dt">data =</span> df, 
+                      <span class="dt">data =</span> dat, 
                       <span class="dt">declaration =</span> declaration)</code></pre></div>
 <p>The two programs obtain the same answers:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri_out<span class="op">$</span>two.tailed.p.value.abs</code></pre></div>
 <pre><code>## [1] 0.1666667</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)<span class="op">$</span>p_value</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)<span class="op">$</span>two_tailed_p_value</code></pre></div>
 <pre><code>## [1] 0.1666667</code></pre>
 </div>
 <div id="complex-example" class="section level1">
@@ -116,7 +116,7 @@ Z &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</sp
 cluster &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">9</span>)
 block &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">4</span>), <span class="kw">rep</span>(<span class="dv">2</span>, <span class="dv">6</span>), <span class="kw">rep</span>(<span class="dv">3</span>, <span class="dv">8</span>))
 
-df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(y, Z, cluster, block)</code></pre></div>
+dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(y, Z, cluster, block)</code></pre></div>
 <p>In <code>ri</code>, you supply cluster and block information to <code>genperms</code> and <code>genprobexact</code>, and the rest of the code stays the same as the basic example.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">perms &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ri/topics/genperms">genperms</a></span>(Z, <span class="dt">blockvar =</span> block, <span class="dt">clustvar =</span> cluster)
 probs &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ri/topics/genprobexact">genprobexact</a></span>(Z, <span class="dt">blockvar =</span> block, <span class="dt">clustvar =</span> cluster)
@@ -128,11 +128,11 @@ ri_out &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocum
 <p>The <code>ri</code> package guesses the number of clusters in each block to treatment based on the realized random assignment. In <code>ri2</code>, we need to explicitly declare the number of clusters to treat in each block with <code>block_m</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">block_m &lt;-<span class="st"> </span><span class="kw">tapply</span>(Z, block, sum) <span class="op">/</span><span class="st"> </span><span class="dv">2</span>
 declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">blocks =</span> block, <span class="dt">clusters =</span> cluster, <span class="dt">block_m =</span> block_m)
-ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">declaration =</span> declaration, <span class="dt">data =</span> df)</code></pre></div>
+ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">declaration =</span> declaration, <span class="dt">data =</span> dat)</code></pre></div>
 <p>Again, the two programs obtain the same answers:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri_out<span class="op">$</span>two.tailed.p.value.abs</code></pre></div>
 <pre><code>## [1] 0.1944444</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)<span class="op">$</span>p_value</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)<span class="op">$</span>two_tailed_p_value</code></pre></div>
 <pre><code>## [1] 0.1944444</code></pre>
 </div>
 <div id="the-need-for-explicit-random-assignment-declaration" class="section level1">
@@ -188,7 +188,7 @@ ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/con
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>

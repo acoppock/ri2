@@ -17,10 +17,7 @@ Additionally, ri2 provides:
 If you'd like to install the most current development release, you can use the following code:
 
 ``` r
-install.packages("estimatr", dependencies = TRUE,
-  repos = c("http://install.declaredesign.org", "https://cloud.r-project.org"))
 install.packages("devtools")
-devtools::install_github("DeclareDesign/randomizr")
 devtools::install_github("acoppock/ri2")
 ```
 
@@ -36,7 +33,7 @@ declaration <- declare_ra(N = N, m = 50)
 Z <- conduct_ra(declaration)
 X <- rnorm(N)
 Y <- .9 * X + .2 * Z + rnorm(N)
-df <- data.frame(Y, X, Z)
+dat <- data.frame(Y, X, Z)
 
 ri_out <-
   conduct_ri(
@@ -44,7 +41,7 @@ ri_out <-
     declaration = declaration,
     assignment = "Z",
     sharp_hypothesis = 0,
-    data = df
+    data = dat
   )
 
 plot(ri_out)
@@ -54,10 +51,8 @@ plot(ri_out)
 
 ``` r
 summary(ri_out)
-#> # A tibble: 1 x 5
-#>   coefficient    estimate p_value null_ci_lower null_ci_upper
-#>         <chr>       <dbl>   <dbl>         <dbl>         <dbl>
-#> 1           Z -0.07039904   0.776     -0.492874      0.481103
+#>   coefficient  estimate two_tailed_p_value null_ci_lower null_ci_upper
+#> 1           Z 0.1755904              0.569    -0.5587762      0.586095
 ```
 
 The development of ri2 is supported by a Standards Grant from [EGAP](http://egap.org).
