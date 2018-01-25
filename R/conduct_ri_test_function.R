@@ -7,7 +7,8 @@ conduct_ri_test_function <- function(test_function,
                                      sampling_weights = NULL,
                                      permutation_matrix = NULL,
                                      data,
-                                     sims = 1000) {
+                                     sims = 1000,
+                                     progress_bar = FALSE) {
   test_stat_obs <- test_function(data)
   assignment_vec <- data[[assignment]]
 
@@ -51,7 +52,11 @@ conduct_ri_test_function <- function(test_function,
     test_function(data)
   }
 
-  test_stat_sim <- pbapply::pbapply(permutation_matrix, 2, ri_function)
+  if (progress_bar) {
+    test_stat_sim <- pbapply::pbapply(permutation_matrix, 2, ri_function)
+  } else {
+    test_stat_sim <- apply(permutation_matrix, 2, ri_function)
+  }
 
   sims_df <-
     data.frame(

@@ -9,7 +9,8 @@ conduct_ri_f <- function(model_1,
                          sampling_weights = NULL,
                          permutation_matrix = NULL,
                          data = data,
-                         sims = 1000) {
+                         sims = 1000,
+                         progress_bar = FALSE) {
   # setup
 
   model_1 <- as.formula(model_1)
@@ -165,7 +166,11 @@ conduct_ri_f <- function(model_1,
     return(f_sim)
   }
 
-  null_distribution <- pbapply::pbapply(permutation_matrix, 2, ri_function)
+  if (progress_bar) {
+    null_distribution <- pbapply::pbapply(permutation_matrix, 2, ri_function)
+  } else {
+    null_distribution <- apply(permutation_matrix, 2, ri_function)
+  }
 
   sims_df <-
     data.frame(

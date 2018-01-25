@@ -1,5 +1,5 @@
 {
-    "path" : "~/git_projects/ri2/vignettes",
+    "path" : "~/git_projects/ri2/tests/testthat",
     "sortOrder" : [
         {
             "ascending" : true,

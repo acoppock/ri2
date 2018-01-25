@@ -11,7 +11,8 @@ conduct_ri_ATE <- function(formula,
                            sampling_weights = NULL,
                            permutation_matrix = NULL,
                            data,
-                           sims = 1000) {
+                           sims = 1000,
+                           progress_bar = FALSE) {
   # setup
 
   formula <- as.formula(formula)
@@ -162,8 +163,13 @@ conduct_ri_ATE <- function(formula,
       return(coefs_sim)
     }
 
-    null_distributions[[i - 1]] <-
-      pbapply::pbapply(permutation_matrix, 2, ri_function)
+    if (progress_bar) {
+      null_distributions[[i - 1]] <-
+        pbapply::pbapply(permutation_matrix, 2, ri_function)
+    } else {
+      null_distributions[[i - 1]] <-
+        apply(permutation_matrix, 2, ri_function)
+    }
   }
 
   sharp_hypothesis <- as.list(sharp_hypothesis)

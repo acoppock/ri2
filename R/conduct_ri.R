@@ -21,6 +21,7 @@
 #' @param permutation_matrix An optional matrix of random assignmnets, typically created by \code{\link{obtain_permutation_matrix}}.
 #' @param data A data.frame.
 #' @param sims the number of simulations. Defaults to 1000.
+#' @param progress_bar logical, defaults to FALSE.  Should a progress bar be displayed in the console?
 #'
 #' @export
 #'
@@ -126,7 +127,8 @@ conduct_ri <- function(formula = NULL,
                        sampling_weights = NULL,
                        permutation_matrix = NULL,
                        data,
-                       sims = 1000) {
+                       sims = 1000,
+                       progress_bar = FALSE) {
   # some error checking -----------------------------------------------------
 
   if (is.null(declaration) &
@@ -152,7 +154,8 @@ conduct_ri <- function(formula = NULL,
       sampling_weights = sampling_weights,
       permutation_matrix = permutation_matrix,
       data = data,
-      sims = sims
+      sims = sims,
+      progress_bar = progress_bar
     )
   }
 
@@ -170,7 +173,8 @@ conduct_ri <- function(formula = NULL,
       sampling_weights = sampling_weights,
       permutation_matrix = permutation_matrix,
       data = data,
-      sims = sims
+      sims = sims,
+      progress_bar = progress_bar
     )
   }
 
@@ -187,7 +191,8 @@ conduct_ri <- function(formula = NULL,
       sampling_weights = sampling_weights,
       permutation_matrix = permutation_matrix,
       data = data,
-      sims = sims
+      sims = sims,
+      progress_bar = progress_bar
     )
   }
 
