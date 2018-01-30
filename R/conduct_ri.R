@@ -18,7 +18,7 @@
 #' @param IPW logical, defaults to TRUE. Should inverse probability weights be calculated?
 #' @param IPW_weights a character string that indicates which variable is the existing inverse probability weights vector. Usually unnecessary, as IPW weights will be incorporated automatically if IPW = TRUE. Defaults to NULL.
 #' @param sampling_weights a character string that indicates which variable is the sampling weights vector. Optional, defaults to NULL. NOT YET IMPLEMENTED
-#' @param permutation_matrix An optional matrix of random assignmnets, typically created by \code{\link{obtain_permutation_matrix}}.
+#' @param permutation_matrix An optional matrix of random assignments, typically created by \code{\link{obtain_permutation_matrix}}.
 #' @param data A data.frame.
 #' @param sims the number of simulations. Defaults to 1000.
 #' @param progress_bar logical, defaults to FALSE.  Should a progress bar be displayed in the console?
