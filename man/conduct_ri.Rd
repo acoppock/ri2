@@ -35,7 +35,7 @@ conduct_ri(formula = NULL, model_1 = NULL, model_2 = NULL,
 
 \item{sampling_weights}{a character string that indicates which variable is the sampling weights vector. Optional, defaults to NULL. NOT YET IMPLEMENTED}
 
-\item{permutation_matrix}{An optional matrix of random assignmnets, typically created by \code{\link{obtain_permutation_matrix}}.}
+\item{permutation_matrix}{An optional matrix of random assignments, typically created by \code{\link{obtain_permutation_matrix}}.}
 
 \item{data}{A data.frame.}
 
