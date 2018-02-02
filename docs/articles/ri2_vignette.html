@@ -68,7 +68,7 @@
       <h1>Randomization Inference with ri2</h1>
                         <h4 class="author">Alexander Coppock, Yale University</h4>
             
-            <h4 class="date">2018-01-25</h4>
+            <h4 class="date">2018-02-02</h4>
           </div>
 
     
@@ -204,7 +204,7 @@ ri2_out &lt;-
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
 <pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
-## 1 F-statistic 4.429772              0.015    0.03876176      3.948768</code></pre>
+## 1 F-statistic  5.61914              0.002    0.02486304      3.865209</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for comparison</span>
 <span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> dat), 
       <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat))</code></pre></div>
@@ -212,9 +212,9 @@ ri2_out &lt;-
 ## 
 ## Model 1: Y ~ 1
 ## Model 2: Y ~ Z
-##   Res.Df     RSS Df Sum of Sq      F  Pr(&gt;F)  
-## 1     99 101.310                              
-## 2     97  92.831  2    8.4788 4.4298 0.01442 *
+##   Res.Df    RSS Df Sum of Sq      F   Pr(&gt;F)   
+## 1     99 92.675                                
+## 2     97 83.053  2    9.6224 5.6191 0.004909 **
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -234,7 +234,7 @@ dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(X, Y, Z)
 ate_hat &lt;-<span class="st"> </span><span class="kw">coef</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat))[<span class="dv">2</span>]
 ate_hat</code></pre></div>
 <pre><code>##         Z 
-## 0.1217316</code></pre>
+## 0.4233557</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
 <span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
     <span class="dt">model_1 =</span> Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="co"># restricted model</span>
@@ -248,7 +248,7 @@ ate_hat</code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-5-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
 <pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
-## 1 F-statistic 13.99079                  0   0.001554498      5.430353</code></pre>
+## 1 F-statistic 3.073201              0.076   0.001493542      4.706473</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for comparison</span>
 <span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="dt">data =</span> dat),
       <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span>Z<span class="op">*</span>X, <span class="dt">data =</span> dat))</code></pre></div>
@@ -256,9 +256,9 @@ ate_hat</code></pre></div>
 ## 
 ## Model 1: Y ~ Z + X
 ## Model 2: Y ~ Z + X + Z * X
-##   Res.Df    RSS Df Sum of Sq      F    Pr(&gt;F)    
-## 1     97 128.85                                  
-## 2     96 112.46  1    16.389 13.991 0.0003126 ***
+##   Res.Df    RSS Df Sum of Sq      F  Pr(&gt;F)  
+## 1     97 97.394                              
+## 2     96 94.373  1    3.0211 3.0732 0.08278 .
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
@@ -285,7 +285,7 @@ test_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
 
 <span class="co"># confirm it works</span>
 <span class="kw">test_fun</span>(dat)</code></pre></div>
-<pre><code>## [1] 0.2397634</code></pre>
+<pre><code>## [1] 0.1720664</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
 <span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
   <span class="dt">test_function =</span> test_fun,
@@ -300,9 +300,9 @@ test_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-6-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
 <pre><code>##             coefficient  estimate two_tailed_p_value null_ci_lower
-## 1 Custom Test Statistic 0.2397634                  0    -0.1332335
+## 1 Custom Test Statistic 0.1720664                  0    -0.1013325
 ##   null_ci_upper
-## 1     0.1327711</code></pre>
+## 1    0.09655501</code></pre>
 </div>
 <div id="balance-test" class="section level2">
 <h2 class="hasAnchor">
@@ -326,8 +326,8 @@ balance_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data)
 
 <span class="co"># Confirm it works!</span>
 <span class="kw">balance_fun</span>(dat)</code></pre></div>
-<pre><code>##     value 
-## 0.9282366</code></pre>
+<pre><code>##    value 
+## 2.295495</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
 <span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
   <span class="dt">test_function =</span> balance_fun,
@@ -341,10 +341,10 @@ balance_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data)
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ri2_out)</code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
-<pre><code>##             coefficient  estimate two_tailed_p_value null_ci_lower
-## 1 Custom Test Statistic 0.9282366              0.438    0.05500923
+<pre><code>##             coefficient estimate two_tailed_p_value null_ci_lower
+## 1 Custom Test Statistic 2.295495              0.098    0.07466706
 ##   null_ci_upper
-## 1      3.164616</code></pre>
+## 1      3.379954</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># For comparison</span>
 <span class="kw">summary</span>(<span class="kw">lm</span>(Z <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>X3, <span class="dt">data =</span> dat))</code></pre></div>
 <pre><code>## 
@@ -353,20 +353,20 @@ balance_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -0.66053 -0.48476 -0.04135  0.47530  0.68638 
+## -0.67796 -0.45944  0.06227  0.46615  0.74251 
 ## 
 ## Coefficients:
 ##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  0.44739    0.10946   4.087 9.07e-05 ***
-## X1          -0.04112    0.05061  -0.812    0.419    
-## X2          -0.10585    0.10230  -1.035    0.303    
-## X3           0.03646    0.03174   1.149    0.253    
+## (Intercept)  0.47832    0.11131   4.297 4.15e-05 ***
+## X1           0.11600    0.05159   2.249   0.0268 *  
+## X2          -0.11542    0.09910  -1.165   0.2470    
+## X3           0.03042    0.02712   1.122   0.2647    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.5031 on 96 degrees of freedom
-## Multiple R-squared:  0.02819,    Adjusted R-squared:  -0.002179 
-## F-statistic: 0.9282 on 3 and 96 DF,  p-value: 0.4302</code></pre>
+## Residual standard error: 0.4929 on 96 degrees of freedom
+## Multiple R-squared:  0.06693,    Adjusted R-squared:  0.03777 
+## F-statistic: 2.295 on 3 and 96 DF,  p-value: 0.08265</code></pre>
 </div>
 </div>
 <div id="conclusion" class="section level1">

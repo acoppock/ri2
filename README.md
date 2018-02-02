@@ -14,6 +14,12 @@ Additionally, ri2 provides:
 1.  Accommodation for arbitrary randomization schemes
 2.  Accommodation for arbitrary (scalar) test statistics
 
+You can install ri2 is on CRAN
+
+``` r
+install.packages("ri2")
+```
+
 If you'd like to install the most current development release, you can use the following code:
 
 ``` r
@@ -47,12 +53,12 @@ ri_out <-
 plot(ri_out)
 ```
 
-![](README-unnamed-chunk-3-1.png)
+![](README-unnamed-chunk-4-1.png)
 
 ``` r
 summary(ri_out)
-#>   coefficient   estimate two_tailed_p_value null_ci_lower null_ci_upper
-#> 1           Z 0.08128592              0.762     -0.507129     0.4777298
+#>   coefficient  estimate two_tailed_p_value null_ci_lower null_ci_upper
+#> 1           Z 0.2954564              0.229    -0.4534083     0.4514941
 ```
 
 The development of ri2 is supported by a Standards Grant from [EGAP](http://egap.org).

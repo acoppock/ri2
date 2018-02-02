@@ -83,6 +83,8 @@
 <li>Accommodation for arbitrary randomization schemes</li>
 <li>Accommodation for arbitrary (scalar) test statistics</li>
 </ol>
+<p>You can install ri2 is on CRAN</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"ri2"</span>)</code></pre></div>
 <p>If you’d like to install the most current development release, you can use the following code:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"devtools"</span>)
 devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"acoppock/ri2"</span>)</code></pre></div>
@@ -108,17 +110,22 @@ ri_out &lt;-
   )
 
 <span class="kw">plot</span>(ri_out)</code></pre></div>
-<p><img src="README-unnamed-chunk-3-1.png" width="672"></p>
+<p><img src="README-unnamed-chunk-4-1.png" width="672"></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri_out)
 <span class="co">#&gt;   coefficient  estimate two_tailed_p_value null_ci_lower null_ci_upper</span>
-<span class="co">#&gt; 1           Z 0.1047249              0.665    -0.4912596      0.509953</span></code></pre></div>
+<span class="co">#&gt; 1           Z 0.2310532              0.385    -0.5159464     0.5319302</span></code></pre></div>
 <p>The development of ri2 is supported by a Standards Grant from <a href="http://egap.org">EGAP</a>.</p>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2 class="hasAnchor">
-<a href="#sidebar" class="anchor"></a>License</h2>
+<a href="#sidebar" class="anchor"></a>Links</h2>
+<ul class="list-unstyled">
+<li>Download from CRAN at <br><a href="https://cran.r-project.org/package=ri2">https://​cran.r-project.org/​package=ri2</a>
+</li>
+</ul>
+<h2>License</h2>
 <p><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE.html">LICENSE</a></p>
 <h2>Developers</h2>
 <ul class="list-unstyled">
