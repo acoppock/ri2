@@ -194,7 +194,7 @@
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
 <pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
-## 1 F-statistic 1.631391              0.196    0.02801725      3.541721</code></pre>
+## 1 F-statistic 1.532795              0.224    0.01821524      4.279474</code></pre>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="co"># for comparison</span></a>
 <a class="sourceLine" id="cb18-2" data-line-number="2"><span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> dat), </a>
 <a class="sourceLine" id="cb18-3" data-line-number="3">      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat))</a></code></pre></div>
@@ -203,8 +203,8 @@
 ## Model 1: Y ~ 1
 ## Model 2: Y ~ Z
 ##   Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
-## 1     99 95.064                           
-## 2     97 91.971  2    3.0936 1.6314  0.201</code></pre>
+## 1     99 77.748                           
+## 2     97 75.366  2    2.3819 1.5328 0.2211</code></pre>
 </section><section id="interaction-terms" class="level2"><h2>Interaction terms</h2>
 <p>Oftentimes in an experiment, we’re interested the difference in average treatment effects by subgroups defined by pre-treatment characteristics. For example, we might want to know if the average treatment effect is larger for men or women. If we want to conduct a formal hypothesis test, we’re not interested in testing against the sharp null of no effect for any unit – we want to test against the null hypothesis of <strong>constant effects</strong>. In the example below, we test using the null hypothesis that all units have a constant effect equal to the estimated ATE. See Gerber and Green (2012) Chapter 9 for more information on this procedure.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">N &lt;-<span class="st"> </span><span class="dv">100</span></a>
@@ -218,8 +218,8 @@
 <a class="sourceLine" id="cb20-9" data-line-number="9"><span class="co"># Observed ATE</span></a>
 <a class="sourceLine" id="cb20-10" data-line-number="10">ate_hat &lt;-<span class="st"> </span><span class="kw">coef</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat))[<span class="dv">2</span>]</a>
 <a class="sourceLine" id="cb20-11" data-line-number="11">ate_hat</a></code></pre></div>
-<pre><code>##        Z 
-## 0.216186</code></pre>
+<pre><code>##          Z 
+## -0.0223385</code></pre>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">ri2_out &lt;-</a>
 <a class="sourceLine" id="cb22-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(</a>
 <a class="sourceLine" id="cb22-3" data-line-number="3">    <span class="dt">model_1 =</span> Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="co"># restricted model</span></a>
@@ -233,7 +233,7 @@
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-5-1.png" width="672"></p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
 <pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
-## 1 F-statistic 23.20763                  0   0.002097303      6.819476</code></pre>
+## 1 F-statistic 12.81859                  0   0.001263264      4.696894</code></pre>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co"># for comparison</span></a>
 <a class="sourceLine" id="cb25-2" data-line-number="2"><span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="dt">data =</span> dat),</a>
 <a class="sourceLine" id="cb25-3" data-line-number="3">      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span>Z<span class="op">*</span>X, <span class="dt">data =</span> dat))</a></code></pre></div>
@@ -241,9 +241,9 @@
 ## 
 ## Model 1: Y ~ Z + X
 ## Model 2: Y ~ Z + X + Z * X
-##   Res.Df    RSS Df Sum of Sq      F    Pr(&gt;F)    
-## 1     97 112.09                                  
-## 2     96  90.27  1    21.822 23.208 5.429e-06 ***
+##   Res.Df     RSS Df Sum of Sq      F    Pr(&gt;F)    
+## 1     97 109.842                                  
+## 2     96  96.903  1    12.939 12.819 0.0005406 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </section></section><section id="arbitrary-test-statistics" class="level1"><h1>Arbitrary test statistics</h1>
@@ -264,7 +264,7 @@
 <a class="sourceLine" id="cb27-12" data-line-number="12"></a>
 <a class="sourceLine" id="cb27-13" data-line-number="13"><span class="co"># confirm it works</span></a>
 <a class="sourceLine" id="cb27-14" data-line-number="14"><span class="kw">test_fun</span>(dat)</a></code></pre></div>
-<pre><code>## [1] 0.1657589</code></pre>
+<pre><code>## [1] 0.2464177</code></pre>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">ri2_out &lt;-</a>
 <a class="sourceLine" id="cb29-2" data-line-number="2"><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(</a>
 <a class="sourceLine" id="cb29-3" data-line-number="3">  <span class="dt">test_function =</span> test_fun,</a>
@@ -279,9 +279,9 @@
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-6-1.png" width="672"></p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
 <pre><code>##             coefficient  estimate two_tailed_p_value null_ci_lower
-## 1 Custom Test Statistic 0.1657589                  0    -0.0926927
+## 1 Custom Test Statistic 0.2464177                  0    -0.1425035
 ##   null_ci_upper
-## 1    0.09312956</code></pre>
+## 1      0.145496</code></pre>
 </section><section id="balance-test" class="level2"><h2>Balance Test</h2>
 <p>Researchers sometimes conduct balance tests as a randomization check. Rather than conducting separate tests covariate-by-covariate, we might be interested in conducting an omnibus test.</p>
 <p>Imagine we’ve got three covariates <code>X1</code>, <code>X2</code>, and <code>X3</code>. We’ll get a summary balance stat (the <span class="math inline">\(F\)</span>-statistic in this case), but it really could be anything!</p>
@@ -302,8 +302,8 @@
 <a class="sourceLine" id="cb32-15" data-line-number="15"></a>
 <a class="sourceLine" id="cb32-16" data-line-number="16"><span class="co"># Confirm it works!</span></a>
 <a class="sourceLine" id="cb32-17" data-line-number="17"><span class="kw">balance_fun</span>(dat)</a></code></pre></div>
-<pre><code>##  value 
-## 2.7837</code></pre>
+<pre><code>##    value 
+## 3.754223</code></pre>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">ri2_out &lt;-</a>
 <a class="sourceLine" id="cb34-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(</a>
 <a class="sourceLine" id="cb34-3" data-line-number="3">  <span class="dt">test_function =</span> balance_fun,</a>
@@ -318,9 +318,9 @@
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
 <pre><code>##             coefficient estimate two_tailed_p_value null_ci_lower
-## 1 Custom Test Statistic   2.7837              0.051    0.07106739
+## 1 Custom Test Statistic 3.754223              0.004    0.06306746
 ##   null_ci_upper
-## 1      3.411524</code></pre>
+## 1      2.990419</code></pre>
 <div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="co"># For comparison</span></a>
 <a class="sourceLine" id="cb39-2" data-line-number="2"><span class="kw">summary</span>(<span class="kw">lm</span>(Z <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>X3, <span class="dt">data =</span> dat))</a></code></pre></div>
 <pre><code>## 
@@ -329,20 +329,20 @@
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -0.77074 -0.46661  0.00624  0.44361  0.75474 
+## -0.76657 -0.43393  0.07567  0.46852  0.83179 
 ## 
 ## Coefficients:
 ##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  0.48050    0.10464   4.592 1.33e-05 ***
-## X1          -0.10632    0.05263  -2.020   0.0462 *  
-## X2          -0.17672    0.09832  -1.797   0.0754 .  
-## X3           0.03572    0.02760   1.294   0.1987    
+## (Intercept)  0.84068    0.11656   7.212 1.27e-10 ***
+## X1           0.03668    0.05122   0.716  0.47567    
+## X2          -0.11377    0.09782  -1.163  0.24769    
+## X3          -0.09632    0.03145  -3.063  0.00284 ** 
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.4895 on 96 degrees of freedom
-## Multiple R-squared:  0.08003,    Adjusted R-squared:  0.05128 
-## F-statistic: 2.784 on 3 and 96 DF,  p-value: 0.04501</code></pre>
+## Residual standard error: 0.4828 on 96 degrees of freedom
+## Multiple R-squared:  0.105,  Adjusted R-squared:  0.07703 
+## F-statistic: 3.754 on 3 and 96 DF,  p-value: 0.01344</code></pre>
 </section></section><section id="conclusion" class="level1"><h1>Conclusion</h1>
 <p>All of the randomization inference procedures had to, somehow or other, provide three pieces of information:</p>
 <ol type="1">

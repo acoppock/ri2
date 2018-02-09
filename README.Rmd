@@ -68,7 +68,7 @@ summary(ri_out)
 The development of ri2 is supported by a Standards Grant from [EGAP](http://egap.org) and the UK Department for International Development.
 
 ```{r, out.height = "50px", echo=FALSE}
-knitr::include_graphics("EGAP_logo.jpg")
-knitr::include_graphics("dfid_logo.jpg")
+knitr::include_graphics("man/figures/EGAP_logo.jpg")
+knitr::include_graphics("man/figures/dfid_logo.jpg")
 ```
 

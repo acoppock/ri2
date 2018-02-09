@@ -64,12 +64,12 @@ plot(ri_out)
 
 ``` r
 summary(ri_out)
-#>   coefficient  estimate two_tailed_p_value null_ci_lower null_ci_upper
-#> 1           Z 0.0953914              0.722    -0.5377486     0.5284404
+#>   coefficient   estimate two_tailed_p_value null_ci_lower null_ci_upper
+#> 1           Z -0.5887379              0.022    -0.4911486     0.4927481
 ```
 
 The development of ri2 is supported by a Standards Grant from
 [EGAP](http://egap.org) and the UK Department for International
 Development.
 
-<img src="EGAP_logo.jpg" height="50px" /><img src="dfid_logo.jpg" height="50px" />
+<img src="man/figures/EGAP_logo.jpg" height="50px" /><img src="man/figures/dfid_logo.jpg" height="50px" />
