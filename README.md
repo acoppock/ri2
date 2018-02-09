@@ -1,13 +1,19 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-ri2 makes conducting randomization inference easy and (with the blessing of the original authors) is the successor package to [ri](https://cran.r-project.org/web/packages/ri/index.html).
+
+ri2 makes conducting randomization inference easy and (with the blessing
+of the original authors) is the successor package to
+[ri](https://cran.r-project.org/web/packages/ri/index.html).
 
 ri2 has specific support for the following:
 
-1.  All randomization schemes in [randomizr](http://randomizr.declaredesign.org).
-2.  Difference-in-means and OLS-adjusted estimates of ATE estimates using R-native formula syntax.
+1.  All randomization schemes in
+    [randomizr](http://randomizr.declaredesign.org).
+2.  Difference-in-means and OLS-adjusted estimates of ATE estimates
+    using R-native formula syntax.
 3.  Multi-arm trials.
-4.  ANOVA-style hypothesis tests (e.g., testing interaction term under null of constant effects),
+4.  ANOVA-style hypothesis tests (e.g., testing interaction term under
+    null of constant effects),
 
 Additionally, ri2 provides:
 
@@ -20,7 +26,8 @@ You can install ri2 is on CRAN
 install.packages("ri2")
 ```
 
-If you'd like to install the most current development release, you can use the following code:
+If you’d like to install the most current development release, you can
+use the following code:
 
 ``` r
 install.packages("devtools")
@@ -53,12 +60,16 @@ ri_out <-
 plot(ri_out)
 ```
 
-![](README-unnamed-chunk-4-1.png)
+![](README-unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
 summary(ri_out)
 #>   coefficient  estimate two_tailed_p_value null_ci_lower null_ci_upper
-#> 1           Z 0.2954564              0.229    -0.4534083     0.4514941
+#> 1           Z 0.0953914              0.722    -0.5377486     0.5284404
 ```
 
-The development of ri2 is supported by a Standards Grant from [EGAP](http://egap.org).
+The development of ri2 is supported by a Standards Grant from
+[EGAP](http://egap.org) and the UK Department for International
+Development.
+
+<img src="EGAP_logo.jpg" height="50px" /><img src="dfid_logo.jpg" height="50px" />

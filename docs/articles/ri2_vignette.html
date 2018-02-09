@@ -29,7 +29,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
+  <a href="..//index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -68,7 +68,7 @@
       <h1>Randomization Inference with ri2</h1>
                         <h4 class="author">Alexander Coppock, Yale University</h4>
             
-            <h4 class="date">2018-02-02</h4>
+            <h4 class="date">2018-02-09</h4>
           </div>
 
     
@@ -82,44 +82,39 @@
 </ul>
 <p>That probability is sometimes called a <span class="math inline">\(p\)</span>-value.</p>
 <p>Randomization inference has a beautiful logic to it that may be more appealing to you than traditional hypothesis frameworks that rely on <span class="math inline">\(t\)</span>- or <span class="math inline">\(F\)</span>-tests. For a really lovely introduction to randomization inference, read Chapter 3 of Gerber and Green (2012).</p>
-<p>The hard part of actually conducting randomization inference is the accounting. We need to enumerate all (or a random subset of all) the possible randomizations, correctly implement the null hypothesis, maybe figure out the inverse probability weights, then calculate the test statistics over and over. You can do this by hand with loops. The <code>ri2</code> package for r was written so that you don’t have to.<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
-<div id="basic-syntax" class="section level1">
-<h1 class="hasAnchor">
-<a href="#basic-syntax" class="anchor"></a>Basic syntax</h1>
+<p>The hard part of actually conducting randomization inference is the accounting. We need to enumerate all (or a random subset of all) the possible randomizations, correctly implement the null hypothesis, maybe figure out the inverse probability weights, then calculate the test statistics over and over. You can do this by hand with loops. The <code>ri2</code> package for r was written so that you don’t have to.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
+<section id="basic-syntax" class="level1"><h1>Basic syntax</h1>
 <p>Gerber and Green (2012) describe a hypothetical experiment in which 2 of 7 villages are assigned a female council head and the outcome is the share of the local budget allocated to water sanitation. Their table 2.2 describes one way the experiment could have come out.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">table_2_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Z =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),
-                        <span class="dt">Y =</span> <span class="kw">c</span>(<span class="dv">15</span>, <span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">20</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">30</span>))</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">table_<span class="dv">2</span>_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Z =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">                        <span class="dt">Y =</span> <span class="kw">c</span>(<span class="dv">15</span>, <span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">20</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">30</span>))</a></code></pre></div>
 <p>In order to conduct randomization inference, we need to supply 1) a test statistic, 2) a null hypothesis, and 3) a randomization procedure.</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>The test statistic. The <code>formula</code> argument of the <code>conduct_ri</code> function is similar to the regression syntax of r’s built-in <code>lm</code> function. Our test statistic is the coefficient on <code>Z</code> from a regression of <code>Y</code> on <code>Z</code>, or more simply, the difference-in-means.</li>
 <li>The null hypothesis. The <code>sharp_hypothesis</code> argument of the <code>conduct_ri</code> function indicates that we are imagining a (hypothetical!) world in which the true difference in potential outcomes is exactly <code>0</code> for all units.</li>
 <li>The randomization procedure: The <code>declare_ra</code> function from the <code>randomizr</code> package allows us to declare a randomization procedure. In this case, we are assigning <code>2</code> units to treatment out of <code>7</code> total units.</li>
 </ol>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ri2)</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(ri2)</a></code></pre></div>
 <pre><code>## Loading required package: randomizr</code></pre>
 <pre><code>## Loading required package: estimatr</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Declare randomization procedure</span>
-declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> <span class="dv">7</span>, <span class="dt">m =</span> <span class="dv">2</span>)
-
-<span class="co"># Conduct Randomization Inference</span>
-ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
-  <span class="dt">formula =</span> Y <span class="op">~</span><span class="st"> </span>Z,
-  <span class="dt">declaration =</span> declaration,
-  <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
-  <span class="dt">data =</span> table_2_<span class="dv">2</span>
-)
-
-<span class="kw">summary</span>(ri2_out)</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># Declare randomization procedure</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> <span class="dv">7</span>, <span class="dt">m =</span> <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co"># Conduct Randomization Inference</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">  <span class="dt">formula =</span> Y <span class="op">~</span><span class="st"> </span>Z,</a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">  <span class="dt">declaration =</span> declaration,</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">  <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb5-9" data-line-number="9">  <span class="dt">data =</span> table_<span class="dv">2</span>_<span class="dv">2</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10">)</a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
 <pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
 ## 1           Z      6.5          0.3809524          -7.5            10</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ri2_out)</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">plot</span>(ri2_out)</a></code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-2-1.png" width="672"></p>
-</div>
-<div id="more-complex-designs" class="section level1">
-<h1 class="hasAnchor">
-<a href="#more-complex-designs" class="anchor"></a>More complex designs</h1>
+</section><section id="more-complex-designs" class="level1"><h1>More complex designs</h1>
 <p>The <code>ri2</code> package has specific support for all the randomization procedures that can be described by the <code>randomizr</code> package:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Simple</li>
 <li>Complete</li>
 <li>Blocked</li>
@@ -128,32 +123,32 @@ ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/con
 </ol>
 <p>See the <a href="http://randomizr.declaredesign.org/articles/randomizr_vignette.html">randomizr vignette</a> for specifics on each of these procedures.</p>
 <p>By way of illustration, let’s take the blocked-and-clustered design from the <code>ri</code> package help files as an example. The call to <code>conduct_ri</code> is the same as it was before, but we need to change the random assignment declaration to accomodate the fact that clusters of two units are assigned to treatment and control (within three separate blocks). Note that in this design, the probabilities of assignment to treatment are <strong>not</strong> constant across units, but the <code>conduct_ri</code> function by default incorporates inverse probability weights to account for this design feature.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
-  <span class="dt">Y =</span> <span class="kw">c</span>(<span class="dv">8</span>, <span class="dv">6</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>),
-  <span class="dt">Z =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>),
-  <span class="dt">cluster =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">9</span>),
-  <span class="dt">block =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">4</span>), <span class="kw">rep</span>(<span class="dv">2</span>, <span class="dv">6</span>), <span class="kw">rep</span>(<span class="dv">3</span>, <span class="dv">8</span>))
-)
-
-<span class="co"># clusters in blocks 1 and 3 have a 1/2 probability of treatment</span>
-<span class="co"># but clusters in block 2 have a 2/3 probability of treatment</span>
-<span class="kw">with</span>(dat, <span class="kw">table</span>(block, Z))</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">  <span class="dt">Y =</span> <span class="kw">c</span>(<span class="dv">8</span>, <span class="dv">6</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">  <span class="dt">Z =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">  <span class="dt">cluster =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">9</span>),</a>
+<a class="sourceLine" id="cb8-5" data-line-number="5">  <span class="dt">block =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">1</span>, <span class="dv">4</span>), <span class="kw">rep</span>(<span class="dv">2</span>, <span class="dv">6</span>), <span class="kw">rep</span>(<span class="dv">3</span>, <span class="dv">8</span>))</a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">)</a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co"># clusters in blocks 1 and 3 have a 1/2 probability of treatment</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co"># but clusters in block 2 have a 2/3 probability of treatment</span></a>
+<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="kw">with</span>(dat, <span class="kw">table</span>(block, Z))</a></code></pre></div>
 <pre><code>##      Z
 ## block 0 1
 ##     1 2 2
 ##     2 2 4
 ##     3 4 4</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">block_m &lt;-<span class="st"> </span><span class="kw">with</span>(dat, <span class="kw">tapply</span>(Z, block, sum) <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)
-
-declaration &lt;-<span class="st"> </span>
-<span class="st">  </span><span class="kw">with</span>(dat,{
-    <span class="kw">declare_ra</span>(
-      <span class="dt">blocks =</span> block,
-      <span class="dt">clusters =</span> cluster,
-      <span class="dt">block_m =</span> block_m)
-  })
-
-declaration</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">block_m &lt;-<span class="st"> </span><span class="kw">with</span>(dat, <span class="kw">tapply</span>(Z, block, sum) <span class="op">/</span><span class="st"> </span><span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">declaration &lt;-<span class="st"> </span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4"><span class="st">  </span><span class="kw">with</span>(dat,{</a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">    <span class="kw">declare_ra</span>(</a>
+<a class="sourceLine" id="cb10-6" data-line-number="6">      <span class="dt">blocks =</span> block,</a>
+<a class="sourceLine" id="cb10-7" data-line-number="7">      <span class="dt">clusters =</span> cluster,</a>
+<a class="sourceLine" id="cb10-8" data-line-number="8">      <span class="dt">block_m =</span> block_m)</a>
+<a class="sourceLine" id="cb10-9" data-line-number="9">  })</a>
+<a class="sourceLine" id="cb10-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb10-11" data-line-number="11">declaration</a></code></pre></div>
 <pre><code>## Random assignment procedure: Blocked and clustered random assignment 
 ## Number of units: 18 
 ## Number of blocks: 3 
@@ -161,232 +156,206 @@ declaration</code></pre></div>
 ## Number of treatment arms: 2 
 ## The possible treatment categories are 0 and 1.
 ## The probabilities of assignment are NOT constant across units. Your analysis strategy must account for differential probabilities of assignment, typically by employing inverse probability weights.</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
-  Y <span class="op">~</span><span class="st"> </span>Z,
-  <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
-  <span class="dt">declaration =</span> declaration,
-  <span class="dt">data =</span> dat
-)
-<span class="kw">summary</span>(ri2_out)</code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">  Y <span class="op">~</span><span class="st"> </span>Z,</a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">  <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb12-4" data-line-number="4">  <span class="dt">declaration =</span> declaration,</a>
+<a class="sourceLine" id="cb12-5" data-line-number="5">  <span class="dt">data =</span> dat</a>
+<a class="sourceLine" id="cb12-6" data-line-number="6">)</a>
+<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
 <pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
 ## 1           Z        2          0.1944444     -2.055556      2.222222</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ri2_out)</code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">plot</span>(ri2_out)</a></code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-3-1.png" width="672"></p>
-</div>
-<div id="comparing-nested-models" class="section level1">
-<h1 class="hasAnchor">
-<a href="#comparing-nested-models" class="anchor"></a>Comparing nested models</h1>
+</section><section id="comparing-nested-models" class="level1"><h1>Comparing nested models</h1>
 <p>A traditional ANOVA hypothesis testing framework (implicitly or explicitly) compares two models, a restricted model and an unrestricted model, where the restricted model can be said to “nest” within the unrestricted model. The difference between models is summarized as an <span class="math inline">\(F\)</span>-statistic. We then compare the observed <span class="math inline">\(F\)</span>-statistic to a hypothetical null distribution that, under some possibly wrong assumptions can be said to follow an <span class="math inline">\(F\)</span>-distribution.</p>
 <p>In a randomization inference framework, we’re happy to use the <span class="math inline">\(F\)</span>-statistic, but we want to construct a null distribution that corresponds to the distribution of <span class="math inline">\(F\)</span>-statistics that we would obtain if a particular (typically sharp) null hypothesis were true and we cycled through all the possible random assignments.</p>
 <p>To do this in the <code>ri2</code> package, we need to supply model formulae to the <code>model_1</code> and <code>model_2</code> arguments of <code>conduct_ri</code>.</p>
-<div id="three-arm-trial" class="section level2">
-<h2 class="hasAnchor">
-<a href="#three-arm-trial" class="anchor"></a>Three Arm Trial</h2>
+<section id="three-arm-trial" class="level2"><h2>Three Arm Trial</h2>
 <p>In this example, we consider a three-arm trial. We want to conduct the randomization inference analogue of an <span class="math inline">\(F\)</span>-test to see if any of the treatments influenced the outcome. We’ll consider the sharp null hypothesis that each unit would express exactly the same outcome regardless of which of the three arms it was assigned to.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">100</span>
-<span class="co"># three-arm trial, treat 33, 33, 34 or 33, 34, 33, or 34, 33, 33</span>
-declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N, <span class="dt">num_arms =</span> <span class="dv">3</span>)
-
-Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)
-Y &lt;-<span class="st"> </span>.<span class="dv">9</span> <span class="op">*</span><span class="st"> </span>.<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>(Z <span class="op">==</span><span class="st"> "T2"</span>) <span class="op">+</span><span class="st"> </span><span class="op">-</span>.<span class="dv">1</span> <span class="op">*</span><span class="st"> </span>(Z <span class="op">==</span><span class="st"> "T3"</span>) <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N)
-dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, Z)
-
-ri2_out &lt;-
-<span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
-    <span class="dt">model_1 =</span> Y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="co"># restricted model</span>
-    <span class="dt">model_2 =</span> Y <span class="op">~</span><span class="st"> </span>Z, <span class="co"># unrestricted model</span>
-    <span class="dt">declaration =</span> declaration,
-    <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
-    <span class="dt">data =</span> dat
-  )
-
-<span class="kw">plot</span>(ri2_out)</code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">N &lt;-<span class="st"> </span><span class="dv">100</span></a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"><span class="co"># three-arm trial, treat 33, 33, 34 or 33, 34, 33, or 34, 33, 33</span></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N, <span class="dt">num_arms =</span> <span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb15-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb15-5" data-line-number="5">Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)</a>
+<a class="sourceLine" id="cb15-6" data-line-number="6">Y &lt;-<span class="st"> </span><span class="fl">.9</span> <span class="op">*</span><span class="st"> </span><span class="fl">.2</span> <span class="op">*</span><span class="st"> </span>(Z <span class="op">==</span><span class="st"> "T2"</span>) <span class="op">+</span><span class="st"> </span><span class="fl">-.1</span> <span class="op">*</span><span class="st"> </span>(Z <span class="op">==</span><span class="st"> "T3"</span>) <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N)</a>
+<a class="sourceLine" id="cb15-7" data-line-number="7">dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, Z)</a>
+<a class="sourceLine" id="cb15-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb15-9" data-line-number="9">ri2_out &lt;-</a>
+<a class="sourceLine" id="cb15-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(</a>
+<a class="sourceLine" id="cb15-11" data-line-number="11">    <span class="dt">model_1 =</span> Y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="co"># restricted model</span></a>
+<a class="sourceLine" id="cb15-12" data-line-number="12">    <span class="dt">model_2 =</span> Y <span class="op">~</span><span class="st"> </span>Z, <span class="co"># unrestricted model</span></a>
+<a class="sourceLine" id="cb15-13" data-line-number="13">    <span class="dt">declaration =</span> declaration,</a>
+<a class="sourceLine" id="cb15-14" data-line-number="14">    <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb15-15" data-line-number="15">    <span class="dt">data =</span> dat</a>
+<a class="sourceLine" id="cb15-16" data-line-number="16">  )</a>
+<a class="sourceLine" id="cb15-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb15-18" data-line-number="18"><span class="kw">plot</span>(ri2_out)</a></code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
 <pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
-## 1 F-statistic  5.61914              0.002    0.02486304      3.865209</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for comparison</span>
-<span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> dat), 
-      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat))</code></pre></div>
+## 1 F-statistic 1.631391              0.196    0.02801725      3.541721</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="co"># for comparison</span></a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> dat), </a>
+<a class="sourceLine" id="cb18-3" data-line-number="3">      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat))</a></code></pre></div>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Model 1: Y ~ 1
 ## Model 2: Y ~ Z
-##   Res.Df    RSS Df Sum of Sq      F   Pr(&gt;F)   
-## 1     99 92.675                                
-## 2     97 83.053  2    9.6224 5.6191 0.004909 **
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</div>
-<div id="interaction-terms" class="section level2">
-<h2 class="hasAnchor">
-<a href="#interaction-terms" class="anchor"></a>Interaction terms</h2>
+##   Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
+## 1     99 95.064                           
+## 2     97 91.971  2    3.0936 1.6314  0.201</code></pre>
+</section><section id="interaction-terms" class="level2"><h2>Interaction terms</h2>
 <p>Oftentimes in an experiment, we’re interested the difference in average treatment effects by subgroups defined by pre-treatment characteristics. For example, we might want to know if the average treatment effect is larger for men or women. If we want to conduct a formal hypothesis test, we’re not interested in testing against the sharp null of no effect for any unit – we want to test against the null hypothesis of <strong>constant effects</strong>. In the example below, we test using the null hypothesis that all units have a constant effect equal to the estimated ATE. See Gerber and Green (2012) Chapter 9 for more information on this procedure.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">100</span>
-<span class="co"># two-arm trial, treat 50 of 100</span>
-declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N)
-X &lt;-<span class="st"> </span><span class="kw">rnorm</span>(N)
-Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)
-Y &lt;-<span class="st"> </span>.<span class="dv">9</span> <span class="op">*</span><span class="st"> </span>.<span class="dv">2</span> <span class="op">*</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>.<span class="dv">1</span> <span class="op">*</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span><span class="op">-</span>.<span class="dv">5</span> <span class="op">*</span><span class="st"> </span>Z <span class="op">*</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N)
-dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(X, Y, Z)
-
-<span class="co"># Observed ATE</span>
-ate_hat &lt;-<span class="st"> </span><span class="kw">coef</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat))[<span class="dv">2</span>]
-ate_hat</code></pre></div>
-<pre><code>##         Z 
-## 0.4233557</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
-<span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
-    <span class="dt">model_1 =</span> Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="co"># restricted model</span>
-    <span class="dt">model_2 =</span> Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span>Z<span class="op">*</span>X, <span class="co"># unrestricted model</span>
-    <span class="dt">declaration =</span> declaration,
-    <span class="dt">sharp_hypothesis =</span> ate_hat,
-    <span class="dt">data =</span> dat
-  )
-
-<span class="kw">plot</span>(ri2_out)</code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">N &lt;-<span class="st"> </span><span class="dv">100</span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="co"># two-arm trial, treat 50 of 100</span></a>
+<a class="sourceLine" id="cb20-3" data-line-number="3">declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N)</a>
+<a class="sourceLine" id="cb20-4" data-line-number="4">X &lt;-<span class="st"> </span><span class="kw">rnorm</span>(N)</a>
+<a class="sourceLine" id="cb20-5" data-line-number="5">Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)</a>
+<a class="sourceLine" id="cb20-6" data-line-number="6">Y &lt;-<span class="st"> </span><span class="fl">.9</span> <span class="op">*</span><span class="st"> </span><span class="fl">.2</span> <span class="op">*</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span><span class="fl">.1</span> <span class="op">*</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span><span class="fl">-.5</span> <span class="op">*</span><span class="st"> </span>Z <span class="op">*</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N)</a>
+<a class="sourceLine" id="cb20-7" data-line-number="7">dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(X, Y, Z)</a>
+<a class="sourceLine" id="cb20-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb20-9" data-line-number="9"><span class="co"># Observed ATE</span></a>
+<a class="sourceLine" id="cb20-10" data-line-number="10">ate_hat &lt;-<span class="st"> </span><span class="kw">coef</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat))[<span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb20-11" data-line-number="11">ate_hat</a></code></pre></div>
+<pre><code>##        Z 
+## 0.216186</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">ri2_out &lt;-</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3">    <span class="dt">model_1 =</span> Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="co"># restricted model</span></a>
+<a class="sourceLine" id="cb22-4" data-line-number="4">    <span class="dt">model_2 =</span> Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span>Z<span class="op">*</span>X, <span class="co"># unrestricted model</span></a>
+<a class="sourceLine" id="cb22-5" data-line-number="5">    <span class="dt">declaration =</span> declaration,</a>
+<a class="sourceLine" id="cb22-6" data-line-number="6">    <span class="dt">sharp_hypothesis =</span> ate_hat,</a>
+<a class="sourceLine" id="cb22-7" data-line-number="7">    <span class="dt">data =</span> dat</a>
+<a class="sourceLine" id="cb22-8" data-line-number="8">  )</a>
+<a class="sourceLine" id="cb22-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb22-10" data-line-number="10"><span class="kw">plot</span>(ri2_out)</a></code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-5-1.png" width="672"></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
 <pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
-## 1 F-statistic 3.073201              0.076   0.001493542      4.706473</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># for comparison</span>
-<span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="dt">data =</span> dat),
-      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span>Z<span class="op">*</span>X, <span class="dt">data =</span> dat))</code></pre></div>
+## 1 F-statistic 23.20763                  0   0.002097303      6.819476</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co"># for comparison</span></a>
+<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="dt">data =</span> dat),</a>
+<a class="sourceLine" id="cb25-3" data-line-number="3">      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span>Z<span class="op">*</span>X, <span class="dt">data =</span> dat))</a></code></pre></div>
 <pre><code>## Analysis of Variance Table
 ## 
 ## Model 1: Y ~ Z + X
 ## Model 2: Y ~ Z + X + Z * X
-##   Res.Df    RSS Df Sum of Sq      F  Pr(&gt;F)  
-## 1     97 97.394                              
-## 2     96 94.373  1    3.0211 3.0732 0.08278 .
+##   Res.Df    RSS Df Sum of Sq      F    Pr(&gt;F)    
+## 1     97 112.09                                  
+## 2     96  90.27  1    21.822 23.208 5.429e-06 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</div>
-</div>
-<div id="arbitrary-test-statistics" class="section level1">
-<h1 class="hasAnchor">
-<a href="#arbitrary-test-statistics" class="anchor"></a>Arbitrary test statistics</h1>
+</section></section><section id="arbitrary-test-statistics" class="level1"><h1>Arbitrary test statistics</h1>
 <p>A major benefit of randomization inference is we can specify any scalar test statistic, which means we can conduct hypothesis tests for estimators beyond the narrow set for which statisticians have derived the variance. The <code>ri2</code> package accommodates this with the <code>test_function</code> argument of <code>conduct_ri</code>. You supply a function that takes a <code>data.frame</code> as its only argument and returns a scalar; <code>conduct_ri</code> does the rest!</p>
-<div id="difference-in-variances" class="section level2">
-<h2 class="hasAnchor">
-<a href="#difference-in-variances" class="anchor"></a>Difference-in-variances</h2>
+<section id="difference-in-variances" class="level2"><h2>Difference-in-variances</h2>
 <p>For example, we can conduct a difference-in-variances test against the sharp null of no effect for any unit:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">100</span>
-declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N, <span class="dt">m =</span> <span class="dv">50</span>)
-
-Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)
-Y &lt;-<span class="st"> </span>.<span class="dv">9</span> <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N, <span class="dt">sd =</span> .<span class="dv">25</span> <span class="op">+</span><span class="st"> </span>.<span class="dv">25</span><span class="op">*</span>Z)
-dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, Z)
-
-<span class="co"># arbitrary function of data</span>
-test_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
-  <span class="kw">with</span>(data, <span class="kw">var</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span><span class="kw">var</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">0</span>]))
-}
-
-<span class="co"># confirm it works</span>
-<span class="kw">test_fun</span>(dat)</code></pre></div>
-<pre><code>## [1] 0.1720664</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
-<span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
-  <span class="dt">test_function =</span> test_fun,
-  <span class="dt">declaration =</span> declaration,
-  <span class="dt">assignment =</span> <span class="st">"Z"</span>,
-  <span class="dt">outcome =</span> <span class="st">"Y"</span>,
-  <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
-  <span class="dt">data =</span> dat
-)
-
-<span class="kw">plot</span>(ri2_out)</code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">N &lt;-<span class="st"> </span><span class="dv">100</span></a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N, <span class="dt">m =</span> <span class="dv">50</span>)</a>
+<a class="sourceLine" id="cb27-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb27-4" data-line-number="4">Z &lt;-<span class="st"> </span><span class="kw">conduct_ra</span>(declaration)</a>
+<a class="sourceLine" id="cb27-5" data-line-number="5">Y &lt;-<span class="st"> </span><span class="fl">.9</span> <span class="op">+</span><span class="st"> </span><span class="kw">rnorm</span>(N, <span class="dt">sd =</span> <span class="fl">.25</span> <span class="op">+</span><span class="st"> </span><span class="fl">.25</span><span class="op">*</span>Z)</a>
+<a class="sourceLine" id="cb27-6" data-line-number="6">dat &lt;-<span class="st"> </span><span class="kw">data.frame</span>(Y, Z)</a>
+<a class="sourceLine" id="cb27-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb27-8" data-line-number="8"><span class="co"># arbitrary function of data</span></a>
+<a class="sourceLine" id="cb27-9" data-line-number="9">test_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data) {</a>
+<a class="sourceLine" id="cb27-10" data-line-number="10">  <span class="kw">with</span>(data, <span class="kw">var</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">1</span>]) <span class="op">-</span><span class="st"> </span><span class="kw">var</span>(Y[Z <span class="op">==</span><span class="st"> </span><span class="dv">0</span>]))</a>
+<a class="sourceLine" id="cb27-11" data-line-number="11">}</a>
+<a class="sourceLine" id="cb27-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb27-13" data-line-number="13"><span class="co"># confirm it works</span></a>
+<a class="sourceLine" id="cb27-14" data-line-number="14"><span class="kw">test_fun</span>(dat)</a></code></pre></div>
+<pre><code>## [1] 0.1657589</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">ri2_out &lt;-</a>
+<a class="sourceLine" id="cb29-2" data-line-number="2"><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(</a>
+<a class="sourceLine" id="cb29-3" data-line-number="3">  <span class="dt">test_function =</span> test_fun,</a>
+<a class="sourceLine" id="cb29-4" data-line-number="4">  <span class="dt">declaration =</span> declaration,</a>
+<a class="sourceLine" id="cb29-5" data-line-number="5">  <span class="dt">assignment =</span> <span class="st">"Z"</span>,</a>
+<a class="sourceLine" id="cb29-6" data-line-number="6">  <span class="dt">outcome =</span> <span class="st">"Y"</span>,</a>
+<a class="sourceLine" id="cb29-7" data-line-number="7">  <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb29-8" data-line-number="8">  <span class="dt">data =</span> dat</a>
+<a class="sourceLine" id="cb29-9" data-line-number="9">)</a>
+<a class="sourceLine" id="cb29-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb29-11" data-line-number="11"><span class="kw">plot</span>(ri2_out)</a></code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-6-1.png" width="672"></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
 <pre><code>##             coefficient  estimate two_tailed_p_value null_ci_lower
-## 1 Custom Test Statistic 0.1720664                  0    -0.1013325
+## 1 Custom Test Statistic 0.1657589                  0    -0.0926927
 ##   null_ci_upper
-## 1    0.09655501</code></pre>
-</div>
-<div id="balance-test" class="section level2">
-<h2 class="hasAnchor">
-<a href="#balance-test" class="anchor"></a>Balance Test</h2>
+## 1    0.09312956</code></pre>
+</section><section id="balance-test" class="level2"><h2>Balance Test</h2>
 <p>Researchers sometimes conduct balance tests as a randomization check. Rather than conducting separate tests covariate-by-covariate, we might be interested in conducting an omnibus test.</p>
 <p>Imagine we’ve got three covariates <code>X1</code>, <code>X2</code>, and <code>X3</code>. We’ll get a summary balance stat (the <span class="math inline">\(F\)</span>-statistic in this case), but it really could be anything!</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">N &lt;-<span class="st"> </span><span class="dv">100</span>
-declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N)
-
-dat &lt;-
-<span class="st">  </span><span class="kw">data.frame</span>(
-  <span class="dt">X1 =</span> <span class="kw">rnorm</span>(N),
-  <span class="dt">X2 =</span> <span class="kw">rbinom</span>(N, <span class="dv">1</span>, .<span class="dv">5</span>),
-  <span class="dt">X3 =</span> <span class="kw">rpois</span>(N, <span class="dv">3</span>),
-  <span class="dt">Z =</span> <span class="kw">conduct_ra</span>(declaration)
-  )
-  
-balance_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data) {
-  <span class="kw">summary</span>(<span class="kw">lm</span>(Z <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>X3, <span class="dt">data =</span> data))<span class="op">$</span>f[<span class="dv">1</span>]
-}
-
-<span class="co"># Confirm it works!</span>
-<span class="kw">balance_fun</span>(dat)</code></pre></div>
-<pre><code>##    value 
-## 2.295495</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ri2_out &lt;-
-<span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(
-  <span class="dt">test_function =</span> balance_fun,
-  <span class="dt">declaration =</span> declaration,
-  <span class="dt">assignment =</span> <span class="st">"Z"</span>,
-  <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,
-  <span class="dt">data =</span> dat
-  )</code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">N &lt;-<span class="st"> </span><span class="dv">100</span></a>
+<a class="sourceLine" id="cb32-2" data-line-number="2">declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N)</a>
+<a class="sourceLine" id="cb32-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb32-4" data-line-number="4">dat &lt;-</a>
+<a class="sourceLine" id="cb32-5" data-line-number="5"><span class="st">  </span><span class="kw">data.frame</span>(</a>
+<a class="sourceLine" id="cb32-6" data-line-number="6">  <span class="dt">X1 =</span> <span class="kw">rnorm</span>(N),</a>
+<a class="sourceLine" id="cb32-7" data-line-number="7">  <span class="dt">X2 =</span> <span class="kw">rbinom</span>(N, <span class="dv">1</span>, <span class="fl">.5</span>),</a>
+<a class="sourceLine" id="cb32-8" data-line-number="8">  <span class="dt">X3 =</span> <span class="kw">rpois</span>(N, <span class="dv">3</span>),</a>
+<a class="sourceLine" id="cb32-9" data-line-number="9">  <span class="dt">Z =</span> <span class="kw">conduct_ra</span>(declaration)</a>
+<a class="sourceLine" id="cb32-10" data-line-number="10">  )</a>
+<a class="sourceLine" id="cb32-11" data-line-number="11">  </a>
+<a class="sourceLine" id="cb32-12" data-line-number="12">balance_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data) {</a>
+<a class="sourceLine" id="cb32-13" data-line-number="13">  <span class="kw">summary</span>(<span class="kw">lm</span>(Z <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>X3, <span class="dt">data =</span> data))<span class="op">$</span>f[<span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb32-14" data-line-number="14">}</a>
+<a class="sourceLine" id="cb32-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb32-16" data-line-number="16"><span class="co"># Confirm it works!</span></a>
+<a class="sourceLine" id="cb32-17" data-line-number="17"><span class="kw">balance_fun</span>(dat)</a></code></pre></div>
+<pre><code>##  value 
+## 2.7837</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">ri2_out &lt;-</a>
+<a class="sourceLine" id="cb34-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(</a>
+<a class="sourceLine" id="cb34-3" data-line-number="3">  <span class="dt">test_function =</span> balance_fun,</a>
+<a class="sourceLine" id="cb34-4" data-line-number="4">  <span class="dt">declaration =</span> declaration,</a>
+<a class="sourceLine" id="cb34-5" data-line-number="5">  <span class="dt">assignment =</span> <span class="st">"Z"</span>,</a>
+<a class="sourceLine" id="cb34-6" data-line-number="6">  <span class="dt">sharp_hypothesis =</span> <span class="dv">0</span>,</a>
+<a class="sourceLine" id="cb34-7" data-line-number="7">  <span class="dt">data =</span> dat</a>
+<a class="sourceLine" id="cb34-8" data-line-number="8">  )</a></code></pre></div>
 <pre><code>## Warning in data.frame(est_sim = test_stat_sim, est_obs = test_stat_obs, :
 ## row names were found from a short variable and have been discarded</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(ri2_out)</code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="kw">plot</span>(ri2_out)</a></code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(ri2_out)</code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
 <pre><code>##             coefficient estimate two_tailed_p_value null_ci_lower
-## 1 Custom Test Statistic 2.295495              0.098    0.07466706
+## 1 Custom Test Statistic   2.7837              0.051    0.07106739
 ##   null_ci_upper
-## 1      3.379954</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># For comparison</span>
-<span class="kw">summary</span>(<span class="kw">lm</span>(Z <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>X3, <span class="dt">data =</span> dat))</code></pre></div>
+## 1      3.411524</code></pre>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="co"># For comparison</span></a>
+<a class="sourceLine" id="cb39-2" data-line-number="2"><span class="kw">summary</span>(<span class="kw">lm</span>(Z <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>X3, <span class="dt">data =</span> dat))</a></code></pre></div>
 <pre><code>## 
 ## Call:
 ## lm(formula = Z ~ X1 + X2 + X3, data = dat)
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -0.67796 -0.45944  0.06227  0.46615  0.74251 
+## -0.77074 -0.46661  0.00624  0.44361  0.75474 
 ## 
 ## Coefficients:
 ##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  0.47832    0.11131   4.297 4.15e-05 ***
-## X1           0.11600    0.05159   2.249   0.0268 *  
-## X2          -0.11542    0.09910  -1.165   0.2470    
-## X3           0.03042    0.02712   1.122   0.2647    
+## (Intercept)  0.48050    0.10464   4.592 1.33e-05 ***
+## X1          -0.10632    0.05263  -2.020   0.0462 *  
+## X2          -0.17672    0.09832  -1.797   0.0754 .  
+## X3           0.03572    0.02760   1.294   0.1987    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.4929 on 96 degrees of freedom
-## Multiple R-squared:  0.06693,    Adjusted R-squared:  0.03777 
-## F-statistic: 2.295 on 3 and 96 DF,  p-value: 0.08265</code></pre>
-</div>
-</div>
-<div id="conclusion" class="section level1">
-<h1 class="hasAnchor">
-<a href="#conclusion" class="anchor"></a>Conclusion</h1>
+## Residual standard error: 0.4895 on 96 degrees of freedom
+## Multiple R-squared:  0.08003,    Adjusted R-squared:  0.05128 
+## F-statistic: 2.784 on 3 and 96 DF,  p-value: 0.04501</code></pre>
+</section></section><section id="conclusion" class="level1"><h1>Conclusion</h1>
 <p>All of the randomization inference procedures had to, somehow or other, provide three pieces of information:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>a test statistic (the difference-in-means, a regression coefficient, the difference-in-variances, an <span class="math inline">\(F\)</span>-statistic, etc.)</li>
 <li>a sharp null hypothesis. The “sharp” in this context means that the null hypothesis has something specific to say about every unit’s potential outcomes. For example, the sharp null hypothesis of no effect for any unit means hypothesizes that each unit’s treatment and control potential outcome are identical.</li>
 <li>A randomization procedure. We discussed simple, complete, blocked, clustered, and blocked and clustered designs, but these are not an exhaustive list of every kind of random assignment. Whatever your randomization procedure is, you have respect it!</li>
 </ol>
 <p>Randomization inference is a useful tool because we can conduct hypothesis tests without making additional assumptions about the distributions of outcomes or estimators. We can also do tests for arbitrary test statistics – we’re not just restricted to the set for which statisticians have worked out analytic hypothesis testing procedures.</p>
 <p>A downside is that RI can be a pain to set up – the <code>ri2</code> package is designed to make this part easier.</p>
-</div>
-<div class="footnotes">
-<hr>
+</section><section class="footnotes"><hr>
 <ol>
-<li id="fn1"><p>The <code>ri2</code> package is the successor to the <code>ri</code> package, written by Peter Aronow and Cyrus Samii. <code>ri</code> was lightweight, fast, and correct for the set of tasks it handled. <code>ri2</code> hopes to be all that and more.<a href="#fnref1">↩</a></p></li>
-</ol>
-</div>
+<li id="fn1"><p>The <code>ri2</code> package is the successor to the <code>ri</code> package, written by Peter Aronow and Cyrus Samii. <code>ri</code> was lightweight, fast, and correct for the set of tasks it handled. <code>ri2</code> hopes to be all that and more.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+</ol></section>
 </div>
   </div>
 
@@ -422,7 +391,7 @@ balance_fun &lt;-<span class="st"> </span><span class="cf">function</span>(data)
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
 </div>
 
       </footer>
