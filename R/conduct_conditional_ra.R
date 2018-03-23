@@ -26,7 +26,7 @@ conduct_conditional_ra <-
         simple_ra(
           N = sum(assignment_vec %in% conditions),
           prob_each = prob_each_local,
-          condition_names = conditions,
+          conditions = conditions,
           check_inputs = FALSE
         )
     }
@@ -40,7 +40,7 @@ conduct_conditional_ra <-
         complete_ra(
           N = sum(assignment_vec %in% conditions),
           prob_each = prob_each_local,
-          condition_names = conditions,
+          conditions = conditions,
           check_inputs = FALSE
         )
     }
@@ -61,7 +61,7 @@ conduct_conditional_ra <-
         block_ra(
           blocks = declaration$blocks[assignment_vec %in% conditions],
           block_prob_each = block_prob_each_local,
-          condition_names = conditions,
+          conditions = conditions,
           check_inputs = FALSE
         )
     }
@@ -75,7 +75,7 @@ conduct_conditional_ra <-
         cluster_ra(
           clusters = declaration$clusters[assignment_vec %in% conditions],
           prob_each = prob_each_local,
-          condition_names = conditions,
+          conditions = conditions,
           check_inputs = FALSE
         )
     }
@@ -99,7 +99,7 @@ conduct_conditional_ra <-
           blocks = declaration$blocks[assignment_vec %in% conditions],
           clusters = declaration$clusters[assignment_vec %in% conditions],
           block_prob_each = block_prob_each_local,
-          condition_names = conditions,
+          conditions = conditions,
           check_inputs = FALSE
         )
     }
