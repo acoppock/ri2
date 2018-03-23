@@ -83,7 +83,7 @@ conduct_ri_f <- function(model_1,
 
   if (length(sharp_hypothesis) == 1) {
     sharp_hypothesis <-
-      rep(sharp_hypothesis, length(unique(assignment_vec)))
+      rep(sharp_hypothesis, length(unique(assignment_vec))-1)
   }
 
   pos_mat <- generate_pos(

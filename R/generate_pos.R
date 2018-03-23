@@ -4,25 +4,14 @@ generate_pos <- function(Y,
                          sharp_hypothesis) {
   condition_names <- sort(unique(assignment_vec))
 
-  pos_mat <-
-    matrix(
-      data = NA,
-      ncol = length(condition_names),
-      nrow = length(Y),
-      dimnames = list(NULL, condition_names)
-    )
+  pos_mat <- matrix(NA, length(Y), length(condition_names))
+  colnames(pos_mat) <- condition_names
 
   # Knock down to baseline
-  for (i in 2:length(condition_names)) {
-    pos_mat[, paste(condition_names[1])] <-
-      Y - (assignment_vec == condition_names[i]) * sharp_hypothesis[i - 1]
-  }
+  pos_mat[,1] <- Y - c(0, sharp_hypothesis)[match(assignment_vec, condition_names)]
 
   # Build back up by conditions
-  for (i in 2:length(condition_names)) {
-    pos_mat[, paste(condition_names[i])] <-
-      pos_mat[, paste(condition_names[1])] + sharp_hypothesis[i - 1]
-  }
+  pos_mat[,-1] <- outer(pos_mat[,1], sharp_hypothesis, `+`)
 
   return(pos_mat)
 }
