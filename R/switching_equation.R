@@ -1,12 +1,9 @@
 switching_equation <- function(pos_mat, assignment_vec) {
-  Y <- rep(NA, length(assignment_vec))
 
-  condition_names <- sort(unique(assignment_vec))
-
-  for (cond in condition_names) {
-    Y[assignment_vec == cond] <-
-      pos_mat[assignment_vec == cond, paste(cond)]
-  }
+  Y <- pos_mat[cbind(
+         1:nrow(pos_mat),
+         match(assignment_vec, colnames(pos_mat))
+  )]
 
   return(Y)
 }
