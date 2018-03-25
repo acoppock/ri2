@@ -24,6 +24,7 @@ test_that("main effect f test", {
   plot(ri_out)
   summary(ri_out)
   anova(lm(Y ~ Z, data = df))
+  expect_true(TRUE)
 })
 
 
@@ -55,6 +56,8 @@ test_that("interaction test under constant fx", {
     lm(Y ~ Z + X, data = df),
     lm(Y ~ Z + X + Z * X, data = df)
   )
+  expect_true(TRUE)
+
 })
 
 
