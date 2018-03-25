@@ -52,8 +52,12 @@ conduct_ri_f <- function(model_1,
       has_int = TRUE
     ))
 
-  coefs_obs_1 <- coefs_obs_1[coefs_obs_1$coefficient_name %in% colnames(design_matrix_1), , drop = FALSE]
-  coefs_obs_1 <- coefs_obs_1$coefficients
+  jx <- intersect(c("term", "coefficient_name"),  names(coefs_obs_1))[1]
+  beta_ix <- intersect(c("estimate", "coefficients"),  names(coefs_obs_1))[1]
+  se_ix <- intersect(c("se", "std.error"),  names(coefs_obs_1))[1]
+
+
+  coefs_obs_1 <- coefs_obs_1[coefs_obs_1[[jx]] %in% colnames(design_matrix_1), beta_ix, drop = TRUE]
 
   coefs_obs_2 <-
     estimatr::tidy.lm_robust(lm_robust_fit(
@@ -69,8 +73,7 @@ conduct_ri_f <- function(model_1,
       has_int = TRUE
     ))
 
-  coefs_obs_2 <- coefs_obs_2[coefs_obs_2$coefficient_name %in% colnames(design_matrix_2), , drop = FALSE]
-  coefs_obs_2 <- coefs_obs_2$coefficients
+  coefs_obs_2 <- coefs_obs_2[coefs_obs_2[[jx]] %in% colnames(design_matrix_2), beta_ix, drop = TRUE]
 
   ssr_1 <- sum((outcome_vec - design_matrix_1 %*% coefs_obs_1) ^ 2)
   ssr_2 <- sum((outcome_vec - design_matrix_2 %*% coefs_obs_2) ^ 2)
@@ -135,8 +138,7 @@ conduct_ri_f <- function(model_1,
         has_int = TRUE
       ))
 
-    coefs_sim_1 <- coefs_sim_1[coefs_sim_1$coefficient_name %in% colnames(design_matrix_sim_1), , drop = FALSE]
-    coefs_sim_1 <- coefs_sim_1$coefficients
+    coefs_sim_1 <- coefs_sim_1[coefs_sim_1[[jx]] %in% colnames(design_matrix_sim_1), beta_ix, drop = TRUE]
 
     coefs_sim_2 <-
       estimatr::tidy.lm_robust(lm_robust_fit(
@@ -152,8 +154,7 @@ conduct_ri_f <- function(model_1,
         has_int = TRUE
       ))
 
-    coefs_sim_2 <- coefs_sim_2[coefs_sim_2$coefficient_name %in% colnames(design_matrix_sim_2), , drop = FALSE]
-    coefs_sim_2 <- coefs_sim_2$coefficients
+    coefs_sim_2 <- coefs_sim_2[coefs_sim_2[[jx]] %in% colnames(design_matrix_sim_2), beta_ix , drop = TRUE]
 
     ssr_sim_1 <-
       sum((outcome_vec_sim - design_matrix_sim_1 %*% coefs_sim_1) ^ 2)
