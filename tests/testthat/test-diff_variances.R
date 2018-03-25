@@ -47,4 +47,6 @@ test_that("test-function", {
   plot(ri_out)
   summary(ri_out)
   summary(lm(Z ~ X, data = df))
+
+  expect_true(TRUE)
 })

@@ -85,4 +85,5 @@ test_that("Balance Test", {
   # summary(ri_out)
   # anova(lm(Y ~ Z + X, data = df),
   #       lm(Y ~ Z + X + Z*X, data = df))
+  expect_true(TRUE)
 })
