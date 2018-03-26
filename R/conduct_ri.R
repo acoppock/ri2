@@ -77,6 +77,9 @@
 #' plot(out)
 #' summary(out)
 #'
+#' summary(out, p = "two-tailed")
+#' summary(out, p = "upper")
+#' summary(out, p = "lower")
 #'
 #' # Randomization Inference for arbitrary test statistics
 #'
