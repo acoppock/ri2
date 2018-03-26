@@ -109,6 +109,8 @@ test_that("Conditional RA", {
   table(Z, clusters)
   table(Z2, clusters)
   table(Z, Z2)
+
+  expect_true(TRUE)
 })
 
 
@@ -126,7 +128,8 @@ test_that("Conditional without conditions!", {
     conditions = c(0, 1)
   )
 
-  table(Z)
+  expect_true(all(table(Z) == N/2))
+
   table(Z2)
   table(Z, Z2)
 })

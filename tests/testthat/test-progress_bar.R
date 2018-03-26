@@ -22,4 +22,5 @@ test_that("Basic Two Arm Trial", {
       progress_bar = TRUE
     )
 
+  expect_true(TRUE)
 })
