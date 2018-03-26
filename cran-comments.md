@@ -2,7 +2,7 @@
 * Small changes to accomodate upcomping estimatr 0.6.0
 
 ## Test environments
-* local OS X install, R version 3.4.3 (Kite-Eating Tree)
+* local OS X install, R version 3.4.4 (Someone to Lean On)
 * R-devel with win-builder.r-project.org.
 
 ## R CMD check results
