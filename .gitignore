@@ -16,3 +16,5 @@ tests/testthat/*.pdf
 inst/doc
 src/*.so
 src/*.o
+
+.Rproj.user/shared/notebooks/paths
