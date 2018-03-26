@@ -1,5 +1,5 @@
 ## Release version 0.1.1 of ri2
-* Small changes to accomodate upcomping estimatr 0.6.0
+* Small changes to accomodate upcoming estimatr 0.6.0
 
 ## Test environments
 * local OS X install, R version 3.4.4 (Someone to Lean On)
