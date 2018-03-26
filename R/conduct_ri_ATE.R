@@ -75,13 +75,21 @@ conduct_ri_ATE <- function(formula,
     has_int = TRUE
   )
 
+
+
   fit_obs <- estimatr::tidy.lm_robust(fit_obs)
-  fit_obs <- fit_obs[fit_obs$coefficient_name %in% coefficient_names, , drop = FALSE]
+
+  jx <- intersect(c("term", "coefficient_name"),  names(fit_obs))[1]
+  beta_ix <- intersect(c("estimate", "coefficients"),  names(fit_obs))[1]
+  se_ix <- intersect(c("se", "std.error"),  names(fit_obs))[1]
+
+
+  fit_obs <- fit_obs[fit_obs[[jx]] %in% coefficient_names, , drop = FALSE]
 
   if (studentize) {
-    coefs_obs <- fit_obs$coefficients / fit_obs$se
+    coefs_obs <- fit_obs[[beta_ix]] / fit_obs[[se_ix]]
   } else {
-    coefs_obs <- fit_obs$coefficients
+    coefs_obs <- fit_obs[[beta_ix]]
   }
 
   names(coefs_obs) <- coefficient_names
@@ -151,12 +159,12 @@ conduct_ri_ATE <- function(formula,
       )
 
       fit_sim <- estimatr::tidy.lm_robust(fit_sim)
-      fit_sim <- fit_sim[fit_sim$coefficient_name %in% coefficient_names[i - 1], , drop = FALSE]
+      fit_sim <- fit_sim[fit_sim[[jx]] %in% coefficient_names[i - 1], , drop = FALSE]
 
       if (studentize) {
-        coefs_sim <- fit_sim$coefficients / fit_sim$se
+        coefs_sim <- fit_sim[[beta_ix]] / fit_sim[[se_ix]]
       } else {
-        coefs_sim <- fit_sim$coefficients
+        coefs_sim <- fit_sim[[beta_ix]]
       }
 
       names(coefs_sim) <- coefficient_names[i - 1]
