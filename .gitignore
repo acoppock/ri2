@@ -18,3 +18,9 @@ src/*.so
 src/*.o
 
 .Rproj.user/shared/notebooks/paths
+
+*.pper
+
+.Rproj.user/9F29A888/persistent-state
+
+.Rproj.user/shared/notebooks/paths
