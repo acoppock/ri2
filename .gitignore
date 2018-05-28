@@ -8,6 +8,7 @@
 .Rproj.user/shared/notebooks/paths
 *.Rproj
 ri2.Rproj
+.Rroj.user
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
