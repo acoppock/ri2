@@ -6,9 +6,7 @@
 # RStudio files
 *.Rproj.user/
 .Rproj.user/shared/notebooks/paths
-*.Rproj
-ri2.Rproj
-.Rroj.user
+.Rproj.user
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
