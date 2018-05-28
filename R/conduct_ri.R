@@ -22,6 +22,7 @@
 #' @param data A data.frame.
 #' @param sims the number of simulations. Defaults to 1000.
 #' @param progress_bar logical, defaults to FALSE.  Should a progress bar be displayed in the console?
+#' @param p Should "two-tailed", "upper", or "lower" p-values be reported? Defaults to "two-tailed"
 #'
 #' @export
 #'
@@ -131,7 +132,8 @@ conduct_ri <- function(formula = NULL,
                        permutation_matrix = NULL,
                        data,
                        sims = 1000,
-                       progress_bar = FALSE) {
+                       progress_bar = FALSE,
+                       p = "two-tailed") {
   # some error checking -----------------------------------------------------
 
   if (is.null(declaration) &
@@ -141,6 +143,9 @@ conduct_ri <- function(formula = NULL,
   if (is.null(declaration) & !is.null(permutation_matrix)) {
     declaration <- randomizr::declare_ra(permutation_matrix = permutation_matrix)
     permutation_matrix <- NULL
+  }
+  if(!assignment %in% names(data)) {
+    stop(paste0("Assignment variable ", assignment, " not found in data."))
   }
 
   # Case 1: ATE -------------------------------------------------------------
@@ -211,6 +216,9 @@ conduct_ri <- function(formula = NULL,
       est_obs <- round(est_obs, 10)
     })
 
+
+  ri_out$p <- p
+
   return(ri_out)
 }
 
@@ -218,7 +226,8 @@ conduct_ri <- function(formula = NULL,
 #' @import ggplot2
 #'
 #'
-plot.ri <- function(x, p = "two-tailed", ...) {
+plot.ri <- function(x, p = NULL, ...) {
+  if(is.null(p)){p <- x$p}
   if (p == "two-tailed") {
     x$sims_df <-
       within(
@@ -282,14 +291,15 @@ plot.ri <- function(x, p = "two-tailed", ...) {
 }
 
 #' @export
-print.ri <- function(x, p = "two-tailed", ...) {
+print.ri <- function(x, p = NULL, ...) {
   print(summary(x, p))
   invisible(summary(x, p))
 }
 
 #' @export
 #' @importFrom stats quantile
-summary.ri <- function(object, p = "two-tailed", ...) {
+summary.ri <- function(object, p = NULL, ...) {
+  if(is.null(p)){p <- object$p}
   if (p == "two-tailed") {
     object$sims_df <-
       within(
@@ -319,9 +329,7 @@ summary.ri <- function(object, p = "two-tailed", ...) {
         dat,
         data.frame(
           estimate = unique(est_obs),
-          p_value = mean(extreme),
-          null_ci_lower = quantile(est_sim, 0.025),
-          null_ci_upper = quantile(est_sim, 0.975)
+          p_value = mean(extreme)
         )
       )
     }
@@ -335,9 +343,7 @@ summary.ri <- function(object, p = "two-tailed", ...) {
     return_df[, c(
       "coefficient",
       "estimate",
-      "p_value",
-      "null_ci_lower",
-      "null_ci_upper"
+      "p_value"
     )]
 
 

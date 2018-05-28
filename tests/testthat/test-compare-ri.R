@@ -39,7 +39,6 @@ test_that("Compare to ri", {
     block_m = tapply(Z, block, sum) / 2
   )
 
-  # debugonce(conduct_ri)
   ri2_out <- conduct_ri(
     y ~ Z,
     sharp_hypothesis = 0,
@@ -68,11 +67,11 @@ test_that("Compare to ri", {
   )
 
   expect_equivalent(
-    summary(ri2_out)$null_ci_lower,
+    quantile(ri2_out$sims_df$est_sim, probs = 0.025),
     ri1_out$quantile[1]
   )
   expect_equivalent(
-    summary(ri2_out)$null_ci_upper,
+    quantile(ri2_out$sims_df$est_sim, probs = 0.975),
     ri1_out$quantile[2]
   )
 })

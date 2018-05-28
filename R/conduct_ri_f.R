@@ -20,10 +20,13 @@ conduct_ri_f <- function(model_1,
   design_matrix_2 <- model.matrix.default(model_2, data = data)
 
   if (nrow(design_matrix_1) != nrow(design_matrix_2)) {
-    stop("Missigness!")
+    stop("The number of complete observations must be the same in both models.")
   }
   if (all.vars(model_1[[2]]) != all.vars(model_2[[2]])) {
-    stop("Outcome Match!")
+    stop("The outcome variable must be the same in both models.")
+  }
+  if(! all.vars(model_1[[2]]) %in% names(data)){
+    stop(paste0("Outcome variable ", all.vars(formula[[2]]), " not found in data."))
   }
 
   assignment_vec <- data[, assignment]

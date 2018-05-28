@@ -10,8 +10,7 @@ test_that("Basic Two Arm Trial", {
   Z <- randomizr::conduct_ra(declaration)
   X <- rnorm(N)
   Y <- .9 * X + .2 * Z + rnorm(N)
-  dat <- data.frame(Z, X, Y)
-
+  dat <- data.frame(Z, X, Y, blocks)
 
   ri_out <-
     conduct_ri(

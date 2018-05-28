@@ -16,8 +16,14 @@ conduct_ri_ATE <- function(formula,
   # setup
 
   formula <- as.formula(formula)
+
   assignment_vec <- data[[assignment]]
   design_matrix <- model.matrix.default(formula, data = data)
+
+  if(! all.vars(formula[[2]]) %in% names(data)){
+    stop(paste0("Outcome variable ", all.vars(formula[[2]]), " not found in data."))
+  }
+
   outcome_vec <- data[[all.vars(formula[[2]])]]
   condition_names <- sort(unique(assignment_vec))
 
