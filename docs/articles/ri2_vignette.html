@@ -8,14 +8,17 @@
 <title>Randomization Inference with ri2 • ri2</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
-<!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Randomization Inference with ri2">
+<meta property="og:description" content="">
+<meta name="twitter:card" content="summary">
+<!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body>
-    <div class="container template-vignette">
+    <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -24,12 +27,16 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">ri2</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">ri2</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.1</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="..//index.html">
+  <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
      
   </a>
@@ -63,17 +70,20 @@
 
       
       </header><div class="row">
-  <div class="col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Randomization Inference with ri2</h1>
                         <h4 class="author">Alexander Coppock, Yale University</h4>
             
-            <h4 class="date">2018-02-09</h4>
-          </div>
+            <h4 class="date">2018-06-27</h4>
+      
+      
+      <div class="hidden name"><code>ri2_vignette.Rmd</code></div>
+
+    </div>
 
     
     
-<div class="contents">
 <p>Randomization inference (RI) is procedure for conducting hypothesis tests in randomized experiments. RI is useful for calculating the the probability that:</p>
 <ul>
 <li>a <strong>test statistic</strong> would be as extreme or more as observed…</li>
@@ -83,12 +93,14 @@
 <p>That probability is sometimes called a <span class="math inline">\(p\)</span>-value.</p>
 <p>Randomization inference has a beautiful logic to it that may be more appealing to you than traditional hypothesis frameworks that rely on <span class="math inline">\(t\)</span>- or <span class="math inline">\(F\)</span>-tests. For a really lovely introduction to randomization inference, read Chapter 3 of Gerber and Green (2012).</p>
 <p>The hard part of actually conducting randomization inference is the accounting. We need to enumerate all (or a random subset of all) the possible randomizations, correctly implement the null hypothesis, maybe figure out the inverse probability weights, then calculate the test statistics over and over. You can do this by hand with loops. The <code>ri2</code> package for r was written so that you don’t have to.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a></p>
-<section id="basic-syntax" class="level1"><h1>Basic syntax</h1>
+<div id="basic-syntax" class="section level1">
+<h1 class="hasAnchor">
+<a href="#basic-syntax" class="anchor"></a>Basic syntax</h1>
 <p>Gerber and Green (2012) describe a hypothetical experiment in which 2 of 7 villages are assigned a female council head and the outcome is the share of the local budget allocated to water sanitation. Their table 2.2 describes one way the experiment could have come out.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">table_<span class="dv">2</span>_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Z =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>),</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">                        <span class="dt">Y =</span> <span class="kw">c</span>(<span class="dv">15</span>, <span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">20</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">30</span>))</a></code></pre></div>
 <p>In order to conduct randomization inference, we need to supply 1) a test statistic, 2) a null hypothesis, and 3) a randomization procedure.</p>
-<ol type="1">
+<ol style="list-style-type: decimal">
 <li>The test statistic. The <code>formula</code> argument of the <code>conduct_ri</code> function is similar to the regression syntax of r’s built-in <code>lm</code> function. Our test statistic is the coefficient on <code>Z</code> from a regression of <code>Y</code> on <code>Z</code>, or more simply, the difference-in-means.</li>
 <li>The null hypothesis. The <code>sharp_hypothesis</code> argument of the <code>conduct_ri</code> function indicates that we are imagining a (hypothetical!) world in which the true difference in potential outcomes is exactly <code>0</code> for all units.</li>
 <li>The randomization procedure: The <code>declare_ra</code> function from the <code>randomizr</code> package allows us to declare a randomization procedure. In this case, we are assigning <code>2</code> units to treatment out of <code>7</code> total units.</li>
@@ -108,13 +120,16 @@
 <a class="sourceLine" id="cb5-10" data-line-number="10">)</a>
 <a class="sourceLine" id="cb5-11" data-line-number="11"></a>
 <a class="sourceLine" id="cb5-12" data-line-number="12"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
-<pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
-## 1           Z      6.5          0.3809524          -7.5            10</code></pre>
+<pre><code>##   coefficient estimate two_tailed_p_value
+## 1           Z      6.5          0.3809524</code></pre>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">plot</span>(ri2_out)</a></code></pre></div>
-<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-2-1.png" width="672"></p>
-</section><section id="more-complex-designs" class="level1"><h1>More complex designs</h1>
+<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+</div>
+<div id="more-complex-designs" class="section level1">
+<h1 class="hasAnchor">
+<a href="#more-complex-designs" class="anchor"></a>More complex designs</h1>
 <p>The <code>ri2</code> package has specific support for all the randomization procedures that can be described by the <code>randomizr</code> package:</p>
-<ol type="1">
+<ol style="list-style-type: decimal">
 <li>Simple</li>
 <li>Complete</li>
 <li>Blocked</li>
@@ -150,11 +165,11 @@
 <a class="sourceLine" id="cb10-10" data-line-number="10"></a>
 <a class="sourceLine" id="cb10-11" data-line-number="11">declaration</a></code></pre></div>
 <pre><code>## Random assignment procedure: Blocked and clustered random assignment 
-## Number of units: 18 
-## Number of blocks: 3 
-## Number of clusters: 9 
-## Number of treatment arms: 2 
-## The possible treatment categories are 0 and 1.
+##  Number of units: 18 
+##  Number of blocks: 3
+##  Number of clusters: 9
+##  Number of treatment arms: 2 
+##  The possible treatment categories are 0 and 1.
 ## The probabilities of assignment are NOT constant across units. Your analysis strategy must account for differential probabilities of assignment, typically by employing inverse probability weights.</code></pre>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">ri2_out &lt;-<span class="st"> </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2">  Y <span class="op">~</span><span class="st"> </span>Z,</a>
@@ -163,15 +178,20 @@
 <a class="sourceLine" id="cb12-5" data-line-number="5">  <span class="dt">data =</span> dat</a>
 <a class="sourceLine" id="cb12-6" data-line-number="6">)</a>
 <a class="sourceLine" id="cb12-7" data-line-number="7"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
-<pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
-## 1           Z        2          0.1944444     -2.055556      2.222222</code></pre>
+<pre><code>##   coefficient estimate two_tailed_p_value
+## 1           Z        2          0.1944444</code></pre>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">plot</span>(ri2_out)</a></code></pre></div>
-<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-3-1.png" width="672"></p>
-</section><section id="comparing-nested-models" class="level1"><h1>Comparing nested models</h1>
+<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
+</div>
+<div id="comparing-nested-models" class="section level1">
+<h1 class="hasAnchor">
+<a href="#comparing-nested-models" class="anchor"></a>Comparing nested models</h1>
 <p>A traditional ANOVA hypothesis testing framework (implicitly or explicitly) compares two models, a restricted model and an unrestricted model, where the restricted model can be said to “nest” within the unrestricted model. The difference between models is summarized as an <span class="math inline">\(F\)</span>-statistic. We then compare the observed <span class="math inline">\(F\)</span>-statistic to a hypothetical null distribution that, under some possibly wrong assumptions can be said to follow an <span class="math inline">\(F\)</span>-distribution.</p>
 <p>In a randomization inference framework, we’re happy to use the <span class="math inline">\(F\)</span>-statistic, but we want to construct a null distribution that corresponds to the distribution of <span class="math inline">\(F\)</span>-statistics that we would obtain if a particular (typically sharp) null hypothesis were true and we cycled through all the possible random assignments.</p>
 <p>To do this in the <code>ri2</code> package, we need to supply model formulae to the <code>model_1</code> and <code>model_2</code> arguments of <code>conduct_ri</code>.</p>
-<section id="three-arm-trial" class="level2"><h2>Three Arm Trial</h2>
+<div id="three-arm-trial" class="section level2">
+<h2 class="hasAnchor">
+<a href="#three-arm-trial" class="anchor"></a>Three Arm Trial</h2>
 <p>In this example, we consider a three-arm trial. We want to conduct the randomization inference analogue of an <span class="math inline">\(F\)</span>-test to see if any of the treatments influenced the outcome. We’ll consider the sharp null hypothesis that each unit would express exactly the same outcome regardless of which of the three arms it was assigned to.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">N &lt;-<span class="st"> </span><span class="dv">100</span></a>
 <a class="sourceLine" id="cb15-2" data-line-number="2"><span class="co"># three-arm trial, treat 33, 33, 34 or 33, 34, 33, or 34, 33, 33</span></a>
@@ -191,10 +211,10 @@
 <a class="sourceLine" id="cb15-16" data-line-number="16">  )</a>
 <a class="sourceLine" id="cb15-17" data-line-number="17"></a>
 <a class="sourceLine" id="cb15-18" data-line-number="18"><span class="kw">plot</span>(ri2_out)</a></code></pre></div>
-<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-4-1.png" width="672"></p>
+<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
-<pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
-## 1 F-statistic 1.532795              0.224    0.01821524      4.279474</code></pre>
+<pre><code>##   coefficient estimate two_tailed_p_value
+## 1 F-statistic 4.386123              0.018</code></pre>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="co"># for comparison</span></a>
 <a class="sourceLine" id="cb18-2" data-line-number="2"><span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span><span class="dv">1</span>, <span class="dt">data =</span> dat), </a>
 <a class="sourceLine" id="cb18-3" data-line-number="3">      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat))</a></code></pre></div>
@@ -202,10 +222,15 @@
 ## 
 ## Model 1: Y ~ 1
 ## Model 2: Y ~ Z
-##   Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)
-## 1     99 77.748                           
-## 2     97 75.366  2    2.3819 1.5328 0.2211</code></pre>
-</section><section id="interaction-terms" class="level2"><h2>Interaction terms</h2>
+##   Res.Df    RSS Df Sum of Sq      F  Pr(&gt;F)  
+## 1     99 89.814                              
+## 2     97 82.365  2    7.4488 4.3861 0.01501 *
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+<div id="interaction-terms" class="section level2">
+<h2 class="hasAnchor">
+<a href="#interaction-terms" class="anchor"></a>Interaction terms</h2>
 <p>Oftentimes in an experiment, we’re interested the difference in average treatment effects by subgroups defined by pre-treatment characteristics. For example, we might want to know if the average treatment effect is larger for men or women. If we want to conduct a formal hypothesis test, we’re not interested in testing against the sharp null of no effect for any unit – we want to test against the null hypothesis of <strong>constant effects</strong>. In the example below, we test using the null hypothesis that all units have a constant effect equal to the estimated ATE. See Gerber and Green (2012) Chapter 9 for more information on this procedure.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">N &lt;-<span class="st"> </span><span class="dv">100</span></a>
 <a class="sourceLine" id="cb20-2" data-line-number="2"><span class="co"># two-arm trial, treat 50 of 100</span></a>
@@ -218,8 +243,8 @@
 <a class="sourceLine" id="cb20-9" data-line-number="9"><span class="co"># Observed ATE</span></a>
 <a class="sourceLine" id="cb20-10" data-line-number="10">ate_hat &lt;-<span class="st"> </span><span class="kw">coef</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z, <span class="dt">data =</span> dat))[<span class="dv">2</span>]</a>
 <a class="sourceLine" id="cb20-11" data-line-number="11">ate_hat</a></code></pre></div>
-<pre><code>##          Z 
-## -0.0223385</code></pre>
+<pre><code>##           Z 
+## -0.06336663</code></pre>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">ri2_out &lt;-</a>
 <a class="sourceLine" id="cb22-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(</a>
 <a class="sourceLine" id="cb22-3" data-line-number="3">    <span class="dt">model_1 =</span> Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="co"># restricted model</span></a>
@@ -230,10 +255,10 @@
 <a class="sourceLine" id="cb22-8" data-line-number="8">  )</a>
 <a class="sourceLine" id="cb22-9" data-line-number="9"></a>
 <a class="sourceLine" id="cb22-10" data-line-number="10"><span class="kw">plot</span>(ri2_out)</a></code></pre></div>
-<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-5-1.png" width="672"></p>
+<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
-<pre><code>##   coefficient estimate two_tailed_p_value null_ci_lower null_ci_upper
-## 1 F-statistic 12.81859                  0   0.001263264      4.696894</code></pre>
+<pre><code>##   coefficient estimate two_tailed_p_value
+## 1 F-statistic 2.997533              0.091</code></pre>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co"># for comparison</span></a>
 <a class="sourceLine" id="cb25-2" data-line-number="2"><span class="kw">anova</span>(<span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X, <span class="dt">data =</span> dat),</a>
 <a class="sourceLine" id="cb25-3" data-line-number="3">      <span class="kw">lm</span>(Y <span class="op">~</span><span class="st"> </span>Z <span class="op">+</span><span class="st"> </span>X <span class="op">+</span><span class="st"> </span>Z<span class="op">*</span>X, <span class="dt">data =</span> dat))</a></code></pre></div>
@@ -241,14 +266,20 @@
 ## 
 ## Model 1: Y ~ Z + X
 ## Model 2: Y ~ Z + X + Z * X
-##   Res.Df     RSS Df Sum of Sq      F    Pr(&gt;F)    
-## 1     97 109.842                                  
-## 2     96  96.903  1    12.939 12.819 0.0005406 ***
+##   Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)  
+## 1     97 105.71                             
+## 2     96 102.51  1    3.2008 2.9975 0.0866 .
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
-</section></section><section id="arbitrary-test-statistics" class="level1"><h1>Arbitrary test statistics</h1>
+</div>
+</div>
+<div id="arbitrary-test-statistics" class="section level1">
+<h1 class="hasAnchor">
+<a href="#arbitrary-test-statistics" class="anchor"></a>Arbitrary test statistics</h1>
 <p>A major benefit of randomization inference is we can specify any scalar test statistic, which means we can conduct hypothesis tests for estimators beyond the narrow set for which statisticians have derived the variance. The <code>ri2</code> package accommodates this with the <code>test_function</code> argument of <code>conduct_ri</code>. You supply a function that takes a <code>data.frame</code> as its only argument and returns a scalar; <code>conduct_ri</code> does the rest!</p>
-<section id="difference-in-variances" class="level2"><h2>Difference-in-variances</h2>
+<div id="difference-in-variances" class="section level2">
+<h2 class="hasAnchor">
+<a href="#difference-in-variances" class="anchor"></a>Difference-in-variances</h2>
 <p>For example, we can conduct a difference-in-variances test against the sharp null of no effect for any unit:</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">N &lt;-<span class="st"> </span><span class="dv">100</span></a>
 <a class="sourceLine" id="cb27-2" data-line-number="2">declaration &lt;-<span class="st"> </span><span class="kw">declare_ra</span>(<span class="dt">N =</span> N, <span class="dt">m =</span> <span class="dv">50</span>)</a>
@@ -264,7 +295,7 @@
 <a class="sourceLine" id="cb27-12" data-line-number="12"></a>
 <a class="sourceLine" id="cb27-13" data-line-number="13"><span class="co"># confirm it works</span></a>
 <a class="sourceLine" id="cb27-14" data-line-number="14"><span class="kw">test_fun</span>(dat)</a></code></pre></div>
-<pre><code>## [1] 0.2464177</code></pre>
+<pre><code>## [1] 0.1968688</code></pre>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">ri2_out &lt;-</a>
 <a class="sourceLine" id="cb29-2" data-line-number="2"><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(</a>
 <a class="sourceLine" id="cb29-3" data-line-number="3">  <span class="dt">test_function =</span> test_fun,</a>
@@ -276,13 +307,14 @@
 <a class="sourceLine" id="cb29-9" data-line-number="9">)</a>
 <a class="sourceLine" id="cb29-10" data-line-number="10"></a>
 <a class="sourceLine" id="cb29-11" data-line-number="11"><span class="kw">plot</span>(ri2_out)</a></code></pre></div>
-<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-6-1.png" width="672"></p>
+<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
-<pre><code>##             coefficient  estimate two_tailed_p_value null_ci_lower
-## 1 Custom Test Statistic 0.2464177                  0    -0.1425035
-##   null_ci_upper
-## 1      0.145496</code></pre>
-</section><section id="balance-test" class="level2"><h2>Balance Test</h2>
+<pre><code>##             coefficient  estimate two_tailed_p_value
+## 1 Custom Test Statistic 0.1968688              0.001</code></pre>
+</div>
+<div id="balance-test" class="section level2">
+<h2 class="hasAnchor">
+<a href="#balance-test" class="anchor"></a>Balance Test</h2>
 <p>Researchers sometimes conduct balance tests as a randomization check. Rather than conducting separate tests covariate-by-covariate, we might be interested in conducting an omnibus test.</p>
 <p>Imagine we’ve got three covariates <code>X1</code>, <code>X2</code>, and <code>X3</code>. We’ll get a summary balance stat (the <span class="math inline">\(F\)</span>-statistic in this case), but it really could be anything!</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">N &lt;-<span class="st"> </span><span class="dv">100</span></a>
@@ -302,8 +334,8 @@
 <a class="sourceLine" id="cb32-15" data-line-number="15"></a>
 <a class="sourceLine" id="cb32-16" data-line-number="16"><span class="co"># Confirm it works!</span></a>
 <a class="sourceLine" id="cb32-17" data-line-number="17"><span class="kw">balance_fun</span>(dat)</a></code></pre></div>
-<pre><code>##    value 
-## 3.754223</code></pre>
+<pre><code>##      value 
+## 0.09382125</code></pre>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">ri2_out &lt;-</a>
 <a class="sourceLine" id="cb34-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="../reference/conduct_ri.html">conduct_ri</a></span>(</a>
 <a class="sourceLine" id="cb34-3" data-line-number="3">  <span class="dt">test_function =</span> balance_fun,</a>
@@ -315,12 +347,10 @@
 <pre><code>## Warning in data.frame(est_sim = test_stat_sim, est_obs = test_stat_obs, :
 ## row names were found from a short variable and have been discarded</code></pre>
 <div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="kw">plot</span>(ri2_out)</a></code></pre></div>
-<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-7-1.png" width="672"></p>
+<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1"><span class="kw">summary</span>(ri2_out)</a></code></pre></div>
-<pre><code>##             coefficient estimate two_tailed_p_value null_ci_lower
-## 1 Custom Test Statistic 3.754223              0.004    0.06306746
-##   null_ci_upper
-## 1      2.990419</code></pre>
+<pre><code>##             coefficient   estimate two_tailed_p_value
+## 1 Custom Test Statistic 0.09382125              0.958</code></pre>
 <div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1"><span class="co"># For comparison</span></a>
 <a class="sourceLine" id="cb39-2" data-line-number="2"><span class="kw">summary</span>(<span class="kw">lm</span>(Z <span class="op">~</span><span class="st"> </span>X1 <span class="op">+</span><span class="st"> </span>X2 <span class="op">+</span><span class="st"> </span>X3, <span class="dt">data =</span> dat))</a></code></pre></div>
 <pre><code>## 
@@ -329,33 +359,39 @@
 ## 
 ## Residuals:
 ##      Min       1Q   Median       3Q      Max 
-## -0.76657 -0.43393  0.07567  0.46852  0.83179 
+## -0.56176 -0.49916 -0.01695  0.50157  0.56252 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  0.84068    0.11656   7.212 1.27e-10 ***
-## X1           0.03668    0.05122   0.716  0.47567    
-## X2          -0.11377    0.09782  -1.163  0.24769    
-## X3          -0.09632    0.03145  -3.063  0.00284 ** 
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  0.475400   0.110128   4.317 3.85e-05 ***
+## X1          -0.020211   0.050006  -0.404    0.687    
+## X2           0.002240   0.103098   0.022    0.983    
+## X3           0.009942   0.029755   0.334    0.739    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
-## Residual standard error: 0.4828 on 96 degrees of freedom
-## Multiple R-squared:  0.105,  Adjusted R-squared:  0.07703 
-## F-statistic: 3.754 on 3 and 96 DF,  p-value: 0.01344</code></pre>
-</section></section><section id="conclusion" class="level1"><h1>Conclusion</h1>
+## Residual standard error: 0.5096 on 96 degrees of freedom
+## Multiple R-squared:  0.002923,   Adjusted R-squared:  -0.02824 
+## F-statistic: 0.09382 on 3 and 96 DF,  p-value: 0.9633</code></pre>
+</div>
+</div>
+<div id="conclusion" class="section level1">
+<h1 class="hasAnchor">
+<a href="#conclusion" class="anchor"></a>Conclusion</h1>
 <p>All of the randomization inference procedures had to, somehow or other, provide three pieces of information:</p>
-<ol type="1">
+<ol style="list-style-type: decimal">
 <li>a test statistic (the difference-in-means, a regression coefficient, the difference-in-variances, an <span class="math inline">\(F\)</span>-statistic, etc.)</li>
 <li>a sharp null hypothesis. The “sharp” in this context means that the null hypothesis has something specific to say about every unit’s potential outcomes. For example, the sharp null hypothesis of no effect for any unit means hypothesizes that each unit’s treatment and control potential outcome are identical.</li>
 <li>A randomization procedure. We discussed simple, complete, blocked, clustered, and blocked and clustered designs, but these are not an exhaustive list of every kind of random assignment. Whatever your randomization procedure is, you have respect it!</li>
 </ol>
 <p>Randomization inference is a useful tool because we can conduct hypothesis tests without making additional assumptions about the distributions of outcomes or estimators. We can also do tests for arbitrary test statistics – we’re not just restricted to the set for which statisticians have worked out analytic hypothesis testing procedures.</p>
 <p>A downside is that RI can be a pain to set up – the <code>ri2</code> package is designed to make this part easier.</p>
-</section><section class="footnotes"><hr>
+</div>
+<div class="footnotes">
+<hr>
 <ol>
 <li id="fn1"><p>The <code>ri2</code> package is the successor to the <code>ri</code> package, written by Peter Aronow and Cyrus Samii. <code>ri</code> was lightweight, fast, and correct for the set of tasks it handled. <code>ri2</code> hopes to be all that and more.<a href="#fnref1" class="footnote-back">↩</a></p></li>
-</ol></section>
+</ol>
 </div>
   </div>
 
@@ -391,11 +427,13 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
 </div>
+
+  
 
   </body>
 </html>

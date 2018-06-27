@@ -1,0 +1,7 @@
+pandoc: 2.1.1
+pkgdown: 1.1.0
+pkgdown_sha: ~
+articles:
+  ri2_vignette: ri2_vignette.html
+  ri2_vs_ri: ri2_vs_ri.html
+
