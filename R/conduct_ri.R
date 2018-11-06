@@ -27,6 +27,7 @@
 #' @export
 #'
 #' @importFrom randomizr declare_ra conduct_ra obtain_condition_probabilities
+#' @importFrom estimatr lm_robust_fit tidy
 #'
 #' @examples
 #'
