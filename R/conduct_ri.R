@@ -262,11 +262,11 @@ plot.ri <- function(x, p = NULL, ...) {
     }
 
 
-  summary_df <- split(x$sims_df, x$sims_df$coefficient)
+  summary_df <- split(x$sims_df, x$sims_df$term)
   summary_df <- lapply(summary_df[lapply(summary_df, nrow) != 0], FUN = summary_fun)
   summary_df <- do.call(rbind, summary_df)
 
-  summary_df$coefficient <- rownames(summary_df)
+  summary_df$term <- rownames(summary_df)
 
   ggplot(x$sims_df, aes(x = est_sim, alpha = extreme)) +
     geom_histogram(bins = max(30, nrow(x$sims_df) / 20)) +
@@ -282,7 +282,7 @@ plot.ri <- function(x, p = NULL, ...) {
     scale_alpha_manual(values = c(0.5, 1), guide = FALSE) +
     xlab("Simulated Estimates") +
     ggtitle("Randomization Inference") +
-    facet_wrap(~ coefficient) +
+    facet_wrap(~ term) +
     theme_bw() +
     theme(
       legend.position = "bottom",
@@ -334,14 +334,14 @@ summary.ri <- function(object, p = NULL, ...) {
       )
     }
 
-  return_df <- split(object$sims_df, object$sims_df$coefficient)
+  return_df <- split(object$sims_df, object$sims_df$term)
   return_df <- lapply(return_df[lapply(return_df, nrow) != 0], FUN = summary_fun)
   return_df <- do.call(rbind, return_df)
-  return_df$coefficient <- rownames(return_df)
+  return_df$term <- rownames(return_df)
   rownames(return_df) <- NULL
   return_df <-
     return_df[, c(
-      "coefficient",
+      "term",
       "estimate",
       "p_value"
     )]

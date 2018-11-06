@@ -11,7 +11,6 @@ test_that("Basic Two Arm Trial", {
   W <- runif(N)
   df <- data.frame(Y, X, Z, W)
 
-
   ri_out <-
     conduct_ri(
       formula = Y ~ Z,
