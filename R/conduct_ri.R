@@ -52,6 +52,7 @@
 #'
 #' summary(out)
 #' plot(out)
+#' tidy(out)
 #'
 #' # Randomization Inference for an Interaction
 #'
@@ -82,6 +83,8 @@
 #' summary(out, p = "two-tailed")
 #' summary(out, p = "upper")
 #' summary(out, p = "lower")
+#'
+#' tidy(out)
 #'
 #' # Randomization Inference for arbitrary test statistics
 #'
@@ -117,6 +120,7 @@
 #'
 #' plot(out)
 #' summary(out)
+#' tidy(out)
 #'
 conduct_ri <- function(formula = NULL,
                        model_1 = NULL,
@@ -356,4 +360,11 @@ summary.ri <- function(object, p = NULL, ...) {
     colnames(return_df)[3] <- "upper_p_value"
   }
   return(return_df)
+}
+
+#' @export
+tidy.ri <- function(x, ...) {
+  ret <- summary(x)
+  colnames(ret)[3] <- "p.value"
+  ret
 }
