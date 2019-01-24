@@ -62,7 +62,7 @@ conduct_ri_test_function <- function(test_function,
     data.frame(
       est_sim = test_stat_sim,
       est_obs = test_stat_obs,
-      coefficient = "Custom Test Statistic"
+      term = "Custom Test Statistic"
     )
 
   return(structure(list(sims_df = sims_df),

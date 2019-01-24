@@ -1,13 +1,14 @@
 Package: ri2
 Type: Package
 Title: Randomization Inference for Randomized Experiments
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: person("Alexander", "Coppock", email = "acoppock@gmail.com", role = c("aut", "cre"))
 Description: Randomization inference procedures for simple and complex randomized designs, including multi-armed trials, as described in Gerber and Green (2012, ISBN: 978-0393979954). Users formally describe their randomization procedure and test statistic. The randomization distribution of the test statistic under some null hypothesis is efficiently simulated.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: ggplot2,
+Imports: generics,
+    ggplot2,
     pbapply
 Depends: randomizr (>= 0.16.0),
     estimatr
@@ -16,5 +17,5 @@ Suggests:
     knitr,
     rmarkdown,
     ri
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr

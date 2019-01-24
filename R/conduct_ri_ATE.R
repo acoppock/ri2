@@ -19,12 +19,13 @@ conduct_ri_ATE <- function(formula,
 
   assignment_vec <- data[[assignment]]
   design_matrix <- model.matrix.default(formula, data = data)
+  outcome_name <- all.vars(formula[[2]])
 
-  if(! all.vars(formula[[2]]) %in% names(data)){
-    stop(paste0("Outcome variable ", all.vars(formula[[2]]), " not found in data."))
+  if(! outcome_name %in% names(data)){
+    stop(paste0("Outcome variable ",outcome_name, " not found in data."))
   }
 
-  outcome_vec <- data[[all.vars(formula[[2]])]]
+  outcome_vec <- data[[outcome_name]]
   condition_names <- sort(unique(assignment_vec))
 
   # Determine coefficient names
@@ -69,7 +70,7 @@ conduct_ri_ATE <- function(formula,
   }
 
   fit_obs <- lm_robust_fit(
-    y = outcome_vec,
+    y = matrix(outcome_vec, dimnames = list(NULL, outcome_name)),
     X = design_matrix,
     weights = weights_vec,
     ci = FALSE,
@@ -83,7 +84,7 @@ conduct_ri_ATE <- function(formula,
 
 
 
-  fit_obs <- estimatr::tidy.lm_robust(fit_obs)
+  fit_obs <- tidy(fit_obs)
 
   jx <- intersect(c("term", "coefficient_name"),  names(fit_obs))[1]
   beta_ix <- intersect(c("estimate", "coefficients"),  names(fit_obs))[1]
@@ -152,7 +153,7 @@ conduct_ri_ATE <- function(formula,
       }
 
       fit_sim <- lm_robust_fit(
-        y = outcome_vec_sim,
+        y = matrix(outcome_vec_sim, dimnames = list(NULL, outcome_name)),
         X = design_matrix,
         weights = weights_vec,
         ci = FALSE,
@@ -164,7 +165,7 @@ conduct_ri_ATE <- function(formula,
         has_int = TRUE
       )
 
-      fit_sim <- estimatr::tidy.lm_robust(fit_sim)
+      fit_sim <- tidy(fit_sim)
       fit_sim <- fit_sim[fit_sim[[jx]] %in% coefficient_names[i - 1], , drop = FALSE]
 
       if (studentize) {
@@ -198,10 +199,10 @@ conduct_ri_ATE <- function(formula,
     )
 
   sims_df <- do.call("rbind", sims_list)
-  sims_df$coefficient <- rep(names(sims_list), sapply(sims_list, nrow))
+  sims_df$term <- rep(names(sims_list), sapply(sims_list, nrow))
 
   if (studentize) {
-    sims_df$coefficient <- paste0(sims_df$coefficient, " (studentized)")
+    sims_df$term <- paste0(sims_df$term, " (studentized)")
   }
 
   return(structure(list(sims_df = sims_df),

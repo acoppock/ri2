@@ -77,6 +77,7 @@ out <- conduct_ri(y ~ d,
 
 summary(out)
 plot(out)
+tidy(out)
 
 # Randomization Inference for an Interaction
 
@@ -107,6 +108,8 @@ summary(out)
 summary(out, p = "two-tailed")
 summary(out, p = "upper")
 summary(out, p = "lower")
+
+tidy(out)
 
 # Randomization Inference for arbitrary test statistics
 
@@ -142,5 +145,6 @@ out <-
 
 plot(out)
 summary(out)
+tidy(out)
 
 }

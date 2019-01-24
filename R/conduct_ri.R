@@ -27,6 +27,7 @@
 #' @export
 #'
 #' @importFrom randomizr declare_ra conduct_ra obtain_condition_probabilities
+#' @importFrom estimatr lm_robust_fit tidy
 #'
 #' @examples
 #'
@@ -51,6 +52,7 @@
 #'
 #' summary(out)
 #' plot(out)
+#' tidy(out)
 #'
 #' # Randomization Inference for an Interaction
 #'
@@ -81,6 +83,8 @@
 #' summary(out, p = "two-tailed")
 #' summary(out, p = "upper")
 #' summary(out, p = "lower")
+#'
+#' tidy(out)
 #'
 #' # Randomization Inference for arbitrary test statistics
 #'
@@ -116,6 +120,7 @@
 #'
 #' plot(out)
 #' summary(out)
+#' tidy(out)
 #'
 conduct_ri <- function(formula = NULL,
                        model_1 = NULL,
@@ -262,11 +267,11 @@ plot.ri <- function(x, p = NULL, ...) {
     }
 
 
-  summary_df <- split(x$sims_df, x$sims_df$coefficient)
+  summary_df <- split(x$sims_df, x$sims_df$term)
   summary_df <- lapply(summary_df[lapply(summary_df, nrow) != 0], FUN = summary_fun)
   summary_df <- do.call(rbind, summary_df)
 
-  summary_df$coefficient <- rownames(summary_df)
+  summary_df$term <- rownames(summary_df)
 
   ggplot(x$sims_df, aes(x = est_sim, alpha = extreme)) +
     geom_histogram(bins = max(30, nrow(x$sims_df) / 20)) +
@@ -282,7 +287,7 @@ plot.ri <- function(x, p = NULL, ...) {
     scale_alpha_manual(values = c(0.5, 1), guide = FALSE) +
     xlab("Simulated Estimates") +
     ggtitle("Randomization Inference") +
-    facet_wrap(~ coefficient) +
+    facet_wrap(~ term) +
     theme_bw() +
     theme(
       legend.position = "bottom",
@@ -334,14 +339,14 @@ summary.ri <- function(object, p = NULL, ...) {
       )
     }
 
-  return_df <- split(object$sims_df, object$sims_df$coefficient)
+  return_df <- split(object$sims_df, object$sims_df$term)
   return_df <- lapply(return_df[lapply(return_df, nrow) != 0], FUN = summary_fun)
   return_df <- do.call(rbind, return_df)
-  return_df$coefficient <- rownames(return_df)
+  return_df$term <- rownames(return_df)
   rownames(return_df) <- NULL
   return_df <-
     return_df[, c(
-      "coefficient",
+      "term",
       "estimate",
       "p_value"
     )]
@@ -355,4 +360,11 @@ summary.ri <- function(object, p = NULL, ...) {
     colnames(return_df)[3] <- "upper_p_value"
   }
   return(return_df)
+}
+
+#' @export
+tidy.ri <- function(x, ...) {
+  ret <- summary(x)
+  colnames(ret)[3] <- "p.value"
+  ret
 }
