@@ -66,7 +66,7 @@ The `ri2` package has specific support for all the randomization procedures that
 4. Clustered
 5. Blocked and clustered
 
-See the [randomizr vignette](http://randomizr.declaredesign.org/articles/randomizr_vignette.html) for specifics on each of these procedures.
+See the [randomizr vignette](https://declaredesign.org/r/randomizr/articles/randomizr_vignette.html) for specifics on each of these procedures.
 
 By way of illustration, let's take the blocked-and-clustered design from the `ri` package help files as an example. The call to `conduct_ri` is the same as it was before, but we need to change the random assignment declaration to accomodate the fact that clusters of two units are assigned to treatment and control (within three separate blocks).  Note that in this design, the probabilities of assignment to treatment are **not** constant across units, but the `conduct_ri` function by default incorporates inverse probability weights to account for this design feature.
 
