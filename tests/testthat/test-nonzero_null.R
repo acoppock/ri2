@@ -1,7 +1,7 @@
 context("Two Arm Trial")
 
 
-test_that("Basic Two Arm Trial", {
+test_that("Non zero null", {
   N <- 100
   declaration <- randomizr::declare_ra(N = N, m = 50)
 
