@@ -44,7 +44,7 @@ conduct_ri(formula = NULL, model_1 = NULL, model_2 = NULL,
 
 \item{progress_bar}{logical, defaults to FALSE.  Should a progress bar be displayed in the console?}
 
-\item{p}{Should "two-tailed", "upper", or "lower" p-values be reported? Defaults to "two-tailed"}
+\item{p}{Should "two-tailed", "upper", or "lower" p-values be reported? Defaults to "two-tailed".  For two-tailed p-values, whether or not a simulated value is as large or larger than the observed value is determined with respect to the distance to the sharp null.}
 }
 \description{
 This function makes it easy to conduct three kinds of randomization inference.
