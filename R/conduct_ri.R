@@ -223,6 +223,7 @@ conduct_ri <- function(formula = NULL,
 
 
   ri_out$p <- p
+  ri_out$sharp_hypothesis <- sharp_hypothesis
 
   return(ri_out)
 }
@@ -237,7 +238,7 @@ plot.ri <- function(x, p = NULL, ...) {
     x$sims_df <-
       within(
         x$sims_df,
-        extreme <- abs(est_sim) >= abs(est_obs)
+        extreme <- abs(est_sim - x$sharp_hypothesis) >= abs(est_obs - x$sharp_hypothesis)
       )
   } else if (p == "lower") {
     x$sims_df <-
@@ -309,7 +310,7 @@ summary.ri <- function(object, p = NULL, ...) {
     object$sims_df <-
       within(
         object$sims_df,
-        extreme <- abs(est_sim) >= abs(est_obs)
+        extreme <- abs(est_sim - object$sharp_hypothesis) >= abs(est_obs - object$sharp_hypothesis)
       )
   } else if (p == "lower") {
     object$sims_df <-
