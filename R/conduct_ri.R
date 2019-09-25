@@ -22,7 +22,7 @@
 #' @param data A data.frame.
 #' @param sims the number of simulations. Defaults to 1000.
 #' @param progress_bar logical, defaults to FALSE.  Should a progress bar be displayed in the console?
-#' @param p Should "two-tailed", "upper", or "lower" p-values be reported? Defaults to "two-tailed"
+#' @param p Should "two-tailed", "upper", or "lower" p-values be reported? Defaults to "two-tailed".  For two-tailed p-values, whether or not a simulated value is as large or larger than the observed value is determined with respect to the distance to the sharp null.
 #'
 #' @export
 #'
