@@ -17,5 +17,5 @@ Suggests:
     knitr,
     rmarkdown,
     ri
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr

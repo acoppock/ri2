@@ -1,9 +1,9 @@
-## Release version 0.1.2 of ri2
-* Small updates to address errors on CRAN
+## Release version 0.2 of ri2
+* minor bug fixes
 
 ## Test environments
-* Platform: x86_64-apple-darwin15.6.0 (64-bit): R version 3.5.2 (2018-12-20) -- "Eggshell Igloo"
-* R-devel with win-builder.r-project.org.
+* Platform: x86_64-apple-darwin15.6.0 (64-bit): R version 4.0.3 (2020-10-10
+* R-devel, R-oldrelease, R-newrelease with win-builder.r-project.org.
 
 ## R CMD check results
 There were no ERRORs, WARNINGs, or NOTES.

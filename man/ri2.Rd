@@ -3,7 +3,6 @@
 \docType{package}
 \name{ri2}
 \alias{ri2}
-\alias{ri2-package}
 \title{ri2 package}
 \description{
 Randomization Inference

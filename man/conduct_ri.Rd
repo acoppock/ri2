@@ -4,12 +4,25 @@
 \alias{conduct_ri}
 \title{Conduct Randomization Inference}
 \usage{
-conduct_ri(formula = NULL, model_1 = NULL, model_2 = NULL,
-  test_function = NULL, assignment = "Z", outcome = NULL,
-  declaration = NULL, sharp_hypothesis = 0, studentize = FALSE,
-  IPW = TRUE, IPW_weights = NULL, sampling_weights = NULL,
-  permutation_matrix = NULL, data, sims = 1000, progress_bar = FALSE,
-  p = "two-tailed")
+conduct_ri(
+  formula = NULL,
+  model_1 = NULL,
+  model_2 = NULL,
+  test_function = NULL,
+  assignment = "Z",
+  outcome = NULL,
+  declaration = NULL,
+  sharp_hypothesis = 0,
+  studentize = FALSE,
+  IPW = TRUE,
+  IPW_weights = NULL,
+  sampling_weights = NULL,
+  permutation_matrix = NULL,
+  data,
+  sims = 1000,
+  progress_bar = FALSE,
+  p = "two-tailed"
+)
 }
 \arguments{
 \item{formula}{an object of class formula, as in \code{\link{lm}}. Use formula when conducting significance tests of an Average Treatment Effect estimate under a sharp null hypothesis. For the difference-in-means estimate, do not include covariates. For the OLS covariate-adjusted estimate, include covariates.}
@@ -70,14 +83,32 @@ declaration <- declare_ra(N = 7, m = 2)
 
 ## Conduct Randomization Inference
 out <- conduct_ri(y ~ d,
-                      declaration = declaration,
-                      assignment = "d",
-                      sharp_hypothesis = 0,
-                      data = table_2.2)
+                  declaration = declaration,
+                  assignment = "d",
+                  sharp_hypothesis = 0,
+                  data = table_2.2)
 
 summary(out)
 plot(out)
 tidy(out)
+
+# Using a custom permutation matrix
+
+permutation_matrix <-
+ matrix(c(0, 0, 0, 0, 0, 0, 1,
+          0, 0, 0, 0, 0, 1, 0,
+          0, 0, 0, 0, 1, 0, 0,
+          0, 0, 0, 1, 0, 0, 0,
+          0, 0, 1, 0, 0, 0, 0,
+          0, 1, 0, 0, 0, 0, 0,
+          1, 0, 0, 0, 0, 0, 0),
+        ncol = 7)
+
+conduct_ri(y ~d, assignment = "d", data = table_2.2,
+                   permutation_matrix = permutation_matrix)
+
+
+
 
 # Randomization Inference for an Interaction
 
