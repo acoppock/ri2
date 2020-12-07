@@ -45,14 +45,32 @@
 #'
 #' ## Conduct Randomization Inference
 #' out <- conduct_ri(y ~ d,
-#'                       declaration = declaration,
-#'                       assignment = "d",
-#'                       sharp_hypothesis = 0,
-#'                       data = table_2.2)
+#'                   declaration = declaration,
+#'                   assignment = "d",
+#'                   sharp_hypothesis = 0,
+#'                   data = table_2.2)
 #'
 #' summary(out)
 #' plot(out)
 #' tidy(out)
+#'
+#' # Using a custom permutation matrix
+#'
+#' permutation_matrix <-
+#'  matrix(c(0, 0, 0, 0, 0, 0, 1,
+#'           0, 0, 0, 0, 0, 1, 0,
+#'           0, 0, 0, 0, 1, 0, 0,
+#'           0, 0, 0, 1, 0, 0, 0,
+#'           0, 0, 1, 0, 0, 0, 0,
+#'           0, 1, 0, 0, 0, 0, 0,
+#'           1, 0, 0, 0, 0, 0, 0),
+#'         ncol = 7)
+#'
+#' conduct_ri(y ~d, assignment = "d", data = table_2.2,
+#'                    permutation_matrix = permutation_matrix)
+#'
+#'
+#'
 #'
 #' # Randomization Inference for an Interaction
 #'
