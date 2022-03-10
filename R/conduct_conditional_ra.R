@@ -23,11 +23,13 @@ conduct_conditional_ra <-
 
 
       assignment_vec_new[assignment_vec %in% conditions] <-
-        simple_ra(
-          N = sum(assignment_vec %in% conditions),
-          prob_each = prob_each_local,
-          conditions = conditions,
-          check_inputs = FALSE
+        as.character(
+          simple_ra(
+            N = sum(assignment_vec %in% conditions),
+            prob_each = prob_each_local,
+            conditions = conditions,
+            check_inputs = FALSE
+          )
         )
     }
 
@@ -37,11 +39,13 @@ conduct_conditional_ra <-
       prob_each_local <- prob_each_local / (sum(prob_each_local))
 
       assignment_vec_new[assignment_vec %in% conditions] <-
-        complete_ra(
-          N = sum(assignment_vec %in% conditions),
-          prob_each = prob_each_local,
-          conditions = conditions,
-          check_inputs = FALSE
+        as.character(
+          complete_ra(
+            N = sum(assignment_vec %in% conditions),
+            prob_each = prob_each_local,
+            conditions = conditions,
+            check_inputs = FALSE
+          )
         )
     }
 
@@ -58,11 +62,13 @@ conduct_conditional_ra <-
         block_prob_each_local / rowSums(block_prob_each_local)
 
       assignment_vec_new[assignment_vec %in% conditions] <-
-        block_ra(
-          blocks = declaration$blocks[assignment_vec %in% conditions],
-          block_prob_each = block_prob_each_local,
-          conditions = conditions,
-          check_inputs = FALSE
+        as.character(
+          block_ra(
+            blocks = declaration$blocks[assignment_vec %in% conditions],
+            block_prob_each = block_prob_each_local,
+            conditions = conditions,
+            check_inputs = FALSE
+          )
         )
     }
 
@@ -72,11 +78,13 @@ conduct_conditional_ra <-
       prob_each_local <- prob_each_local / (sum(prob_each_local))
 
       assignment_vec_new[assignment_vec %in% conditions] <-
-        cluster_ra(
-          clusters = declaration$clusters[assignment_vec %in% conditions],
-          prob_each = prob_each_local,
-          conditions = conditions,
-          check_inputs = FALSE
+        as.character(
+          cluster_ra(
+            clusters = declaration$clusters[assignment_vec %in% conditions],
+            prob_each = prob_each_local,
+            conditions = conditions,
+            check_inputs = FALSE
+          )
         )
     }
 
