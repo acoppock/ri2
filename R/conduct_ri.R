@@ -303,7 +303,7 @@ plot.ri <- function(x, p = NULL, ...) {
       ),
       show.legend = TRUE
     ) +
-    scale_alpha_manual(values = c(0.5, 1), guide = FALSE) +
+    scale_alpha_manual(values = c(0.5, 1), guide = "none") +
     xlab("Simulated Estimates") +
     ggtitle("Randomization Inference") +
     facet_wrap(~ term) +
