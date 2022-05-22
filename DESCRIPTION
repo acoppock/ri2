@@ -15,7 +15,6 @@ Depends: randomizr (>= 0.16.0),
 Suggests: 
     testthat,
     knitr,
-    rmarkdown,
-    ri
+    rmarkdown
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
