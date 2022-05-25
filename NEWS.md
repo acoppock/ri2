@@ -1,4 +1,4 @@
-# ri2 0.2.0
+# ri2 0.4.0
 
 * disabled tests that check against the `ri` package because it is no longer on CRAN.
 
