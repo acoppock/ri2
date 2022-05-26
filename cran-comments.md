@@ -1,5 +1,6 @@
 ## Release version 0.4 of ri2
-* Remove ri
+* ri2 was archived on 2022-24-05. My apologies for the late resubmission.
+* Remove ri from examples and vignettes because it was archived.
 
 ## Test environments
 * Platform: x86_64-apple-darwin17.0  R version 4.1.2 (2021-11-01)
