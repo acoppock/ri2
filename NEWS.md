@@ -1,7 +1,10 @@
+# ri2 0.4.1
+
+* Minor patch release fixing package documentation and link anchors.
+
 # ri2 0.4.0
 
 * disabled tests that check against the `ri` package because it is no longer on CRAN.
-
 
 # ri2 0.2.0
 

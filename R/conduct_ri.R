@@ -12,13 +12,13 @@
 #' @param test_function A function that takes data and returns a scalar test statistic.
 #' @param assignment a character string that indicates which variable is randomly assigned. Defaults to "Z".
 #' @param outcome a character string that indicates which variable is the outcome variable. Defaults to NULL.
-#' @param declaration A random assignment declaration, created by \code{\link{declare_ra}}.
+#' @param declaration A random assignment declaration, created by \code{\link[randomizr]{declare_ra}}.
 #' @param sharp_hypothesis either a numeric scalar or a numeric vector of length k - 1, where k is the number of treatment conditions. In a two-arm trial, this number is the *hypothesized* difference between the treated and untreated potential potential outcomes for each unit.. In a multi-arm trial, each number in the vector is the hypothesized difference in potential outcomes between the baseline condition and each successive treatment condition.
 #' @param studentize logical, defaults to FALSE. Should the test statistic be the t-ratio rather than the estimated ATE? T-ratios will be calculated using HC2 robust standard errors or their clustered equivalent. CLUSTERING NOT YET IMPLEMENTED.
 #' @param IPW logical, defaults to TRUE. Should inverse probability weights be calculated?
 #' @param IPW_weights a character string that indicates which variable is the existing inverse probability weights vector. Usually unnecessary, as IPW weights will be incorporated automatically if IPW = TRUE. Defaults to NULL.
 #' @param sampling_weights a character string that indicates which variable is the sampling weights vector. Optional, defaults to NULL. NOT YET IMPLEMENTED
-#' @param permutation_matrix An optional matrix of random assignments, typically created by \code{\link{obtain_permutation_matrix}}.
+#' @param permutation_matrix An optional matrix of random assignments, typically created by \code{\link[randomizr]{obtain_permutation_matrix}}.
 #' @param data A data.frame.
 #' @param sims the number of simulations. Defaults to 1000.
 #' @param progress_bar logical, defaults to FALSE.  Should a progress bar be displayed in the console?
