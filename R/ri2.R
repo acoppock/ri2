@@ -1,9 +1,9 @@
-#' ri2 package
+#' ri2: Randomization Inference
 #'
-#' Randomization Inference
+#' Tools for conducting randomization inference for experiments.
 #'
-#' @docType package
-#' @name ri2
-NULL
+#' @keywords internal
+"_PACKAGE"
 
+## quiets concerns of R CMD check re: the .data pronoun etc.
 globalVariables(c("est_sim", "est_obs", "coefficient", "extreme", "Estimate"))
