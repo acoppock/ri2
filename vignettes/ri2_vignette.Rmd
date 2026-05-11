@@ -204,6 +204,43 @@ cat("p-value (correct):   ", round(mean(abs(dim_correct) >= abs(obs_dim)), 3), "
 
 The naive null's inflated variance swamps the T2 signal: its p-value is too large. The correct null's narrower spread gives a p-value that reflects the actual T2 effect. `conduct_ri()` always uses the conditional approach.
 
+The inflated variance is not just a power problem — it also breaks type I error control. We can show this directly with a Monte Carlo study. We set the T2 effect to zero (null is true) and ask: across many simulated datasets, how often does each approach reject at $\alpha = 0.05$?
+
+```{r, cache = TRUE}
+set.seed(99)
+reps <- 300   # simulated datasets
+sims_mc <- 300  # permutations per dataset
+
+p_naive_mc   <- numeric(reps)
+p_correct_mc <- numeric(reps)
+
+for (s in seq_len(reps)) {
+  Z_s   <- conduct_ra(decl3)
+  Y_s   <- 3.0 * (Z_s == "T3") + rnorm(N3)   # T2 effect = 0
+  obs_s <- mean(Y_s[Z_s == "T2"]) - mean(Y_s[Z_s == "T1"])
+
+  d_n <- replicate(sims_mc, {
+    Zn <- conduct_ra(decl3)
+    mean(Y_s[Zn == "T2"]) - mean(Y_s[Zn == "T1"])
+  })
+
+  idx <- Z_s %in% c("T1", "T2")
+  d_c <- replicate(sims_mc, {
+    z_new <- Z_s
+    z_new[idx] <- sample(Z_s[idx])
+    mean(Y_s[z_new == "T2"]) - mean(Y_s[z_new == "T1"])
+  })
+
+  p_naive_mc[s]   <- mean(abs(d_n) >= abs(obs_s))
+  p_correct_mc[s] <- mean(abs(d_c) >= abs(obs_s))
+}
+
+cat("Naive rejection rate (should be 0.05):  ", mean(p_naive_mc   < 0.05), "\n")
+cat("Correct rejection rate (should be 0.05):", mean(p_correct_mc < 0.05), "\n")
+```
+
+The naive approach rejects essentially never, even though a valid 5\% test should reject on 5\% of datasets where the null is true. The correct approach achieves the nominal rate. This matters not only for power but for calibration: a researcher using the naive approach could not distinguish a true null from a null that simply couldn't be detected. The conditional permutation is not a technicality — it is what makes the test valid.
+
 # Comparing nested models
 
 A traditional ANOVA hypothesis testing framework (implicitly or explicitly) compares two models, a restricted model and an unrestricted model, where the restricted model can be said to "nest" within the unrestricted model. The difference between models is summarized as an $F$-statistic. We then compare the observed $F$-statistic to a hypothetical null distribution that, under some possibly wrong assumptions can be said to follow an $F$-distribution.
