@@ -149,6 +149,61 @@ ri2_out_vec <- conduct_ri(
 summary(ri2_out_vec)
 ```
 
+## Why conditioning on the two-arm comparison matters
+
+The pairwise null distribution for T2 vs T1 is constructed by re-randomizing only the T1 and T2 units. A natural but wrong alternative is to permute all three arms and then extract the T2-vs-T1 difference from each permutation. The problem: T3-assigned units carry their T3 potential outcomes. When a full permutation shuffles them into T1 or T2, their outcomes --- which reflect the T3 effect, not anything about T2 vs T1 --- pollute the null distribution.
+
+The contamination is most visible when T3 has a large effect. Here T3 has an effect of 3, while T2 has an effect of 0.4:
+
+```{r}
+set.seed(7)
+N3 <- 90
+decl3 <- declare_ra(N = N3, num_arms = 3)
+Z3   <- conduct_ra(decl3)
+Y3   <- 0.4 * (Z3 == "T2") + 3.0 * (Z3 == "T3") + rnorm(N3)
+obs_dim <- mean(Y3[Z3 == "T2"]) - mean(Y3[Z3 == "T1"])
+
+sims3 <- 1000
+
+# Naive: draw a fresh full assignment, record T2 vs T1 each time
+dim_naive <- replicate(sims3, {
+  Zs <- conduct_ra(decl3)
+  mean(Y3[Zs == "T2"]) - mean(Y3[Zs == "T1"])
+})
+
+# Correct: hold T3 units at their observed arm, permute only T1/T2 labels
+dim_correct <- replicate(sims3, {
+  z_new <- Z3
+  idx12 <- Z3 %in% c("T1", "T2")
+  z_new[idx12] <- sample(Z3[idx12])
+  mean(Y3[z_new == "T2"]) - mean(Y3[z_new == "T1"])
+})
+```
+
+The naive null distribution is much wider because units with $Y \approx 3$ (the T3 units) randomly land in T1 or T2 across permutations, adding variance that has nothing to do with the T2 vs T1 comparison:
+
+```{r, fig.width = 7, fig.height = 3.5}
+par(mfrow = c(1, 2))
+xlim <- range(c(dim_naive, dim_correct, obs_dim)) * 1.1
+
+hist(dim_naive, breaks = 40, main = "Naive: full permutation",
+     xlab = "Simulated T2 vs T1 DiM", xlim = xlim, col = "grey80", border = "white")
+abline(v = obs_dim, col = "steelblue", lwd = 2)
+
+hist(dim_correct, breaks = 40, main = "Correct: conditional permutation",
+     xlab = "Simulated T2 vs T1 DiM", xlim = xlim, col = "grey80", border = "white")
+abline(v = obs_dim, col = "steelblue", lwd = 2)
+```
+
+```{r}
+cat("SD of null (naive):  ", round(sd(dim_naive),   2), "\n")
+cat("SD of null (correct):", round(sd(dim_correct), 2), "\n")
+cat("p-value (naive):     ", round(mean(abs(dim_naive)   >= abs(obs_dim)), 3), "\n")
+cat("p-value (correct):   ", round(mean(abs(dim_correct) >= abs(obs_dim)), 3), "\n")
+```
+
+The naive null's inflated variance swamps the T2 signal: its p-value is too large. The correct null's narrower spread gives a p-value that reflects the actual T2 effect. `conduct_ri()` always uses the conditional approach.
+
 # Comparing nested models
 
 A traditional ANOVA hypothesis testing framework (implicitly or explicitly) compares two models, a restricted model and an unrestricted model, where the restricted model can be said to "nest" within the unrestricted model. The difference between models is summarized as an $F$-statistic. We then compare the observed $F$-statistic to a hypothetical null distribution that, under some possibly wrong assumptions can be said to follow an $F$-distribution.
