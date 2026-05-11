@@ -16,3 +16,4 @@ _pkgdown.yml
 appveyor.yml
 CONDUCT.md
 ^_pkgdown\.yml$
+^notes$
