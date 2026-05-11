@@ -40,6 +40,7 @@ In order to conduct randomization inference, we need to supply 1) a test statist
 
 ```{r}
 library(ri2)
+library(randomizr)
 
 # Declare randomization procedure
 declaration <- declare_ra(N = 7, m = 2)

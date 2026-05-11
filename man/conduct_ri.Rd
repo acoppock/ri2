@@ -17,6 +17,7 @@ conduct_ri(
   IPW = TRUE,
   IPW_weights = NULL,
   sampling_weights = NULL,
+  clusters = NULL,
   permutation_matrix = NULL,
   data,
   sims = 1000,
@@ -25,7 +26,7 @@ conduct_ri(
 )
 }
 \arguments{
-\item{formula}{an object of class formula, as in \code{\link{lm}}. Use formula when conducting significance tests of an Average Treatment Effect estimate under a sharp null hypothesis. For the difference-in-means estimate, do not include covariates. For the OLS covariate-adjusted estimate, include covariates.}
+\item{formula}{an object of class formula, as in \code{\link{lm}}. Use formula when conducting significance tests of an Average Treatment Effect estimate under a sharp null hypothesis. For the difference-in-means estimate, do not include covariates. For the OLS covariate-adjusted estimate, include covariates. Transformations of the outcome variable such as \code{log(Y) ~ Z} are supported.}
 
 \item{model_1}{an object of class formula, as in \code{\link{lm}}. Models 1 and 2 must be "nested." model_1 should be the "restricted" model and model_2 should be the "unrestricted" model.}
 
@@ -39,15 +40,17 @@ conduct_ri(
 
 \item{declaration}{A random assignment declaration, created by \code{\link[randomizr]{declare_ra}}.}
 
-\item{sharp_hypothesis}{either a numeric scalar or a numeric vector of length k - 1, where k is the number of treatment conditions. In a two-arm trial, this number is the *hypothesized* difference between the treated and untreated potential potential outcomes for each unit.. In a multi-arm trial, each number in the vector is the hypothesized difference in potential outcomes between the baseline condition and each successive treatment condition.}
+\item{sharp_hypothesis}{either a numeric scalar or a numeric vector of length k - 1, where k is the number of treatment conditions. In a two-arm trial, this number is the hypothesized difference between the treated and untreated potential outcomes for each unit. In a multi-arm trial, each number in the vector is the hypothesized difference in potential outcomes between the baseline condition and each successive treatment condition.}
 
-\item{studentize}{logical, defaults to FALSE. Should the test statistic be the t-ratio rather than the estimated ATE? T-ratios will be calculated using HC2 robust standard errors or their clustered equivalent. CLUSTERING NOT YET IMPLEMENTED.}
+\item{studentize}{logical, defaults to FALSE. Should the test statistic be the t-ratio rather than the estimated ATE? T-ratios will be calculated using HC2 robust standard errors, or CR2 clustered standard errors when \code{clusters} is specified.}
 
 \item{IPW}{logical, defaults to TRUE. Should inverse probability weights be calculated?}
 
-\item{IPW_weights}{a character string that indicates which variable is the existing inverse probability weights vector. Usually unnecessary, as IPW weights will be incorporated automatically if IPW = TRUE. Defaults to NULL.}
+\item{IPW_weights}{a character string indicating which variable in \code{data} contains the inverse probability weights for the observed assignment. When supplied, these weights are used for the observed estimate; permuted estimates use weights computed automatically from the declaration.}
 
-\item{sampling_weights}{a character string that indicates which variable is the sampling weights vector. Optional, defaults to NULL. NOT YET IMPLEMENTED}
+\item{sampling_weights}{a character string indicating which variable in \code{data} contains sampling weights. When combined with \code{IPW = TRUE}, sampling and inverse probability weights are multiplied together.}
+
+\item{clusters}{a character string indicating which variable in \code{data} contains the cluster IDs. When supplied with \code{studentize = TRUE}, CR2 clustered standard errors are used instead of HC2.}
 
 \item{permutation_matrix}{An optional matrix of random assignments, typically created by \code{\link[randomizr]{obtain_permutation_matrix}}.}
 
@@ -55,9 +58,9 @@ conduct_ri(
 
 \item{sims}{the number of simulations. Defaults to 1000.}
 
-\item{progress_bar}{logical, defaults to FALSE.  Should a progress bar be displayed in the console?}
+\item{progress_bar}{logical, defaults to FALSE. Should a progress bar be displayed in the console?}
 
-\item{p}{Should "two-tailed", "upper", or "lower" p-values be reported? Defaults to "two-tailed".  For two-tailed p-values, whether or not a simulated value is as large or larger than the observed value is determined with respect to the distance to the sharp null.}
+\item{p}{Should "two-tailed", "upper", or "lower" p-values be reported? Defaults to "two-tailed". For two-tailed p-values, whether or not a simulated value is as large or larger than the observed value is determined with respect to the distance to the sharp null.}
 }
 \description{
 This function makes it easy to conduct three kinds of randomization inference.
@@ -71,15 +74,12 @@ This function makes it easy to conduct three kinds of randomization inference.
 
 # Data from Gerber and Green Table 2.2
 
-
-# Randomization Inference for the Average Treatment Effect
-
 table_2.2 <-
     data.frame(d = c(1, 0, 0, 0, 0, 0, 1),
                y = c(15, 15, 20, 20, 10, 15, 30))
 
 ## Declare randomization procedure
-declaration <- declare_ra(N = 7, m = 2)
+declaration <- randomizr::declare_ra(N = 7, m = 2)
 
 ## Conduct Randomization Inference
 out <- conduct_ri(y ~ d,
@@ -104,14 +104,11 @@ permutation_matrix <-
           1, 0, 0, 0, 0, 0, 0),
         ncol = 7)
 
-conduct_ri(y ~d, assignment = "d", data = table_2.2,
-                   permutation_matrix = permutation_matrix)
-
-
+conduct_ri(y ~ d, assignment = "d", data = table_2.2,
+           permutation_matrix = permutation_matrix)
 
 
 # Randomization Inference for an Interaction
-
 
 N <- 100
 declaration <- randomizr::declare_ra(N = N, m = 50)
@@ -121,7 +118,7 @@ X <- rnorm(N)
 Y <- .9 * X + .2 * Z + 1 * X * Z + rnorm(N)
 dat <- data.frame(Y, X, Z)
 
-ate_obs <- coef(lm(Y ~ Z, data = dat))[2]
+ate_obs <- coef(lm(Y ~ Z, data = dat))[[2]]
 
 out <-
   conduct_ri(
@@ -136,15 +133,7 @@ out <-
 plot(out)
 summary(out)
 
-summary(out, p = "two-tailed")
-summary(out, p = "upper")
-summary(out, p = "lower")
-
-tidy(out)
-
 # Randomization Inference for arbitrary test statistics
-
-## In this example we're conducting a randomization check (in this case, a balance test).
 
 N <- 100
 declaration <- randomizr::declare_ra(N = N, m = 50)
@@ -159,11 +148,6 @@ balance_fun <- function(data) {
     names(f_stat) <- NULL
     return(f_stat)
 }
-
-## confirm function works as expected
-balance_fun(dat)
-
-## conduct randomization inference
 
 out <-
   conduct_ri(

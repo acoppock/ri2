@@ -66,6 +66,6 @@ conduct_ri_test_function <- function(test_function,
     )
 
   return(structure(list(sims_df = sims_df),
-    class = "ri"
+    class = "ri2"
   ))
 }
