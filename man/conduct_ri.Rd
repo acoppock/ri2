@@ -37,7 +37,7 @@ conduct_ri(
 
 \item{outcome}{a character string that indicates which variable is the outcome variable. Defaults to NULL.}
 
-\item{declaration}{A random assignment declaration, created by \code{\link{declare_ra}}.}
+\item{declaration}{A random assignment declaration, created by \code{\link[randomizr]{declare_ra}}.}
 
 \item{sharp_hypothesis}{either a numeric scalar or a numeric vector of length k - 1, where k is the number of treatment conditions. In a two-arm trial, this number is the *hypothesized* difference between the treated and untreated potential potential outcomes for each unit.. In a multi-arm trial, each number in the vector is the hypothesized difference in potential outcomes between the baseline condition and each successive treatment condition.}
 
@@ -49,7 +49,7 @@ conduct_ri(
 
 \item{sampling_weights}{a character string that indicates which variable is the sampling weights vector. Optional, defaults to NULL. NOT YET IMPLEMENTED}
 
-\item{permutation_matrix}{An optional matrix of random assignments, typically created by \code{\link{obtain_permutation_matrix}}.}
+\item{permutation_matrix}{An optional matrix of random assignments, typically created by \code{\link[randomizr]{obtain_permutation_matrix}}.}
 
 \item{data}{A data.frame.}
 
