@@ -11,7 +11,6 @@
 * Added `ri_ci()` for randomization inference confidence intervals by test inversion (#31).
 * Added explicit NA checks with informative messages (#2).
 * Moved `randomizr` and `estimatr` from `Depends` to `Imports`.
-* Bumped `randomizr` requirement to >= 2.0.0.
 
 # ri2 0.4.1
 

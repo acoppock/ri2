@@ -9,7 +9,7 @@ Encoding: UTF-8
 Imports: generics,
     ggplot2,
     pbapply,
-    randomizr (>= 2.0.0),
+    randomizr (>= 0.16.0),
     estimatr
 Suggests: 
     testthat,
