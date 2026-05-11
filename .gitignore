@@ -1,31 +1,26 @@
-# History files
-.Rhistory
-.Rapp.history
-# Example code in package build process
-*-Ex.R
-# RStudio files
-*.Rproj.user/
-.Rproj.user/shared/notebooks/paths
-.Rproj.user
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
-vignettes/.*
-.Rproj.user
-tests/testthat/*.pdf
-.DS_Store
-inst/doc
+# R build artifacts
+*.Rcheck/
+*.tar.gz
 src/*.so
 src/*.o
 
-.Rproj.user/shared/notebooks/paths
-
+# R session / RStudio
+.Rhistory
+.Rapp.history
+.RData
+.Ruserdata
+.Rproj.user/
 *.pper
 
-.Rproj.user/9F29A888/persistent-state
+# Vignette build output
+vignettes/*.html
+vignettes/*.pdf
+vignettes/*_cache/
+vignettes/*_files/
+inst/doc/
 
-.Rproj.user/shared/notebooks/paths
+# Test output
+tests/testthat/*.pdf
 
-.Rproj.user/9F29A888/pcs/source-pane.pper
-
-.Rproj.user/9F29A888/pcs/windowlayoutstate.pper
+# Misc
+.DS_Store
