@@ -15,7 +15,6 @@ conduct_ri(
   sharp_hypothesis = 0,
   studentize = FALSE,
   IPW = TRUE,
-  IPW_weights = NULL,
   sampling_weights = NULL,
   clusters = NULL,
   permutation_matrix = NULL,
@@ -46,9 +45,7 @@ conduct_ri(
 
 \item{IPW}{logical, defaults to TRUE. Should inverse probability weights be calculated?}
 
-\item{IPW_weights}{a character string indicating which variable in \code{data} contains the inverse probability weights for the observed assignment. When supplied, these weights are used for the observed estimate; permuted estimates use weights computed automatically from the declaration.}
-
-\item{sampling_weights}{a character string indicating which variable in \code{data} contains sampling weights. When combined with \code{IPW = TRUE}, sampling and inverse probability weights are multiplied together.}
+\item{sampling_weights}{a character string indicating which variable in \code{data} contains sampling weights. Sampling weights are fixed across permutations (they reflect the sampling design, not the assignment). When combined with \code{IPW = TRUE}, sampling and inverse probability weights are multiplied together.}
 
 \item{clusters}{a character string indicating which variable in \code{data} contains the cluster IDs. When supplied with \code{studentize = TRUE}, CR2 clustered standard errors are used instead of HC2.}
 

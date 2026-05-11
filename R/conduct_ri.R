@@ -16,8 +16,7 @@
 #' @param sharp_hypothesis either a numeric scalar or a numeric vector of length k - 1, where k is the number of treatment conditions. In a two-arm trial, this number is the hypothesized difference between the treated and untreated potential outcomes for each unit. In a multi-arm trial, each number in the vector is the hypothesized difference in potential outcomes between the baseline condition and each successive treatment condition.
 #' @param studentize logical, defaults to FALSE. Should the test statistic be the t-ratio rather than the estimated ATE? T-ratios will be calculated using HC2 robust standard errors, or CR2 clustered standard errors when \code{clusters} is specified.
 #' @param IPW logical, defaults to TRUE. Should inverse probability weights be calculated?
-#' @param IPW_weights a character string indicating which variable in \code{data} contains the inverse probability weights for the observed assignment. When supplied, these weights are used for the observed estimate; permuted estimates use weights computed automatically from the declaration.
-#' @param sampling_weights a character string indicating which variable in \code{data} contains sampling weights. When combined with \code{IPW = TRUE}, sampling and inverse probability weights are multiplied together.
+#' @param sampling_weights a character string indicating which variable in \code{data} contains sampling weights. Sampling weights are fixed across permutations (they reflect the sampling design, not the assignment). When combined with \code{IPW = TRUE}, sampling and inverse probability weights are multiplied together.
 #' @param clusters a character string indicating which variable in \code{data} contains the cluster IDs. When supplied with \code{studentize = TRUE}, CR2 clustered standard errors are used instead of HC2.
 #' @param permutation_matrix An optional matrix of random assignments, typically created by \code{\link[randomizr]{obtain_permutation_matrix}}.
 #' @param data A data.frame.
@@ -132,7 +131,6 @@ conduct_ri <- function(formula = NULL,
                        sharp_hypothesis = 0,
                        studentize = FALSE,
                        IPW = TRUE,
-                       IPW_weights = NULL,
                        sampling_weights = NULL,
                        clusters = NULL,
                        permutation_matrix = NULL,
@@ -161,7 +159,6 @@ conduct_ri <- function(formula = NULL,
       sharp_hypothesis  = sharp_hypothesis,
       studentize        = studentize,
       IPW               = IPW,
-      IPW_weights       = IPW_weights,
       sampling_weights  = sampling_weights,
       clusters          = clusters,
       permutation_matrix = permutation_matrix,
@@ -180,7 +177,6 @@ conduct_ri <- function(formula = NULL,
       declaration       = declaration,
       sharp_hypothesis  = sharp_hypothesis,
       IPW               = IPW,
-      IPW_weights       = IPW_weights,
       sampling_weights  = sampling_weights,
       permutation_matrix = permutation_matrix,
       data              = data,
@@ -197,7 +193,6 @@ conduct_ri <- function(formula = NULL,
       outcome           = outcome,
       declaration       = declaration,
       sharp_hypothesis  = sharp_hypothesis,
-      IPW_weights       = IPW_weights,
       sampling_weights  = sampling_weights,
       permutation_matrix = permutation_matrix,
       data              = data,

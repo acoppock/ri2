@@ -7,7 +7,6 @@ conduct_ri_ATE <- function(formula,
                            sharp_hypothesis = 0,
                            studentize = FALSE,
                            IPW = TRUE,
-                           IPW_weights = NULL,
                            sampling_weights = NULL,
                            clusters = NULL,
                            permutation_matrix = NULL,
@@ -72,23 +71,10 @@ conduct_ri_ATE <- function(formula,
     se_type <- "none"
   }
 
-  # Observed weights (IPW and/or sampling weights) ----
-  obs_weights <- if (!is.null(IPW_weights)) {
-    data[[IPW_weights]]
-  } else if (IPW) {
-    1 / obtain_condition_probabilities(declaration, assignment = assignment_vec)
-  } else {
-    NULL
-  }
-  if (!is.null(sampling_weights)) {
-    sw <- data[[sampling_weights]]
-    obs_weights <- if (!is.null(obs_weights)) obs_weights * sw else sw
-  }
-
-  # Function to compute per-permutation weights ----
-  perm_weights <- function(Z_sim) {
+  # Weights function — recomputed for every assignment vector ----
+  make_weights <- function(Z_vec) {
     w <- if (IPW) {
-      1 / obtain_condition_probabilities(declaration, assignment = Z_sim)
+      1 / obtain_condition_probabilities(declaration, assignment = Z_vec)
     } else {
       NULL
     }
@@ -103,7 +89,7 @@ conduct_ri_ATE <- function(formula,
   fit_obs <- lm_robust_fit(
     y            = matrix(outcome_vec, dimnames = list(NULL, outcome_name)),
     X            = design_matrix,
-    weights      = obs_weights,
+    weights      = make_weights(assignment_vec),
     ci           = FALSE,
     cluster      = clusters_vec,
     alpha        = 0.05,
@@ -175,7 +161,7 @@ conduct_ri_ATE <- function(formula,
       fit_sim <- lm_robust_fit(
         y            = matrix(outcome_vec_sim, dimnames = list(NULL, outcome_name)),
         X            = dm_sim,
-        weights      = perm_weights(Z_sim),
+        weights      = make_weights(Z_sim),
         ci           = FALSE,
         cluster      = clusters_vec,
         alpha        = 0.05,

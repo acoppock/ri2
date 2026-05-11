@@ -3,7 +3,6 @@ conduct_ri_test_function <- function(test_function,
                                      outcome = "Y",
                                      declaration,
                                      sharp_hypothesis = 0,
-                                     IPW_weights = NULL,
                                      sampling_weights = NULL,
                                      permutation_matrix = NULL,
                                      data,
@@ -38,11 +37,6 @@ conduct_ri_test_function <- function(test_function,
     }
 
     data[, assignment] <- Z_sim
-
-    if (!is.null(IPW_weights)) {
-      data[, IPW_weights] <-
-        1 / obtain_condition_probabilities(declaration, assignment = data[[assignment]])
-    }
 
     if (!is.null(outcome)) {
       data[, outcome] <-

@@ -7,7 +7,6 @@ conduct_ri_f <- function(model_1,
                          declaration,
                          sharp_hypothesis = 0,
                          IPW = TRUE,
-                         IPW_weights = NULL,
                          sampling_weights = NULL,
                          permutation_matrix = NULL,
                          data = data,
@@ -49,22 +48,10 @@ conduct_ri_f <- function(model_1,
     stop("The number of complete observations must be the same in both models.")
   }
 
-  # Observed weights ----
-  obs_weights <- if (!is.null(IPW_weights)) {
-    data[[IPW_weights]]
-  } else if (IPW) {
-    1 / obtain_condition_probabilities(declaration, assignment = assignment_vec)
-  } else {
-    NULL
-  }
-  if (!is.null(sampling_weights)) {
-    sw <- data[[sampling_weights]]
-    obs_weights <- if (!is.null(obs_weights)) obs_weights * sw else sw
-  }
-
-  perm_weights <- function(Z_sim) {
+  # Weights function — recomputed for every assignment vector ----
+  make_weights <- function(Z_vec) {
     w <- if (IPW) {
-      1 / obtain_condition_probabilities(declaration, assignment = Z_sim)
+      1 / obtain_condition_probabilities(declaration, assignment = Z_vec)
     } else {
       NULL
     }
@@ -95,8 +82,8 @@ conduct_ri_f <- function(model_1,
   }
 
   # Observed F-statistic ----
-  coefs_1 <- fit_coefs(outcome_vec, design_matrix_1, obs_weights)
-  coefs_2 <- fit_coefs(outcome_vec, design_matrix_2, obs_weights)
+  coefs_1 <- fit_coefs(outcome_vec, design_matrix_1, make_weights(assignment_vec))
+  coefs_2 <- fit_coefs(outcome_vec, design_matrix_2, make_weights(assignment_vec))
   ssr_1 <- sum((outcome_vec - design_matrix_1 %*% coefs_1) ^ 2)
   ssr_2 <- sum((outcome_vec - design_matrix_2 %*% coefs_2) ^ 2)
   f_obs <- (ssr_1 - ssr_2) / (ncol(design_matrix_2) - ncol(design_matrix_1)) /
@@ -132,7 +119,7 @@ conduct_ri_f <- function(model_1,
     dm_sim_2 <- model.matrix.default(model_2, data = data_sim)
 
     y_sim <- switching_equation(pos_mat = pos_mat, assignment_vec = Z_sim)
-    w_sim <- perm_weights(Z_sim)
+    w_sim <- make_weights(Z_sim)
 
     c1 <- fit_coefs(y_sim, dm_sim_1, w_sim)
     c2 <- fit_coefs(y_sim, dm_sim_2, w_sim)
