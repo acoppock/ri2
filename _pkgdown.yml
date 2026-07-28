@@ -1,0 +1,19 @@
+url: https://alexandercoppock.com/ri2/
+
+template:
+  bootstrap: 5
+
+reference:
+  - title: Conducting randomization inference
+    desc: >
+      Simulate the randomization distribution of a test statistic under a sharp
+      null hypothesis.
+    contents:
+      - conduct_ri
+      - ri_ci
+  - title: Re-exports
+    desc: >
+      Random assignment functions from randomizr, re-exported so that a
+      declaration can be built without attaching randomizr.
+    contents:
+      - reexports

@@ -1,33 +1,43 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-ri2 makes conducting randomization inference easy and (with the blessing
-of the original authors) is the successor package to
-[ri](https://cran.r-project.org/web/packages/ri/index.html).
+
+
+# ri2
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/acoppock/ri2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/acoppock/ri2/actions/workflows/R-CMD-check.yaml)
+[![CRAN status](https://www.r-pkg.org/badges/version/ri2)](https://CRAN.R-project.org/package=ri2)
+[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ri2)](https://CRAN.R-project.org/package=ri2)
+<!-- badges: end -->
+
+ri2 makes conducting randomization inference easy and (with the blessing of the original authors) is the successor package to [ri](https://cran.r-project.org/web/packages/ri/index.html).
 
 ri2 has specific support for the following:
 
-1.  All randomization schemes in
-    [randomizr](http://randomizr.declaredesign.org).
-2.  Difference-in-means and OLS-adjusted estimates of ATE estimates
-    using R-native formula syntax.
-3.  Multi-arm trials.
-4.  ANOVA-style hypothesis tests (e.g., testing interaction term under
-    null of constant effects),
+1. All randomization schemes in [randomizr](http://randomizr.declaredesign.org).
+2. Difference-in-means and OLS-adjusted estimates of ATE estimates using R-native formula syntax.
+3. Multi-arm trials.
+4. ANOVA-style hypothesis tests (e.g., testing interaction term under null of constant effects),
 
 Additionally, ri2 provides:
 
-1.  Accommodation for arbitrary randomization schemes
-2.  Accommodation for arbitrary (scalar) test statistics
+1. Accommodation for arbitrary randomization schemes
+2. Accommodation for arbitrary (scalar) test statistics
 
-You can install ri2 is on CRAN
+ri2 is on CRAN:
+
 
 ``` r
 install.packages("ri2")
 ```
 
-If you’d like to install the most current development release, you can
-use the following code:
+If you'd like to install the most current development release, you can use the following code:
+
+
 
 ``` r
 install.packages("devtools")
@@ -35,6 +45,7 @@ devtools::install_github("acoppock/ri2")
 ```
 
 Here is the basic syntax for a two-arm trial:
+
 
 ``` r
 library(ri2)
@@ -60,16 +71,21 @@ ri_out <-
 plot(ri_out)
 ```
 
-![](README-unnamed-chunk-4-1.png)<!-- -->
+<div class="figure">
+<img src="man/figures/README-unnamed-chunk-4-1.png" alt="Histogram of the randomization distribution of the estimated ATE under the sharp null of no effect, with a vertical line at the observed estimate."  />
+<p class="caption">plot of chunk unnamed-chunk-4</p>
+</div>
 
 ``` r
 summary(ri_out)
-#>   coefficient   estimate two_tailed_p_value null_ci_lower null_ci_upper
-#> 1           Z -0.5887379              0.022    -0.4911486     0.4927481
+#>   term  estimate two_tailed_p_value
+#> 1    Z 0.2393663               0.43
 ```
 
-The development of ri2 is supported by a Standards Grant from
-[EGAP](http://egap.org) and the UK Department for International
-Development.
+The development of ri2 is supported by a Standards Grant from [EGAP](http://egap.org).
 
-<img src="man/figures/EGAP_logo.jpg" height="50px" /><img src="man/figures/dfid_logo.jpg" height="50px" />
+<div class="figure">
+<img src="man/figures/EGAP_logo.jpg" alt="EGAP logo" width="1067" height="50px" />
+<p class="caption">plot of chunk unnamed-chunk-5</p>
+</div>
+
