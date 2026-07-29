@@ -18,6 +18,18 @@ conduct_ri_ATE <- function(formula,
   assignment_vec <- data[[assignment]]
 
   # Input validation ----
+  # See the note in conduct_ri_f(): only the assignment column is permuted, so a
+  # formula that does not mention it cannot produce a meaningful null.
+  if (!assignment %in% all.vars(formula)) {
+    stop(
+      "The assignment variable '", assignment, "' does not appear in the formula.\n",
+      "ri2 permutes only the assignment column, so any column derived from it is ",
+      "not recomputed and the null distribution would be degenerate.\n",
+      "If your formula uses variables derived from the assignment (for example ",
+      "factors derived from a factorial cell variable), derive them inside a ",
+      "test_function instead, which sees the permuted assignment on every draw."
+    )
+  }
   if (anyNA(assignment_vec)) {
     stop("Missing values in assignment variable '", assignment,
          "'. Please remove NA rows before calling conduct_ri().")

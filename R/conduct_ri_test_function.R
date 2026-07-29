@@ -8,6 +8,22 @@ conduct_ri_test_function <- function(test_function,
                                      data,
                                      sims = 1000,
                                      progress_bar = FALSE) {
+  # ri2 cannot weight an arbitrary scalar statistic on the user's behalf, and
+  # this argument was previously accepted and silently ignored. Weighting is the
+  # test function's job: the sampling weights column is passed through untouched,
+  # and inverse probability weights can be recomputed from the declaration, which
+  # the function captures by closure.
+  if (!is.null(sampling_weights)) {
+    stop(
+      "sampling_weights is not used with the test_function interface.\n",
+      "Apply weights inside your test function instead. The '", sampling_weights,
+      "' column is passed through unchanged, and inverse probability weights can ",
+      "be recomputed for each permuted assignment with\n",
+      "  1 / randomizr::obtain_condition_probabilities(declaration, assignment = data[[\"",
+      assignment, "\"]])"
+    )
+  }
+
   test_stat_obs <- test_function(data)
   assignment_vec <- data[[assignment]]
 
