@@ -16,6 +16,13 @@
 - Fixed histogram bar stacking
   ([\#6](https://github.com/acoppock/ri2/issues/6)): use `fill`
   aesthetic instead of `alpha` in `plot.ri2()`.
+- Fixed [`plot()`](https://rdrr.io/r/graphics/plot.default.html) failing
+  to draw any bars when the number of simulations is not a multiple of
+  20 ([\#32](https://github.com/acoppock/ri2/issues/32), thanks
+  [@mreece13](https://github.com/mreece13)): the bin count is now
+  floored to a whole number, as
+  [`geom_histogram()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html)
+  requires.
 - Replaced floating-point rounding hack with tolerance-based comparison
   in `summary.ri2()` and `plot.ri2()`.
 - Implemented `sampling_weights` argument
