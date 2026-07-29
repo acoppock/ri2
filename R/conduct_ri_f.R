@@ -24,6 +24,21 @@ conduct_ri_f <- function(model_1,
   assignment_vec <- data[[assignment]]
 
   # Input validation ----
+  # Only the assignment column is permuted, so columns derived from it (say
+  # z1 and z2 built from a factorial cell variable) keep their observed values.
+  # If neither model mentions the assignment, every permutation reproduces the
+  # observed F-statistic and the null distribution collapses to a point mass,
+  # silently returning p = 1.
+  if (!assignment %in% c(all.vars(model_1), all.vars(model_2))) {
+    stop(
+      "The assignment variable '", assignment, "' does not appear in either model.\n",
+      "ri2 permutes only the assignment column, so any column derived from it is ",
+      "not recomputed and the null distribution would be degenerate.\n",
+      "If your models use variables derived from the assignment (for example ",
+      "factors derived from a factorial cell variable), derive them inside a ",
+      "test_function instead, which sees the permuted assignment on every draw."
+    )
+  }
   if (anyNA(assignment_vec)) {
     stop("Missing values in assignment variable '", assignment,
          "'. Please remove NA rows before calling conduct_ri().")

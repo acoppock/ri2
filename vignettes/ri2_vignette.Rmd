@@ -463,9 +463,62 @@ summary(ri2_out)
 lm_robust(Z ~ X1 + X2 + X3, data = dat)
 ```
 
+## Factorial designs
+
+A $2 \times 2$ factorial looks like it needs two assignment vectors, one per factor, and `declare_ra` returns only one. That framing is misleading. The randomization assigns each unit to one of the four *cells*; the two factors are deterministic functions of the cell, not separate random draws. A factorial design is a four-arm trial, and one assignment vector is the right representation of it.
+
+So declare the cells, and derive the factors from them:
+
+```{r}
+set.seed(20)
+N <- 200
+declaration <- declare_ra(N = N, conditions = c("00", "01", "10", "11"))
+
+dat <-
+  tibble(cell = conduct_ra(declaration)) |>
+  mutate(Z1 = as.numeric(substr(cell, 1, 1)),
+         Z2 = as.numeric(substr(cell, 2, 2)),
+         Y = 0.5 * Z1 + 0.8 * Z2 + 1.2 * Z1 * Z2 + rnorm(n()))
+```
+
+The one thing to be careful about is that `conduct_ri` permutes the **assignment column only**. Columns derived from it, like `Z1` and `Z2` above, are not recomputed, so they would keep their observed values across permutations. Derive them inside a test function instead, which receives the data with the permuted assignment on every draw:
+
+```{r}
+interaction_coef <- function(data) {
+  z1 <- as.numeric(substr(data$cell, 1, 1))
+  z2 <- as.numeric(substr(data$cell, 2, 2))
+  coef(lm(data$Y ~ z1 * z2))[["z1:z2"]]
+}
+
+ri2_out <-
+  conduct_ri(
+    test_function = interaction_coef,
+    assignment = "cell",
+    outcome = "Y",
+    declaration = declaration,
+    sharp_hypothesis = 0,
+    data = dat
+  )
+
+summary(ri2_out)
+```
+
+Any test statistic works here, not just the interaction: swap in a marginal effect, a difference of differences, or anything else you can compute from the cell assignment. The design can also be blocked, clustered, or use unequal probabilities across cells, since `declare_ra` handles all of those over the cell variable.
+
+Two notes on weighting. Sampling weights are fixed across permutations, so if they are a column of `data` your test function can use them directly. Inverse probability weights are not fixed, since they depend on the permuted assignment, so recompute them inside the function. Your `declaration` is available there by closure:
+
+```{r, eval = FALSE}
+ipw_dim <- function(data) {
+  w <- 1 / obtain_condition_probabilities(declaration, assignment = data$cell)
+  coef(lm(Y ~ Z1, data = data, weights = w))[["Z1"]]
+}
+```
+
+Passing `sampling_weights` to `conduct_ri` alongside a `test_function` is an error rather than a silent no-op, because ri2 cannot know how to apply weights to an arbitrary scalar statistic.
+
 # Conclusion
 
-All of the randomization inference procedures had to, somehow or other, provide three pieces of information: 
+All of the randomization inference procedures had to, somehow or other, provide three pieces of information:
 
 1. a test statistic (the difference-in-means, a regression coefficient, the difference-in-variances, an $F$-statistic, etc.)
 2. a sharp null hypothesis. The "sharp" in this context means that the null hypothesis has something specific to say about every unit's potential outcomes. For example, the sharp null hypothesis of no effect for any unit means hypothesizes that each unit's treatment and control potential outcome are identical.

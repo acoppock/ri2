@@ -253,3 +253,82 @@ test_that("additive covariate adjustment is unaffected by the rebuild path", {
   expect_equal(out$sims_df$est_sim, expected, tolerance = 1e-8,
                ignore_attr = TRUE)
 })
+
+# Only the assignment column is permuted, so a formula or model that does not
+# mention it yields a degenerate null (every permutation reproduces the observed
+# statistic) and a p-value of 1 regardless of the data. Guard rather than run.
+test_that("conduct_ri errors when the assignment is absent from the model", {
+  set.seed(6)
+  N <- 60
+  decl <- randomizr::declare_ra(N = N, conditions = c("00", "01", "10", "11"))
+  cell <- randomizr::conduct_ra(decl)
+  z1 <- as.numeric(substr(cell, 1, 1))
+  z2 <- as.numeric(substr(cell, 2, 2))
+  dat <- data.frame(Y = 0.5 * z1 + 0.8 * z2 + rnorm(N), cell, z1, z2)
+
+  expect_error(
+    conduct_ri(model_1 = Y ~ z1 + z2, model_2 = Y ~ z1 * z2,
+               assignment = "cell", declaration = decl, data = dat, sims = 20),
+    "does not appear in either model"
+  )
+  expect_error(
+    conduct_ri(Y ~ z1 * z2, assignment = "cell", declaration = decl,
+               data = dat, sims = 20),
+    "does not appear in the formula"
+  )
+
+  # legitimate uses of the same design must still run
+  expect_s3_class(
+    conduct_ri(Y ~ cell, assignment = "cell", declaration = decl,
+               data = dat, sims = 20),
+    "ri2"
+  )
+})
+
+test_that("sampling_weights with test_function errors instead of being ignored", {
+  set.seed(7)
+  N <- 40
+  decl <- randomizr::declare_ra(N = N, m = 20)
+  dat <- data.frame(Z = randomizr::conduct_ra(decl), sw = runif(N, 0.5, 2))
+  dat$Y <- 0.3 * dat$Z + rnorm(N)
+
+  expect_error(
+    conduct_ri(test_function = function(d) mean(d$Y), assignment = "Z",
+               outcome = "Y", declaration = decl, sampling_weights = "sw",
+               data = dat, sims = 20),
+    "not used with the test_function interface"
+  )
+})
+
+# A factorial is a multi-arm trial over its cells; deriving the factors inside
+# the test function gives exactly the right null distribution (#27).
+test_that("factorial via cells and a test_function matches manual permutation", {
+  set.seed(8)
+  N <- 80
+  decl <- randomizr::declare_ra(N = N, conditions = c("00", "01", "10", "11"))
+  cell <- randomizr::conduct_ra(decl)
+  z1 <- as.numeric(substr(cell, 1, 1))
+  z2 <- as.numeric(substr(cell, 2, 2))
+  Y <- 0.5 * z1 + 0.8 * z2 + 1.2 * z1 * z2 + rnorm(N)
+  dat <- data.frame(Y, cell)
+
+  interaction_coef <- function(data) {
+    a <- as.numeric(substr(data$cell, 1, 1))
+    b <- as.numeric(substr(data$cell, 2, 2))
+    coef(lm(data$Y ~ a * b))[["a:b"]]
+  }
+
+  pm <- randomizr::obtain_permutation_matrix(decl, maximum_permutations = 25)
+  out <- conduct_ri(test_function = interaction_coef, assignment = "cell",
+                    outcome = "Y", declaration = decl,
+                    permutation_matrix = pm, sharp_hypothesis = 0, data = dat)
+
+  expected <- apply(pm, 2, function(cs) {
+    a <- as.numeric(substr(cs, 1, 1))
+    b <- as.numeric(substr(cs, 2, 2))
+    coef(lm(Y ~ a * b))[["a:b"]]
+  })
+
+  expect_equal(out$sims_df$est_sim, expected, tolerance = 1e-8,
+               ignore_attr = TRUE)
+})
