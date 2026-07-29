@@ -10,7 +10,7 @@
 * Implemented clustered standard errors for `studentize = TRUE`: add a `clusters` argument; CR2 SEs are used automatically when clusters are supplied.
 * Added `ri_ci()` for randomization inference confidence intervals by test inversion (#31).
 * Added explicit NA checks with informative messages (#2).
-* Moved `randomizr` and `estimatr` from `Depends` to `Imports`.
+* Moved `randomizr` and `estimatr` from `Depends` to `Imports`. To keep `library(ri2)` self-sufficient, `declare_ra()`, `conduct_ra()`, the `*_ra()` assignment functions, and the `obtain_*()` helpers are now re-exported from ri2, so existing scripts that relied on `randomizr` being attached continue to work.
 
 # ri2 0.4.1
 

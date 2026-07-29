@@ -13,9 +13,13 @@ Imports: generics,
     pbapply,
     randomizr (>= 0.16.0),
     estimatr
-Suggests: 
+Suggests:
     testthat,
     knitr,
-    rmarkdown
-RoxygenNote: 7.3.3
+    rmarkdown,
+    dplyr,
+    tidyr,
+    purrr,
+    forcats
 VignetteBuilder: knitr
+Config/roxygen2/version: 8.0.0

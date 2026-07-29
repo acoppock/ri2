@@ -8,8 +8,22 @@
 \description{
 Tools for conducting randomization inference for experiments.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://alexandercoppock.com/ri2/}
+  \item \url{https://github.com/acoppock/ri2}
+  \item Report bugs at \url{https://github.com/acoppock/ri2/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Alexander Coppock \email{acoppock@gmail.com}
+
+Authors:
+\itemize{
+  \item Alexander Coppock \email{acoppock@gmail.com}
+}
 
 }
 \keyword{internal}

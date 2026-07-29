@@ -50,7 +50,7 @@ devtools::install_github("acoppock/ri2")
 
 Here is the basic syntax for a two-arm trial:
 
-```{r, fig.alt = "Histogram of the randomization distribution of the estimated ATE under the sharp null of no effect, with a vertical line at the observed estimate."}
+```{r ri-example, fig.alt = "Histogram of the randomization distribution of the estimated ATE under the sharp null of no effect, with a vertical line at the observed estimate."}
 library(ri2)
 N <- 100
 declaration <- declare_ra(N = N, m = 50)
@@ -75,7 +75,7 @@ summary(ri_out)
 
 The development of ri2 is supported by a Standards Grant from [EGAP](http://egap.org).
 
-```{r, out.height = "50px", echo=FALSE, fig.alt = "EGAP logo"}
+```{r egap-logo, out.height = "50px", echo=FALSE, fig.alt = "EGAP logo"}
 knitr::include_graphics("man/figures/EGAP_logo.jpg")
 ```
 
