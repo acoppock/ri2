@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/acoppock/ri2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/acoppock/ri2/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/acoppock/ri2/graph/badge.svg)](https://app.codecov.io/gh/acoppock/ri2)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/ri2)](https://CRAN.R-project.org/package=ri2)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ri2)](https://CRAN.R-project.org/package=ri2)
@@ -72,8 +74,8 @@ plot(ri_out)
 
 ``` r
 summary(ri_out)
-#>   term   estimate two_tailed_p_value
-#> 1    Z -0.5711395              0.044
+#>   term  estimate two_tailed_p_value
+#> 1    Z 0.1235293              0.658
 ```
 
 The development of ri2 is supported by a Standards Grant from

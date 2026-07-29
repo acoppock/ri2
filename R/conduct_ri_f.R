@@ -6,6 +6,7 @@ conduct_ri_f <- function(model_1,
                          assignment = "Z",
                          declaration,
                          sharp_hypothesis = 0,
+                         potential_outcomes = NULL,
                          IPW = TRUE,
                          sampling_weights = NULL,
                          permutation_matrix = NULL,
@@ -108,10 +109,12 @@ conduct_ri_f <- function(model_1,
   if (length(sharp_hypothesis) == 1) {
     sharp_hypothesis <- rep(sharp_hypothesis, length(unique(assignment_vec)) - 1)
   }
-  pos_mat <- generate_pos(
-    Y              = outcome_vec,
-    assignment_vec = assignment_vec,
-    sharp_hypothesis = sharp_hypothesis
+  pos_mat <- resolve_pos(
+    Y                = outcome_vec,
+    assignment_vec   = assignment_vec,
+    sharp_hypothesis = sharp_hypothesis,
+    potential_outcomes = potential_outcomes,
+    data             = data
   )
 
   # Permutation matrix ----

@@ -5,6 +5,7 @@ conduct_ri_ATE <- function(formula,
                            assignment = "Z",
                            declaration,
                            sharp_hypothesis = 0,
+                           potential_outcomes = NULL,
                            studentize = FALSE,
                            IPW = TRUE,
                            sampling_weights = NULL,
@@ -83,10 +84,12 @@ conduct_ri_ATE <- function(formula,
   }
 
   # Potential outcomes under sharp null ----
-  pos_mat <- generate_pos(
+  pos_mat <- resolve_pos(
     Y = outcome_vec,
     assignment_vec = assignment_vec,
-    sharp_hypothesis = sharp_hypothesis
+    sharp_hypothesis = sharp_hypothesis,
+    potential_outcomes = potential_outcomes,
+    data = data
   )
 
   # SE type — clustering supported when studentize = TRUE ----
@@ -185,7 +188,7 @@ conduct_ri_ATE <- function(formula,
         dm
       }
 
-      outcome_vec_sim <- if (all(sharp_hypothesis == 0)) {
+      outcome_vec_sim <- if (is.null(potential_outcomes) && all(sharp_hypothesis == 0)) {
         outcome_vec
       } else {
         switching_equation(pos_mat = pos_mat, assignment_vec = Z_sim)
