@@ -47,8 +47,10 @@ declaration <- randomizr::declare_ra(N = 40, m = 20)
 Z <- randomizr::conduct_ra(declaration)
 Y <- 0.5 * Z + rnorm(40)
 dat <- data.frame(Y, Z)
+# sims and n_grid are kept small here so the example runs quickly;
+# use larger values in practice for a finer, less noisy interval.
 ri_ci(Y ~ Z, declaration = declaration, assignment = "Z", data = dat,
-      sims = 200)
-#>   term ci_lower ci_upper alpha
-#> 1    Z 0.128207 1.226221  0.05
+      sims = 100, n_grid = 20)
+#>   term  ci_lower ci_upper alpha
+#> 1    Z 0.1443276 1.118599  0.05
 ```
