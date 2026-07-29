@@ -36,6 +36,20 @@ conduct_ri_ATE <- function(formula,
   outcome_name <- names(mf)[1]
   design_matrix <- model.matrix.default(formula, data = data)
 
+  # When the assignment variable enters more than one term (an interaction such
+  # as Y ~ Z * X, or Y ~ Z + I(Z^2)), overwriting only the assignment columns
+  # would leave the other terms at their observed values, so the design matrix
+  # would disagree with itself about what the assignment was. Rebuild it from
+  # the permuted data in that case; patch columns in the common single-term
+  # case, which is much faster.
+  term_labels <- attr(stats::terms(formula, data = data), "term.labels")
+  assignment_terms <- vapply(
+    term_labels,
+    function(label) assignment %in% all.vars(str2lang(label)),
+    logical(1)
+  )
+  rebuild_design <- sum(assignment_terms) > 1
+
   condition_names <- sort(unique(assignment_vec))
 
   # Coefficient names ----
@@ -149,8 +163,15 @@ conduct_ri_ATE <- function(formula,
         Z_sim <- factor(Z_sim, levels = levels(assignment_vec))
       }
 
-      dm_sim <- design_matrix
-      dm_sim[, coefficient_names] <- model.matrix.default(~ Z_sim)[, -1]
+      dm_sim <- if (rebuild_design) {
+        data_sim <- data
+        data_sim[[assignment]] <- Z_sim
+        model.matrix.default(formula, data = data_sim)
+      } else {
+        dm <- design_matrix
+        dm[, coefficient_names] <- model.matrix.default(~ Z_sim)[, -1]
+        dm
+      }
 
       outcome_vec_sim <- if (all(sharp_hypothesis == 0)) {
         outcome_vec

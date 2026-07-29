@@ -1,5 +1,6 @@
 # ri2 0.5.0
 
+* Fixed wrong null distributions when the assignment variable appears in more than one term of the formula, such as `Y ~ Z * X`. Only the assignment columns of the design matrix were updated for each permutation, so interaction columns kept their observed values and the design matrix disagreed with itself about what the assignment was. The resulting null distribution was too narrow and p-values were anti-conservative. Such formulas now rebuild the design matrix from the permuted assignment; the single-term case keeps the faster column-patching path.
 * Fixed multi-arm trial bug (#33): arms 2+ now each get a fresh conditional permutation matrix instead of reusing the first arm's matrix, giving correct p-values for all arms.
 * Fixed silent outcome transformation dropping (#20): `log(Y) ~ Z` and other formula transformations now apply correctly via `model.frame()`.
 * Fixed S3 class name conflict with `bit::ri` (#28): class is now `"ri2"`.
