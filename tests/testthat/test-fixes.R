@@ -209,3 +209,47 @@ test_that("plot.ri2 builds when the simulation count is not a multiple of 20", {
   built <- expect_no_warning(ggplot2::ggplot_build(plot(out)))
   expect_gt(nrow(built$data[[1]]), 0)
 })
+
+# The design matrix used to be patched by overwriting only the assignment
+# columns, which left interaction columns at their observed values. The columns
+# then disagreed about what the assignment was, narrowing the null distribution
+# and making p-values anti-conservative.
+test_that("terms involving the assignment are rebuilt under permutation", {
+  set.seed(4)
+  N <- 60
+  decl <- randomizr::declare_ra(N = N, prob = 0.5)
+  Z1 <- randomizr::conduct_ra(decl)
+  Z2 <- rbinom(N, 1, 0.5)
+  Y <- 0.5 * Z1 + 0.8 * Z2 + 1.2 * Z1 * Z2 + rnorm(N)
+  dat <- data.frame(Y, Z1, Z2)
+
+  pm <- randomizr::obtain_permutation_matrix(decl, maximum_permutations = 25)
+
+  out <- conduct_ri(Y ~ Z1 * Z2, assignment = "Z1", declaration = decl,
+                    permutation_matrix = pm, IPW = FALSE, data = dat)
+
+  expected <- apply(pm, 2, function(z) coef(lm(Y ~ z * Z2))[["z"]])
+
+  expect_equal(out$sims_df$est_sim, expected, tolerance = 1e-8,
+               ignore_attr = TRUE)
+})
+
+test_that("additive covariate adjustment is unaffected by the rebuild path", {
+  set.seed(5)
+  N <- 60
+  decl <- randomizr::declare_ra(N = N, prob = 0.5)
+  Z <- randomizr::conduct_ra(decl)
+  X <- rnorm(N)
+  Y <- 0.4 * Z + 0.7 * X + rnorm(N)
+  dat <- data.frame(Y, Z, X)
+
+  pm <- randomizr::obtain_permutation_matrix(decl, maximum_permutations = 25)
+
+  out <- conduct_ri(Y ~ Z + X, assignment = "Z", declaration = decl,
+                    permutation_matrix = pm, IPW = FALSE, data = dat)
+
+  expected <- apply(pm, 2, function(z) coef(lm(Y ~ z + X))[["z"]])
+
+  expect_equal(out$sims_df$est_sim, expected, tolerance = 1e-8,
+               ignore_attr = TRUE)
+})
