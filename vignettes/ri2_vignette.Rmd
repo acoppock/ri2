@@ -1,6 +1,6 @@
 ---
 title: "Randomization Inference with ri2"
-author: "Alexander Coppock, Yale University"
+author: "Alexander Coppock"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
