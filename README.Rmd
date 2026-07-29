@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/acoppock/ri2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/acoppock/ri2/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/acoppock/ri2/graph/badge.svg)](https://app.codecov.io/gh/acoppock/ri2)
 [![CRAN status](https://www.r-pkg.org/badges/version/ri2)](https://CRAN.R-project.org/package=ri2)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/ri2)](https://CRAN.R-project.org/package=ri2)
 <!-- badges: end -->

@@ -40,9 +40,7 @@ jobs:
 
       - uses: codecov/codecov-action@v5
         with:
-          # Set to true once a CODECOV_TOKEN repository secret exists; until
-          # then a failed upload should not turn the whole run red.
-          fail_ci_if_error: false
+          fail_ci_if_error: true
           files: ./cobertura.xml
           plugins: noop
           disable_search: true
