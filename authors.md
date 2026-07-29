@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/acoppock/ri2/blob/master/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/acoppock/ri2/blob/v0.5.0/DESCRIPTION)
 
 Coppock A (2026). *ri2: Randomization Inference for Randomized
 Experiments*. R package version 0.5.0,
