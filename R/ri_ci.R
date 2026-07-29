@@ -26,8 +26,10 @@
 #' Z <- randomizr::conduct_ra(declaration)
 #' Y <- 0.5 * Z + rnorm(40)
 #' dat <- data.frame(Y, Z)
+#' # sims and n_grid are kept small here so the example runs quickly;
+#' # use larger values in practice for a finer, less noisy interval.
 #' ri_ci(Y ~ Z, declaration = declaration, assignment = "Z", data = dat,
-#'       sims = 200)
+#'       sims = 100, n_grid = 20)
 ri_ci <- function(..., alpha = 0.05, n_grid = 40) {
   dots <- list(...)
 

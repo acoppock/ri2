@@ -40,10 +40,15 @@ test inversion.
 * local: aarch64-apple-darwin, R 4.6.0
 * GitHub Actions: macOS (release), Windows (release), Ubuntu (devel, release,
   oldrel-1)
+* win-builder: R-devel (2026-07-28 r90311)
 
 ## R CMD check results
 
-There were no ERRORs, WARNINGs, or NOTEs on any of the above.
+There were no ERRORs, WARNINGs, or NOTEs.
+
+An earlier win-builder run reported one NOTE, that the `ri_ci` example took
+10.73s elapsed. The example now uses smaller `sims` and `n_grid` values and
+runs in well under a second locally.
 
 ## Downstream dependencies
 
