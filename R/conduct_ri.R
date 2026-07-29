@@ -244,8 +244,12 @@ plot.ri2 <- function(x, p = NULL, ...) {
   ))
   summary_df$term <- rownames(summary_df)
 
+  # geom_histogram() requires a whole number of bins, and nrow / 20 is
+  # fractional whenever the row count is not a multiple of 20.
+  n_bins <- max(30, floor(nrow(x$sims_df) / 20))
+
   ggplot(x$sims_df, aes(x = est_sim, fill = extreme)) +
-    geom_histogram(bins = max(30, nrow(x$sims_df) / 20)) +
+    geom_histogram(bins = n_bins) +
     geom_vline(
       data = summary_df,
       aes(xintercept = est_obs, linetype = Estimate, colour = Estimate),

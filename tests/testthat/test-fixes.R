@@ -193,3 +193,19 @@ test_that("ri_ci interval contains the observed estimate", {
   expect_gte(beta_hat, out_ci$ci_lower)
   expect_lte(beta_hat, out_ci$ci_upper)
 })
+
+# GH PR #32 (mreece13): bins = nrow / 20 is fractional whenever the row count
+# is not a multiple of 20, and geom_histogram() requires a whole number.
+test_that("plot.ri2 builds when the simulation count is not a multiple of 20", {
+  set.seed(101)
+  N <- 60
+  decl <- randomizr::declare_ra(N = N, m = 30)
+  Z <- randomizr::conduct_ra(decl)
+  dat <- data.frame(Y = 0.3 * Z + rnorm(N), Z = Z)
+
+  out <- conduct_ri(Y ~ Z, declaration = decl, data = dat, sims = 1010)
+  expect_equal(nrow(out$sims_df) %% 20, 10)
+
+  built <- expect_no_warning(ggplot2::ggplot_build(plot(out)))
+  expect_gt(nrow(built$data[[1]]), 0)
+})
