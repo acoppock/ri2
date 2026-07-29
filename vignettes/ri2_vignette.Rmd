@@ -469,7 +469,7 @@ The `sharp_hypothesis` argument states one number per treatment condition, which
 
 Some hypotheses are not of that form. You might want to test that the effect is proportional to a covariate, or that it is a fixed fraction of each unit's baseline outcome, or a schedule implied by a prior study. For those, state the potential outcomes directly.
 
-`add_potential_outcomes()` writes the schedule into the data as one column per condition. It accepts a per-unit vector of effects, so a hypothesis like "the effect is $0.5 X_i$ for unit $i$" is one line:
+Write the schedule into the data as one column per condition, then tell `conduct_ri` which columns they are. Suppose the hypothesis is that the effect is $0.5 X_i$ for unit $i$:
 
 ```{r}
 set.seed(80)
@@ -478,15 +478,16 @@ declaration <- declare_ra(N = N, m = 100)
 
 dat <-
   tibble(Z = conduct_ra(declaration), X = rnorm(N)) |>
-  mutate(Y = 0.3 * Z + 0.5 * X * Z + rnorm(n()))
-
-dat <- add_potential_outcomes(dat, outcome = "Y", assignment = "Z",
-                              sharp_hypothesis = 0.5 * dat$X)
+  mutate(Y = 0.3 * Z + 0.5 * X * Z + rnorm(n())) |>
+  mutate(Y_Z_0 = if_else(Z == 1, Y - 0.5 * X, Y),
+         Y_Z_1 = if_else(Z == 1, Y, Y + 0.5 * X))
 
 dat |> select(Z, X, Y, Y_Z_0, Y_Z_1) |> head(4)
 ```
 
-Each unit's outcome under the condition it actually received is its observed outcome; the other column is the hypothesized counterfactual. Pass the column names to `conduct_ri`, in condition order:
+The `if_else` on both lines is the part to get right. Each unit's *observed* outcome stays where it is, in the column for the condition that unit actually received; only the other column is hypothesized. A unit assigned to treatment contributes its real outcome to `Y_Z_1` and an imputed one to `Y_Z_0`, and vice versa.
+
+Pass the column names to `conduct_ri`. They are matched to the conditions in sorted order, so the control column comes first:
 
 ```{r}
 ri2_out <-
@@ -500,7 +501,19 @@ ri2_out <-
 summary(ri2_out)
 ```
 
-You can also build the columns yourself rather than through `add_potential_outcomes()`. ri2 checks that the schedule reproduces the observed outcomes and errors if it does not, which catches the easy mistake of passing the columns in the wrong order.
+The same approach extends to multi-arm trials: supply one column per arm, in sorted condition order.
+
+ri2 checks that the schedule reproduces the observed outcomes and errors if it does not. That catches both of the easy mistakes, passing the columns in the wrong order and forgetting to hold the observed outcomes fixed:
+
+```{r, error = TRUE}
+careless <-
+  dat |>
+  mutate(Y_Z_0 = Y, Y_Z_1 = Y + 0.5 * X)
+
+conduct_ri(Y ~ Z, declaration = declaration,
+           potential_outcomes = c("Y_Z_0", "Y_Z_1"),
+           data = careless)
+```
 
 ## Factorial designs
 

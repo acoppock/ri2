@@ -8,7 +8,8 @@ test_that("explicit PO columns reproduce a constant sharp_hypothesis exactly", {
   dat <- data.frame(Z = randomizr::conduct_ra(decl), X = rnorm(N))
   dat$Y <- 0.3 * dat$Z + rnorm(N)
 
-  dat <- add_potential_outcomes(dat, "Y", "Z", sharp_hypothesis = 0.2)
+  dat$Y_Z_0 <- ifelse(dat$Z == 1, dat$Y - 0.2, dat$Y)
+  dat$Y_Z_1 <- ifelse(dat$Z == 1, dat$Y, dat$Y + 0.2)
   pm <- randomizr::obtain_permutation_matrix(decl, maximum_permutations = 30)
 
   via_scalar <- conduct_ri(Y ~ Z, declaration = decl, permutation_matrix = pm,
@@ -27,7 +28,8 @@ test_that("a heterogeneous sharp null matches a manual switching equation", {
   dat <- data.frame(Z = randomizr::conduct_ra(decl), X = rnorm(N))
   dat$Y <- 0.3 * dat$Z + rnorm(N)
 
-  dat <- add_potential_outcomes(dat, "Y", "Z", sharp_hypothesis = 0.5 * dat$X)
+  dat$Y_Z_0 <- ifelse(dat$Z == 1, dat$Y - 0.5 * dat$X, dat$Y)
+  dat$Y_Z_1 <- ifelse(dat$Z == 1, dat$Y, dat$Y + 0.5 * dat$X)
 
   # the schedule must hold the observed outcome fixed
   expect_equal(ifelse(dat$Z == 1, dat$Y_Z_1, dat$Y_Z_0), dat$Y)
@@ -43,17 +45,21 @@ test_that("a heterogeneous sharp null matches a manual switching equation", {
   expect_equal(out$sims_df$est_sim, expected, ignore_attr = TRUE)
 })
 
-test_that("per-unit effects work in a multi-arm trial via a matrix", {
+test_that("per-unit effects work in a multi-arm trial", {
   set.seed(72)
   N <- 90
   decl <- randomizr::declare_ra(N = N, num_arms = 3)
   dat <- data.frame(Z = randomizr::conduct_ra(decl), X = rnorm(N))
   dat$Y <- rnorm(N)
 
-  tau <- cbind(0.2 + 0.1 * dat$X, 0.6 - 0.2 * dat$X)
-  dat <- add_potential_outcomes(dat, "Y", "Z", sharp_hypothesis = tau)
+  # effects relative to T1, varying by unit
+  tau_2 <- 0.2 + 0.1 * dat$X
+  tau_3 <- 0.6 - 0.2 * dat$X
+  baseline <- dat$Y - ifelse(dat$Z == "T2", tau_2, ifelse(dat$Z == "T3", tau_3, 0))
+  dat$Y_Z_T1 <- baseline
+  dat$Y_Z_T2 <- baseline + tau_2
+  dat$Y_Z_T3 <- baseline + tau_3
 
-  expect_true(all(c("Y_Z_T1", "Y_Z_T2", "Y_Z_T3") %in% names(dat)))
   observed <- dat$Y_Z_T1
   observed[dat$Z == "T2"] <- dat$Y_Z_T2[dat$Z == "T2"]
   observed[dat$Z == "T3"] <- dat$Y_Z_T3[dat$Z == "T3"]
@@ -71,7 +77,8 @@ test_that("mis-ordered or inconsistent PO columns are caught", {
   decl <- randomizr::declare_ra(N = N, m = 30)
   dat <- data.frame(Z = randomizr::conduct_ra(decl))
   dat$Y <- 0.3 * dat$Z + rnorm(N)
-  dat <- add_potential_outcomes(dat, "Y", "Z", sharp_hypothesis = 0.4)
+  dat$Y_Z_0 <- ifelse(dat$Z == 1, dat$Y - 0.4, dat$Y)
+  dat$Y_Z_1 <- ifelse(dat$Z == 1, dat$Y, dat$Y + 0.4)
 
   expect_error(
     conduct_ri(Y ~ Z, declaration = decl,
