@@ -4,6 +4,7 @@
 * Fixed silent outcome transformation dropping (#20): `log(Y) ~ Z` and other formula transformations now apply correctly via `model.frame()`.
 * Fixed S3 class name conflict with `bit::ri` (#28): class is now `"ri2"`.
 * Fixed histogram bar stacking (#6): use `fill` aesthetic instead of `alpha` in `plot.ri2()`.
+* Fixed `plot()` failing to draw any bars when the number of simulations is not a multiple of 20 (#32, thanks @mreece13): the bin count is now floored to a whole number, as `geom_histogram()` requires.
 * Replaced floating-point rounding hack with tolerance-based comparison in `summary.ri2()` and `plot.ri2()`.
 * Implemented `sampling_weights` argument (#16): pass a column name containing sampling weights; multiplied with the auto-computed IPW weights when both are present.
 * Removed `IPW_weights` argument: pre-specified IPW weights are incoherent for RI because weights must vary with each permuted assignment. IPW is always computed from the declaration via `obtain_condition_probabilities()`.
