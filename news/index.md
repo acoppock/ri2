@@ -1,0 +1,58 @@
+# Changelog
+
+## ri2 0.5.0
+
+- Fixed multi-arm trial bug
+  ([\#33](https://github.com/acoppock/ri2/issues/33)): arms 2+ now each
+  get a fresh conditional permutation matrix instead of reusing the
+  first arm’s matrix, giving correct p-values for all arms.
+- Fixed silent outcome transformation dropping
+  ([\#20](https://github.com/acoppock/ri2/issues/20)): `log(Y) ~ Z` and
+  other formula transformations now apply correctly via
+  [`model.frame()`](https://rdrr.io/r/stats/model.frame.html).
+- Fixed S3 class name conflict with `bit::ri`
+  ([\#28](https://github.com/acoppock/ri2/issues/28)): class is now
+  `"ri2"`.
+- Fixed histogram bar stacking
+  ([\#6](https://github.com/acoppock/ri2/issues/6)): use `fill`
+  aesthetic instead of `alpha` in `plot.ri2()`.
+- Replaced floating-point rounding hack with tolerance-based comparison
+  in `summary.ri2()` and `plot.ri2()`.
+- Implemented `sampling_weights` argument
+  ([\#16](https://github.com/acoppock/ri2/issues/16)): pass a column
+  name containing sampling weights; multiplied with the auto-computed
+  IPW weights when both are present.
+- Removed `IPW_weights` argument: pre-specified IPW weights are
+  incoherent for RI because weights must vary with each permuted
+  assignment. IPW is always computed from the declaration via
+  [`obtain_condition_probabilities()`](https://declaredesign.org/r/randomizr/reference/obtain_condition_probabilities.html).
+- Implemented clustered standard errors for `studentize = TRUE`: add a
+  `clusters` argument; CR2 SEs are used automatically when clusters are
+  supplied.
+- Added [`ri_ci()`](https://alexandercoppock.com/ri2/reference/ri_ci.md)
+  for randomization inference confidence intervals by test inversion
+  ([\#31](https://github.com/acoppock/ri2/issues/31)).
+- Added explicit NA checks with informative messages
+  ([\#2](https://github.com/acoppock/ri2/issues/2)).
+- Moved `randomizr` and `estimatr` from `Depends` to `Imports`.
+
+## ri2 0.4.1
+
+CRAN release: 2025-10-14
+
+- Minor patch release fixing package documentation and link anchors.
+
+## ri2 0.4.0
+
+CRAN release: 2022-05-26
+
+- disabled tests that check against the `ri` package because it is no
+  longer on CRAN.
+
+## ri2 0.2.0
+
+CRAN release: 2020-12-07
+
+- added support for user-supplied permutation matrix
+- fixed a non-zero null bug
+- Added a `NEWS.md` file to track changes to the package.
