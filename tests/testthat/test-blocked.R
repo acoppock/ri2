@@ -21,7 +21,7 @@ test_that("Basic Two Arm Trial", {
     )
 
   summary(ri_out)
-  dim <- difference_in_means(Y ~ Z, blocks = blocks, data = dat)
+  dim <- estimatr::difference_in_means(Y ~ Z, blocks = blocks, data = dat)
 
   expect_equivalent(summary(ri_out)$estimate, dim$coefficients)
 

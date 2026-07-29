@@ -1,31 +1,37 @@
-# History files
-.Rhistory
-.Rapp.history
-# Example code in package build process
-*-Ex.R
-# RStudio files
-*.Rproj.user/
-.Rproj.user/shared/notebooks/paths
-.Rproj.user
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
-vignettes/.*
-.Rproj.user
-tests/testthat/*.pdf
-.DS_Store
-inst/doc
+# R build artifacts
+*.Rcheck/
+*.tar.gz
+*.Rout
 src/*.so
 src/*.o
+src/*.dll
 
-.Rproj.user/shared/notebooks/paths
+# R session / RStudio
+.Rhistory
+.Rapp.history
+.RData
+.Rdata
+.Ruserdata
+.Rproj.user/
+.Renviron
 
+# Vignette build output
+vignettes/*.html
+vignettes/*.pdf
+vignettes/ri2_vignette.R
+vignettes/*_cache/
+vignettes/*_files/
+inst/doc/
+
+# pkgdown site (built and deployed by GitHub Actions)
+docs/
+
+# Test and coverage output
+tests/testthat/*.pdf
 *.pper
 
-.Rproj.user/9F29A888/persistent-state
+# Private dev log (mirrored to claude_control)
+notes/
 
-.Rproj.user/shared/notebooks/paths
-
-.Rproj.user/9F29A888/pcs/source-pane.pper
-
-.Rproj.user/9F29A888/pcs/windowlayoutstate.pper
+# Misc
+.DS_Store
