@@ -40,8 +40,6 @@ Here is the basic syntax for a two-arm trial:
 ``` r
 
 library(ri2)
-#> Loading required package: randomizr
-#> Loading required package: estimatr
 N <- 100
 declaration <- declare_ra(N = N, m = 50)
 
@@ -64,20 +62,16 @@ plot(ri_out)
 
 ![Histogram of the randomization distribution of the estimated ATE under
 the sharp null of no effect, with a vertical line at the observed
-estimate.](reference/figures/README-unnamed-chunk-4-1.png)
-
-plot of chunk unnamed-chunk-4
+estimate.](reference/figures/README-ri-example-1.png)
 
 ``` r
 
 summary(ri_out)
-#>   term  estimate two_tailed_p_value
-#> 1    Z 0.2393663               0.43
+#>   term   estimate two_tailed_p_value
+#> 1    Z -0.5711395              0.044
 ```
 
 The development of ri2 is supported by a Standards Grant from
 [EGAP](http://egap.org).
 
 ![EGAP logo](reference/figures/EGAP_logo.jpg)
-
-plot of chunk unnamed-chunk-5

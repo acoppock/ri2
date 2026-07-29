@@ -1,5 +1,16 @@
 # Randomization Inference with ri2
 
+``` r
+
+library(ri2)
+library(estimatr)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(forcats)
+library(ggplot2)
+```
+
 Randomization inference (RI) is procedure for conducting hypothesis
 tests in randomized experiments. RI is useful for calculating the the
 probability that:
@@ -32,8 +43,8 @@ describes one way the experiment could have come out.
 
 ``` r
 
-table_2_2 <- data.frame(Z = c(1, 0, 0, 0, 0, 0, 1),
-                        Y = c(15, 15, 20, 20, 10, 15, 30))
+table_2_2 <- tibble(Z = c(1, 0, 0, 0, 0, 0, 1),
+                    Y = c(15, 15, 20, 20, 10, 15, 30))
 ```
 
 In order to conduct randomization inference, we need to supply 1) a test
@@ -53,9 +64,6 @@ statistic, 2) a null hypothesis, and 3) a randomization procedure.
     total units.
 
 ``` r
-
-library(ri2)
-library(randomizr)
 
 # Declare randomization procedure
 declaration <- declare_ra(N = 7, m = 2)
@@ -108,7 +116,7 @@ feature.
 
 ``` r
 
-dat <- data.frame(
+dat <- tibble(
   Y = c(8, 6, 2, 0, 3, 1, 1, 1, 2, 2, 0, 1, 0, 2, 2, 4, 1, 1),
   Z = c(1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0),
   cluster = c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9),
@@ -128,7 +136,11 @@ with(dat, table(block, Z))
 
 ``` r
 
-block_m <- with(dat, tapply(Z, block, sum) / 2)
+block_m <-
+  dat |>
+  summarize(m = sum(Z) / 2, .by = block) |>
+  arrange(block) |>
+  pull(m)
 
 declaration <- 
   with(dat,{
@@ -192,9 +204,9 @@ set.seed(42)
 N <- 120
 declaration <- declare_ra(N = N, num_arms = 3)
 
-Z <- conduct_ra(declaration)
-Y <- 0.6 * (Z == "T2") + 0.0 * (Z == "T3") + rnorm(N)
-dat_3arm <- data.frame(Y, Z)
+dat_3arm <-
+  tibble(Z = conduct_ra(declaration)) |>
+  mutate(Y = 0.6 * (Z == "T2") + 0.0 * (Z == "T3") + rnorm(n()))
 
 ri2_out <- conduct_ri(
   formula          = Y ~ Z,
@@ -250,36 +262,70 @@ re-randomizing only the T1 and T2 units. A natural but wrong alternative
 is to permute all three arms and then extract the T2-vs-T1 difference
 from each permutation. The problem: T3-assigned units carry their T3
 potential outcomes. When a full permutation shuffles them into T1 or T2,
-their outcomes — which reflect the T3 effect, not anything about T2 vs
-T1 — pollute the null distribution.
+their outcomes pollute the null distribution, since those outcomes
+reflect the T3 effect rather than anything about T2 vs T1.
 
 The contamination is most visible when T3 has a large effect. Here T3
 has an effect of 3, while T2 has an effect of 0.4:
 
+The two approaches differ only in how they build a simulated assignment.
+The naive one draws a fresh assignment for all three arms. The correct
+one shuffles the labels of the two arms being compared among the units
+that actually received them, leaving every other unit at its observed
+arm. `permute_within` does the shuffling:
+
+``` r
+
+permute_within <- function(z, arms) {
+  shuffled <- z %in% arms
+  z[shuffled] <- sample(z[shuffled])
+  z
+}
+```
+
+Rather than simulate one assignment at a time, we stack every simulation
+into one long data frame: `sims` copies of the experiment, each with its
+own simulated assignment, then a single grouped summary at the end.
+`arm_dims` takes such a frame and returns the simulated
+difference-in-means for one arm against the T1 baseline:
+
+``` r
+
+arm_dims <- function(draws, arm) {
+  draws |>
+    filter(Z_sim %in% c("T1", arm)) |>
+    summarize(mean_Y = mean(Y), .by = c(approach, sim, Z_sim)) |>
+    pivot_wider(names_from = Z_sim, values_from = mean_Y) |>
+    mutate(est_sim = .data[[arm]] - T1)
+}
+```
+
 ``` r
 
 set.seed(7)
-N3 <- 90
-decl3 <- declare_ra(N = N3, num_arms = 3)
-Z3   <- conduct_ra(decl3)
-Y3   <- 0.4 * (Z3 == "T2") + 3.0 * (Z3 == "T3") + rnorm(N3)
-obs_dim <- mean(Y3[Z3 == "T2"]) - mean(Y3[Z3 == "T1"])
+declaration_contam <- declare_ra(N = 90, num_arms = 3)
 
-sims3 <- 1000
+dat_contam <-
+  tibble(Z = conduct_ra(declaration_contam)) |>
+  mutate(Y = 0.4 * (Z == "T2") + 3.0 * (Z == "T3") + rnorm(n()))
 
-# Naive: draw a fresh full assignment, record T2 vs T1 each time
-dim_naive <- replicate(sims3, {
-  Zs <- conduct_ra(decl3)
-  mean(Y3[Zs == "T2"]) - mean(Y3[Zs == "T1"])
-})
+obs_dim <-
+  dat_contam |>
+  mutate(approach = "observed", sim = 1, Z_sim = Z) |>
+  arm_dims("T2") |>
+  pull(est_sim)
 
-# Correct: hold T3 units at their observed arm, permute only T1/T2 labels
-dim_correct <- replicate(sims3, {
-  z_new <- Z3
-  idx12 <- Z3 %in% c("T1", "T2")
-  z_new[idx12] <- sample(Z3[idx12])
-  mean(Y3[z_new == "T2"]) - mean(Y3[z_new == "T1"])
-})
+null_dims <-
+  bind_rows(
+    "Naive: full permutation" =
+      expand_grid(sim = 1:1000, dat_contam) |>
+      mutate(Z_sim = conduct_ra(declaration_contam), .by = sim),
+    "Correct: conditional permutation" =
+      expand_grid(sim = 1:1000, dat_contam) |>
+      mutate(Z_sim = permute_within(Z, c("T1", "T2")), .by = sim),
+    .id = "approach"
+  ) |>
+  arm_dims("T2")
 ```
 
 The naive null distribution is much wider because units with
@@ -289,47 +335,38 @@ comparison:
 
 ``` r
 
-par(mfrow = c(1, 2))
-xlim <- range(c(dim_naive, dim_correct, obs_dim)) * 1.1
+gg_df <-
+  null_dims |>
+  mutate(approach = fct_relevel(approach, "Naive: full permutation"))
 
-hist(dim_naive, breaks = 40, main = "Naive: full permutation",
-     xlab = "Simulated T2 vs T1 DiM", xlim = xlim, col = "grey80", border = "white")
-abline(v = obs_dim, col = "steelblue", lwd = 2)
-
-hist(dim_correct, breaks = 40, main = "Correct: conditional permutation",
-     xlab = "Simulated T2 vs T1 DiM", xlim = xlim, col = "grey80", border = "white")
-abline(v = obs_dim, col = "steelblue", lwd = 2)
+ggplot(gg_df, aes(x = est_sim)) +
+  geom_histogram(bins = 40, fill = "grey80", colour = "white") +
+  geom_vline(xintercept = obs_dim, colour = "steelblue", linewidth = 1) +
+  facet_wrap(~ approach) +
+  labs(x = "Simulated T2 vs T1 difference-in-means", y = NULL) +
+  theme_bw() +
+  theme(legend.position = "none")
 ```
 
-![](ri2_vignette_files/figure-html/unnamed-chunk-7-1.png)
+![Two histograms of simulated T2 versus T1 differences in means. The
+naive full permutation null is visibly wider than the correct
+conditional permutation null, and the observed estimate sits well inside
+the naive null but in the tail of the correct
+one.](ri2_vignette_files/figure-html/unnamed-chunk-9-1.png)
 
 ``` r
 
-cat("SD of null (naive):  ", round(sd(dim_naive),   2), "\n")
+null_dims |>
+  summarize(sd_null = sd(est_sim),
+            p_value = mean(abs(est_sim) >= abs(obs_dim)),
+            .by = approach)
 ```
 
-    ## SD of null (naive):   0.45
-
-``` r
-
-cat("SD of null (correct):", round(sd(dim_correct), 2), "\n")
-```
-
-    ## SD of null (correct): 0.24
-
-``` r
-
-cat("p-value (naive):     ", round(mean(abs(dim_naive)   >= abs(obs_dim)), 3), "\n")
-```
-
-    ## p-value (naive):      0.235
-
-``` r
-
-cat("p-value (correct):   ", round(mean(abs(dim_correct) >= abs(obs_dim)), 3), "\n")
-```
-
-    ## p-value (correct):    0.022
+    ## # A tibble: 2 × 3
+    ##   approach                         sd_null p_value
+    ##   <chr>                              <dbl>   <dbl>
+    ## 1 Naive: full permutation            0.455   0.235
+    ## 2 Correct: conditional permutation   0.244   0.022
 
 The naive null’s inflated variance swamps the T2 signal: its p-value is
 too large. The correct null’s narrower spread gives a p-value that
@@ -353,74 +390,74 @@ At the same time, high-variance T1/T2 units contaminate the T3
 comparison when they shuffle in, widening that null and reducing power
 precisely where we have a real effect to detect.
 
+The same two helpers do the work here. One replication draws an
+experiment, builds both null distributions for both comparisons, and
+returns four p-values:
+
+``` r
+
+one_replication <- function(declaration, sims = 300) {
+  dat_lev <-
+    tibble(Z = conduct_ra(declaration)) |>
+    mutate(Y = if_else(Z == "T3",
+                       rnorm(n(), mean = 1.5, sd = 0.1),
+                       rnorm(n(), mean = 0, sd = 6)))
+
+  draws <- function(arm) {
+    bind_rows(
+      naive =
+        expand_grid(sim = 1:sims, dat_lev) |>
+        mutate(Z_sim = conduct_ra(declaration), .by = sim),
+      correct =
+        expand_grid(sim = 1:sims, dat_lev) |>
+        mutate(Z_sim = permute_within(Z, c("T1", arm)), .by = sim),
+      .id = "approach"
+    ) |>
+      arm_dims(arm) |>
+      mutate(arm = arm)
+  }
+
+  observed <-
+    map(c("T2", "T3"), \(arm)
+        dat_lev |>
+          mutate(approach = "observed", sim = 1, Z_sim = Z) |>
+          arm_dims(arm) |>
+          mutate(arm = arm)) |>
+    list_rbind() |>
+    select(arm, est_obs = est_sim)
+
+  map(c("T2", "T3"), draws) |>
+    list_rbind() |>
+    left_join(observed, by = "arm") |>
+    summarize(p_value = mean(abs(est_sim) >= abs(est_obs)), .by = c(arm, approach))
+}
+```
+
+Running it 300 times gives the rejection rate of each approach. T2’s
+sharp null is true, so its rejection rate should sit at 0.05. T3 has a
+real effect, so a higher rate there is power:
+
 ``` r
 
 set.seed(42)
-N3 <- 90
-decl3 <- declare_ra(N = N3, num_arms = 3)
+declaration_lev <- declare_ra(N = 90, num_arms = 3)
 
-# T1/T2: high-variance outcomes (sd = 6).
-# T3: leveling treatment, all units converge near 1.5 (sd = 0.1).
-# T2 sharp null is TRUE.
-reps_lev <- 300
-sims_lev <- 300
+leveling_results <-
+  tibble(replication = 1:300) |>
+  mutate(p_values = map(replication, \(r) one_replication(declaration_lev))) |>
+  unnest(p_values) |>
+  summarize(rejection_rate = mean(p_value < 0.05), .by = c(arm, approach))
 
-p_naive_T2_lev <- p_naive_T3_lev <- numeric(reps_lev)
-p_correct_T2_lev <- p_correct_T3_lev <- numeric(reps_lev)
-
-for (s in seq_len(reps_lev)) {
-  Z_s  <- conduct_ra(decl3)
-  Y0_s <- rnorm(N3, mean = 0, sd = 6)
-  Y_s  <- ifelse(Z_s == "T3", rnorm(N3, mean = 1.5, sd = 0.1), Y0_s)
-
-  obs_T2 <- mean(Y_s[Z_s == "T2"]) - mean(Y_s[Z_s == "T1"])
-  obs_T3 <- mean(Y_s[Z_s == "T3"]) - mean(Y_s[Z_s == "T1"])
-
-  d_n2 <- d_n3 <- d_c2 <- d_c3 <- numeric(sims_lev)
-  idx12 <- Z_s %in% c("T1", "T2")
-  idx13 <- Z_s %in% c("T1", "T3")
-
-  for (j in seq_len(sims_lev)) {
-    Zn    <- conduct_ra(decl3)
-    d_n2[j] <- mean(Y_s[Zn == "T2"]) - mean(Y_s[Zn == "T1"])
-    d_n3[j] <- mean(Y_s[Zn == "T3"]) - mean(Y_s[Zn == "T1"])
-    z2 <- Z_s; z2[idx12] <- sample(Z_s[idx12])
-    d_c2[j] <- mean(Y_s[z2 == "T2"]) - mean(Y_s[z2 == "T1"])
-    z3 <- Z_s; z3[idx13] <- sample(Z_s[idx13])
-    d_c3[j] <- mean(Y_s[z3 == "T3"]) - mean(Y_s[z3 == "T1"])
-  }
-
-  p_naive_T2_lev[s]   <- mean(abs(d_n2) >= abs(obs_T2))
-  p_naive_T3_lev[s]   <- mean(abs(d_n3) >= abs(obs_T3))
-  p_correct_T2_lev[s] <- mean(abs(d_c2) >= abs(obs_T2))
-  p_correct_T3_lev[s] <- mean(abs(d_c3) >= abs(obs_T3))
-}
-
-cat("T2 (null true) — naive rejection rate:   ", mean(p_naive_T2_lev   < 0.05), "\n")
+leveling_results
 ```
 
-    ## T2 (null true) — naive rejection rate:    0.11
-
-``` r
-
-cat("T2 (null true) — correct rejection rate: ", mean(p_correct_T2_lev < 0.05), "\n")
-```
-
-    ## T2 (null true) — correct rejection rate:  0.04
-
-``` r
-
-cat("T3 (real effect) — naive power:   ", mean(p_naive_T3_lev   < 0.05), "\n")
-```
-
-    ## T3 (real effect) — naive power:    0.1933333
-
-``` r
-
-cat("T3 (real effect) — correct power: ", mean(p_correct_T3_lev < 0.05), "\n")
-```
-
-    ## T3 (real effect) — correct power:  0.27
+    ## # A tibble: 4 × 3
+    ##   arm   approach rejection_rate
+    ##   <chr> <chr>             <dbl>
+    ## 1 T2    naive            0.0967
+    ## 2 T2    correct          0.0533
+    ## 3 T3    naive            0.17  
+    ## 4 T3    correct          0.253
 
 The naive T2 test rejects at roughly twice the nominal rate: the
 low-variance T3 units narrow its null distribution, making modest
@@ -429,7 +466,7 @@ substantially lower power: high-variance T1/T2 units inflate its null
 distribution, making the real T3 effect harder to detect. The correct
 conditional approach maintains the nominal type I error rate for T2 and
 the correct power for T3 in both scenarios. The conditional permutation
-is not a technicality — it is what makes the test valid.
+is not a technicality: it is what makes the test valid.
 
 ## Comparing nested models
 
@@ -464,9 +501,9 @@ N <- 100
 # three-arm trial, treat 33, 33, 34 or 33, 34, 33, or 34, 33, 33
 declaration <- declare_ra(N = N, num_arms = 3)
 
-Z <- conduct_ra(declaration)
-Y <- .9 * .2 * (Z == "T2") + -.1 * (Z == "T3") + rnorm(N)
-dat <- data.frame(Y, Z)
+dat <-
+  tibble(Z = conduct_ra(declaration)) |>
+  mutate(Y = .9 * .2 * (Z == "T2") + -.1 * (Z == "T3") + rnorm(n()))
 
 ri2_out <-
   conduct_ri(
@@ -480,7 +517,7 @@ ri2_out <-
 plot(ri2_out)
 ```
 
-![](ri2_vignette_files/figure-html/unnamed-chunk-10-1.png)
+![](ri2_vignette_files/figure-html/unnamed-chunk-13-1.png)
 
 ``` r
 
@@ -488,7 +525,7 @@ summary(ri2_out)
 ```
 
     ##          term estimate two_tailed_p_value
-    ## 1 F-statistic 0.681984              0.502
+    ## 1 F-statistic 1.703975              0.171
 
 ``` r
 
@@ -502,8 +539,8 @@ anova(lm(Y ~ 1, data = dat),
     ## Model 1: Y ~ 1
     ## Model 2: Y ~ Z
     ##   Res.Df    RSS Df Sum of Sq     F Pr(>F)
-    ## 1     99 85.571                          
-    ## 2     97 84.384  2    1.1866 0.682  0.508
+    ## 1     99 110.31                          
+    ## 2     97 106.57  2    3.7441 1.704 0.1874
 
 ### Interaction terms
 
@@ -522,18 +559,21 @@ and Green (2012) Chapter 9 for more information on this procedure.
 N <- 100
 # two-arm trial, treat 50 of 100
 declaration <- declare_ra(N = N)
-X <- rnorm(N)
-Z <- conduct_ra(declaration)
-Y <- .9 + .2 * Z + .1 * X + -.5 * Z * X + rnorm(N)
-dat <- data.frame(X, Y, Z)
+dat <-
+  tibble(X = rnorm(N), Z = conduct_ra(declaration)) |>
+  mutate(Y = .9 + .2 * Z + .1 * X + -.5 * Z * X + rnorm(n()))
 
 # Observed ATE
-ate_hat <- coef(lm(Y ~ Z, data = dat))[2]
+ate_hat <-
+  lm_robust(Y ~ Z, data = dat) |>
+  tidy() |>
+  filter(term == "Z") |>
+  pull(estimate)
+
 ate_hat
 ```
 
-    ##          Z 
-    ## -0.1414751
+    ## [1] 0.2486798
 
 ``` r
 
@@ -549,7 +589,7 @@ ri2_out <-
 plot(ri2_out)
 ```
 
-![](ri2_vignette_files/figure-html/unnamed-chunk-11-1.png)
+![](ri2_vignette_files/figure-html/unnamed-chunk-14-1.png)
 
 ``` r
 
@@ -557,7 +597,7 @@ summary(ri2_out)
 ```
 
     ##          term estimate two_tailed_p_value
-    ## 1 F-statistic 30.25135                  0
+    ## 1 F-statistic 1.701251              0.282
 
 ``` r
 
@@ -570,11 +610,9 @@ anova(lm(Y ~ Z + X, data = dat),
     ## 
     ## Model 1: Y ~ Z + X
     ## Model 2: Y ~ Z + X + Z * X
-    ##   Res.Df    RSS Df Sum of Sq      F    Pr(>F)    
-    ## 1     97 119.61                                  
-    ## 2     96  90.95  1     28.66 30.251 3.137e-07 ***
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##   Res.Df    RSS Df Sum of Sq      F Pr(>F)
+    ## 1     97 102.37                           
+    ## 2     96 100.59  1    1.7825 1.7013 0.1952
 
 ## Arbitrary test statistics
 
@@ -596,20 +634,24 @@ sharp null of no effect for any unit:
 N <- 100
 declaration <- declare_ra(N = N, m = 50)
 
-Z <- conduct_ra(declaration)
-Y <- .9 + rnorm(N, sd = .25 + .25*Z)
-dat <- data.frame(Y, Z)
+dat <-
+  tibble(Z = conduct_ra(declaration)) |>
+  mutate(Y = .9 + rnorm(n(), sd = .25 + .25 * Z))
 
 # arbitrary function of data
 test_fun <- function(data) {
-  with(data, var(Y[Z == 1]) - var(Y[Z == 0]))
+  data |>
+    summarize(var_Y = var(Y), .by = Z) |>
+    pivot_wider(names_from = Z, values_from = var_Y, names_prefix = "Z") |>
+    mutate(diff_var = Z1 - Z0) |>
+    pull(diff_var)
 }
 
 # confirm it works
 test_fun(dat)
 ```
 
-    ## [1] 0.2866155
+    ## [1] 0.2284293
 
 ``` r
 
@@ -626,7 +668,7 @@ conduct_ri(
 plot(ri2_out)
 ```
 
-![](ri2_vignette_files/figure-html/unnamed-chunk-12-1.png)
+![](ri2_vignette_files/figure-html/unnamed-chunk-15-1.png)
 
 ``` r
 
@@ -634,7 +676,7 @@ summary(ri2_out)
 ```
 
     ##                    term  estimate two_tailed_p_value
-    ## 1 Custom Test Statistic 0.2866155                  0
+    ## 1 Custom Test Statistic 0.2284293                  0
 
 ### Balance Test
 
@@ -652,23 +694,22 @@ N <- 100
 declaration <- declare_ra(N = N)
 
 dat <-
-  data.frame(
-  X1 = rnorm(N),
-  X2 = rbinom(N, 1, .5),
-  X3 = rpois(N, 3),
-  Z = conduct_ra(declaration)
+  tibble(
+    X1 = rnorm(N),
+    X2 = rbinom(N, 1, .5),
+    X3 = rpois(N, 3),
+    Z = conduct_ra(declaration)
   )
-  
+
 balance_fun <- function(data) {
-  summary(lm(Z ~ X1 + X2 + X3, data = data))$f[1]
+  lm_robust(Z ~ X1 + X2 + X3, data = data)$fstatistic[["value"]]
 }
 
 # Confirm it works!
 balance_fun(dat)
 ```
 
-    ##    value 
-    ## 2.333344
+    ## [1] 3.11156
 
 ``` r
 
@@ -680,17 +721,11 @@ ri2_out <-
   sharp_hypothesis = 0,
   data = dat
   )
-```
-
-    ## Warning in data.frame(est_sim = test_stat_sim, est_obs = test_stat_obs, : row
-    ## names were found from a short variable and have been discarded
-
-``` r
 
 plot(ri2_out)
 ```
 
-![](ri2_vignette_files/figure-html/unnamed-chunk-13-1.png)
+![](ri2_vignette_files/figure-html/unnamed-chunk-16-1.png)
 
 ``` r
 
@@ -698,34 +733,24 @@ summary(ri2_out)
 ```
 
     ##                    term estimate two_tailed_p_value
-    ## 1 Custom Test Statistic 2.333344              0.071
+    ## 1 Custom Test Statistic  3.11156              0.055
 
 ``` r
 
 # For comparison
-summary(lm(Z ~ X1 + X2 + X3, data = dat))
+lm_robust(Z ~ X1 + X2 + X3, data = dat)
 ```
 
-    ## 
-    ## Call:
-    ## lm(formula = Z ~ X1 + X2 + X3, data = dat)
-    ## 
-    ## Residuals:
-    ##     Min      1Q  Median      3Q     Max 
-    ## -0.6969 -0.4808  0.0517  0.4402  0.7874 
-    ## 
-    ## Coefficients:
-    ##             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)  0.74479    0.11471   6.493 3.71e-09 ***
-    ## X1           0.05245    0.04465   1.175   0.2430    
-    ## X2          -0.09441    0.09920  -0.952   0.3437    
-    ## X3          -0.06223    0.02762  -2.253   0.0265 *  
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Residual standard error: 0.4927 on 96 degrees of freedom
-    ## Multiple R-squared:  0.06796,    Adjusted R-squared:  0.03884 
-    ## F-statistic: 2.333 on 3 and 96 DF,  p-value: 0.07885
+    ##                 Estimate Std. Error     t value     Pr(>|t|)    CI Lower
+    ## (Intercept)  0.626507883 0.11688584  5.35999832 5.717938e-07  0.39449133
+    ## X1           0.060203097 0.04787220  1.25757958 2.115944e-01 -0.03482246
+    ## X2          -0.265953770 0.09767134 -2.72294595 7.686149e-03 -0.45982984
+    ## X3           0.001054774 0.02998723  0.03517413 9.720139e-01 -0.05846940
+    ##                CI Upper DF
+    ## (Intercept)  0.85852443 96
+    ## X1           0.15522866 96
+    ## X2          -0.07207770 96
+    ## X3           0.06057895 96
 
 ## Conclusion
 

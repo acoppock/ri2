@@ -48,7 +48,7 @@
 <li>Implemented clustered standard errors for <code>studentize = TRUE</code>: add a <code>clusters</code> argument; CR2 SEs are used automatically when clusters are supplied.</li>
 <li>Added <code><a href="../reference/ri_ci.html">ri_ci()</a></code> for randomization inference confidence intervals by test inversion (<a href="https://github.com/acoppock/ri2/issues/31" class="external-link">#31</a>).</li>
 <li>Added explicit NA checks with informative messages (<a href="https://github.com/acoppock/ri2/issues/2" class="external-link">#2</a>).</li>
-<li>Moved <code>randomizr</code> and <code>estimatr</code> from <code>Depends</code> to <code>Imports</code>.</li>
+<li>Moved <code>randomizr</code> and <code>estimatr</code> from <code>Depends</code> to <code>Imports</code>. To keep <code><a href="https://alexandercoppock.com/ri2/">library(ri2)</a></code> self-sufficient, <code><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra()</a></code>, <code><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra()</a></code>, the <code>*_ra()</code> assignment functions, and the <code>obtain_*()</code> helpers are now re-exported from ri2, so existing scripts that relied on <code>randomizr</code> being attached continue to work.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.1" id="ri2-041">ri2 0.4.1<a class="anchor" aria-label="anchor" href="#ri2-041"></a></h2><p class="text-muted">CRAN release: 2025-10-14</p>

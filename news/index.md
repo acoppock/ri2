@@ -34,7 +34,13 @@
   ([\#31](https://github.com/acoppock/ri2/issues/31)).
 - Added explicit NA checks with informative messages
   ([\#2](https://github.com/acoppock/ri2/issues/2)).
-- Moved `randomizr` and `estimatr` from `Depends` to `Imports`.
+- Moved `randomizr` and `estimatr` from `Depends` to `Imports`. To keep
+  [`library(ri2)`](https://alexandercoppock.com/ri2/) self-sufficient,
+  [`declare_ra()`](https://declaredesign.org/r/randomizr/reference/declare_ra.html),
+  [`conduct_ra()`](https://declaredesign.org/r/randomizr/reference/conduct_ra.html),
+  the `*_ra()` assignment functions, and the `obtain_*()` helpers are
+  now re-exported from ri2, so existing scripts that relied on
+  `randomizr` being attached continue to work.
 
 ## ri2 0.4.1
 

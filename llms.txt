@@ -40,8 +40,6 @@ Here is the basic syntax for a two-arm trial:
 ``` r
 
 library(ri2)
-#> Loading required package: randomizr
-#> Loading required package: estimatr
 N <- 100
 declaration <- declare_ra(N = N, m = 50)
 
@@ -64,23 +62,19 @@ plot(ri_out)
 
 ![Histogram of the randomization distribution of the estimated ATE under
 the sharp null of no effect, with a vertical line at the observed
-estimate.](reference/figures/README-unnamed-chunk-4-1.png)
-
-plot of chunk unnamed-chunk-4
+estimate.](reference/figures/README-ri-example-1.png)
 
 ``` r
 
 summary(ri_out)
-#>   term  estimate two_tailed_p_value
-#> 1    Z 0.2393663               0.43
+#>   term   estimate two_tailed_p_value
+#> 1    Z -0.5711395              0.044
 ```
 
 The development of ri2 is supported by a Standards Grant from
 [EGAP](http://egap.org).
 
 ![EGAP logo](reference/figures/EGAP_logo.jpg)
-
-plot of chunk unnamed-chunk-5
 
 # Package index
 
@@ -96,12 +90,24 @@ sharp null hypothesis.
 
 ## Re-exports
 
-Random assignment functions from randomizr, re-exported so that a
-declaration can be built without attaching randomizr.
+Random assignment functions from randomizr and the
+[`tidy()`](https://generics.r-lib.org/reference/tidy.html) generic from
+generics, re-exported so that a declaration can be built and tidied
+without attaching another package.
 
 - [`reexports`](https://alexandercoppock.com/ri2/reference/reexports.md)
-  [`tidy`](https://alexandercoppock.com/ri2/reference/reexports.md) :
-  Objects exported from other packages
+  [`tidy`](https://alexandercoppock.com/ri2/reference/reexports.md)
+  [`declare_ra`](https://alexandercoppock.com/ri2/reference/reexports.md)
+  [`conduct_ra`](https://alexandercoppock.com/ri2/reference/reexports.md)
+  [`simple_ra`](https://alexandercoppock.com/ri2/reference/reexports.md)
+  [`complete_ra`](https://alexandercoppock.com/ri2/reference/reexports.md)
+  [`block_ra`](https://alexandercoppock.com/ri2/reference/reexports.md)
+  [`cluster_ra`](https://alexandercoppock.com/ri2/reference/reexports.md)
+  [`block_and_cluster_ra`](https://alexandercoppock.com/ri2/reference/reexports.md)
+  [`obtain_permutation_matrix`](https://alexandercoppock.com/ri2/reference/reexports.md)
+  [`obtain_num_permutations`](https://alexandercoppock.com/ri2/reference/reexports.md)
+  [`obtain_condition_probabilities`](https://alexandercoppock.com/ri2/reference/reexports.md)
+  : Objects exported from other packages
 
 # Articles
 

@@ -68,6 +68,14 @@ Coppock</h4>
 
     
     
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://alexandercoppock.com/ri2/">ri2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://declaredesign.org/r/estimatr/" class="external-link">estimatr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://forcats.tidyverse.org/" class="external-link">forcats</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
 <p>Randomization inference (RI) is procedure for conducting hypothesis
 tests in randomized experiments. RI is useful for calculating the the
 probability that:</p>
@@ -103,9 +111,9 @@ it handled. &lt;code&gt;ri2&lt;/code&gt; hopes to be all that and more.&lt;/p&gt
 of 7 villages are assigned a female council head and the outcome is the
 share of the local budget allocated to water sanitation. Their table 2.2
 describes one way the experiment could have come out.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">table_2_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>                        Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">20</span>, <span class="fl">10</span>, <span class="fl">15</span>, <span class="fl">30</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">table_2_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>Z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>                    Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>, <span class="fl">15</span>, <span class="fl">20</span>, <span class="fl">20</span>, <span class="fl">10</span>, <span class="fl">15</span>, <span class="fl">30</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>In order to conduct randomization inference, we need to supply 1) a
 test statistic, 2) a null hypothesis, and 3) a randomization
 procedure.</p>
@@ -124,11 +132,8 @@ from the <code>randomizr</code> package allows us to declare a
 randomization procedure. In this case, we are assigning <code>2</code>
 units to treatment out of <code>7</code> total units.</li>
 </ol>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://alexandercoppock.com/ri2/">ri2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://declaredesign.org/r/randomizr/" class="external-link">randomizr</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Declare randomization procedure</span></span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Declare randomization procedure</span></span>
 <span><span class="va">declaration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">7</span>, m <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Conduct Randomization Inference</span></span>
@@ -142,7 +147,7 @@ units to treatment out of <code>7</code> total units.</li>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   term estimate two_tailed_p_value</span></span>
 <span><span class="co">## 1    Z      6.5          0.3809524</span></span></code></pre>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="700"></p>
 </div>
@@ -170,8 +175,8 @@ three separate blocks). Note that in this design, the probabilities of
 assignment to treatment are <strong>not</strong> constant across units,
 but the <code>conduct_ri</code> function by default incorporates inverse
 probability weights to account for this design feature.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
 <span>  Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">0</span>, <span class="fl">3</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>  Z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  cluster <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">8</span>, <span class="fl">9</span>, <span class="fl">9</span><span class="op">)</span>,</span>
@@ -186,8 +191,12 @@ probability weights to account for this design feature.</p>
 <span><span class="co">##     1 2 2</span></span>
 <span><span class="co">##     2 2 4</span></span>
 <span><span class="co">##     3 4 4</span></span></code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">block_m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fu"><a href="https://rdrr.io/r/base/tapply.html" class="external-link">tapply</a></span><span class="op">(</span><span class="va">Z</span>, <span class="va">block</span>, <span class="va">sum</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">block_m</span> <span class="op">&lt;-</span></span>
+<span>  <span class="va">dat</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>m <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">Z</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span>, .by <span class="op">=</span> <span class="va">block</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">block</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">declaration</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">dat</span>,<span class="op">{</span></span>
@@ -206,7 +215,7 @@ probability weights to account for this design feature.</p>
 <span><span class="co">## The possible treatment categories are 0 and 1.</span></span>
 <span><span class="co">## The number of possible random assignments is 36.  </span></span>
 <span><span class="co">## The probabilities of assignment are NOT constant across units. Your analysis strategy must account for differential probabilities of assignment, typically by employing inverse probability weights.</span></span></code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ri2_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/conduct_ri.html">conduct_ri</a></span><span class="op">(</span></span>
 <span>  <span class="va">Y</span> <span class="op">~</span> <span class="va">Z</span>,</span>
 <span>  sharp_hypothesis <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -216,7 +225,7 @@ probability weights to account for this design feature.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   term estimate two_tailed_p_value</span></span>
 <span><span class="co">## 1    Z        2          0.1944444</span></span></code></pre>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="700"></p>
 </div>
@@ -235,14 +244,14 @@ draws, reflecting the conditional design.</p>
 <code>T1</code> (control), <code>T2</code>, and <code>T3</code>. The
 call to <code>conduct_ri</code> looks the same as in the two-arm
 case.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">N</span> <span class="op">&lt;-</span> <span class="fl">120</span></span>
 <span><span class="va">declaration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N</span>, num_arms <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span></span>
-<span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fl">0.6</span> <span class="op">*</span> <span class="op">(</span><span class="va">Z</span> <span class="op">==</span> <span class="st">"T2"</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.0</span> <span class="op">*</span> <span class="op">(</span><span class="va">Z</span> <span class="op">==</span> <span class="st">"T3"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N</span><span class="op">)</span></span>
-<span><span class="va">dat_3arm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">Z</span><span class="op">)</span></span>
+<span><span class="va">dat_3arm</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>Z <span class="op">=</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="fl">0.6</span> <span class="op">*</span> <span class="op">(</span><span class="va">Z</span> <span class="op">==</span> <span class="st">"T2"</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.0</span> <span class="op">*</span> <span class="op">(</span><span class="va">Z</span> <span class="op">==</span> <span class="st">"T3"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ri2_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/conduct_ri.html">conduct_ri</a></span><span class="op">(</span></span>
 <span>  formula          <span class="op">=</span> <span class="va">Y</span> <span class="op">~</span> <span class="va">Z</span>,</span>
@@ -256,7 +265,7 @@ case.</p>
 <pre><code><span><span class="co">##   term  estimate two_tailed_p_value</span></span>
 <span><span class="co">## 1  ZT2 0.7569473               0.00</span></span>
 <span><span class="co">## 2  ZT3 0.2689631               0.14</span></span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
 <p><img src="ri2_vignette_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="700"></p>
 <p>The summary and plot return one row (or panel) per comparison. Here
@@ -267,7 +276,7 @@ not.</p>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k - 1</annotation></semantics></math>,
 one entry per comparison in the same order as the terms in the
 output:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Test T2 against H0: tau = 0.6, T3 against H0: tau = 0</span></span>
 <span><span class="va">ri2_out_vec</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/conduct_ri.html">conduct_ri</a></span><span class="op">(</span></span>
 <span>  formula          <span class="op">=</span> <span class="va">Y</span> <span class="op">~</span> <span class="va">Z</span>,</span>
@@ -289,61 +298,87 @@ re-randomizing only the T1 and T2 units. A natural but wrong alternative
 is to permute all three arms and then extract the T2-vs-T1 difference
 from each permutation. The problem: T3-assigned units carry their T3
 potential outcomes. When a full permutation shuffles them into T1 or T2,
-their outcomes — which reflect the T3 effect, not anything about T2 vs
-T1 — pollute the null distribution.</p>
+their outcomes pollute the null distribution, since those outcomes
+reflect the T3 effect rather than anything about T2 vs T1.</p>
 <p>The contamination is most visible when T3 has a large effect. Here T3
 has an effect of 3, while T2 has an effect of 0.4:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<p>The two approaches differ only in how they build a simulated
+assignment. The naive one draws a fresh assignment for all three arms.
+The correct one shuffles the labels of the two arms being compared among
+the units that actually received them, leaving every other unit at its
+observed arm. <code>permute_within</code> does the shuffling:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">permute_within</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span>, <span class="va">arms</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">shuffled</span> <span class="op">&lt;-</span> <span class="va">z</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">arms</span></span>
+<span>  <span class="va">z</span><span class="op">[</span><span class="va">shuffled</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">z</span><span class="op">[</span><span class="va">shuffled</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="va">z</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Rather than simulate one assignment at a time, we stack every
+simulation into one long data frame: <code>sims</code> copies of the
+experiment, each with its own simulated assignment, then a single
+grouped summary at the end. <code>arm_dims</code> takes such a frame and
+returns the simulated difference-in-means for one arm against the T1
+baseline:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">arm_dims</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">draws</span>, <span class="va">arm</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">draws</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Z_sim</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T1"</span>, <span class="va">arm</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>mean_Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span>, .by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">approach</span>, <span class="va">sim</span>, <span class="va">Z_sim</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">Z_sim</span>, values_from <span class="op">=</span> <span class="va">mean_Y</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>est_sim <span class="op">=</span> <span class="va">.data</span><span class="op">[[</span><span class="va">arm</span><span class="op">]</span><span class="op">]</span> <span class="op">-</span> <span class="va">T1</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">7</span><span class="op">)</span></span>
-<span><span class="va">N3</span> <span class="op">&lt;-</span> <span class="fl">90</span></span>
-<span><span class="va">decl3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N3</span>, num_arms <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="va">Z3</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">decl3</span><span class="op">)</span></span>
-<span><span class="va">Y3</span>   <span class="op">&lt;-</span> <span class="fl">0.4</span> <span class="op">*</span> <span class="op">(</span><span class="va">Z3</span> <span class="op">==</span> <span class="st">"T2"</span><span class="op">)</span> <span class="op">+</span> <span class="fl">3.0</span> <span class="op">*</span> <span class="op">(</span><span class="va">Z3</span> <span class="op">==</span> <span class="st">"T3"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N3</span><span class="op">)</span></span>
-<span><span class="va">obs_dim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y3</span><span class="op">[</span><span class="va">Z3</span> <span class="op">==</span> <span class="st">"T2"</span><span class="op">]</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y3</span><span class="op">[</span><span class="va">Z3</span> <span class="op">==</span> <span class="st">"T1"</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">declaration_contam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">90</span>, num_arms <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">sims3</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
+<span><span class="va">dat_contam</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>Z <span class="op">=</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration_contam</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="fl">0.4</span> <span class="op">*</span> <span class="op">(</span><span class="va">Z</span> <span class="op">==</span> <span class="st">"T2"</span><span class="op">)</span> <span class="op">+</span> <span class="fl">3.0</span> <span class="op">*</span> <span class="op">(</span><span class="va">Z</span> <span class="op">==</span> <span class="st">"T3"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Naive: draw a fresh full assignment, record T2 vs T1 each time</span></span>
-<span><span class="va">dim_naive</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="va">sims3</span>, <span class="op">{</span></span>
-<span>  <span class="va">Zs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">decl3</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y3</span><span class="op">[</span><span class="va">Zs</span> <span class="op">==</span> <span class="st">"T2"</span><span class="op">]</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y3</span><span class="op">[</span><span class="va">Zs</span> <span class="op">==</span> <span class="st">"T1"</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="va">obs_dim</span> <span class="op">&lt;-</span></span>
+<span>  <span class="va">dat_contam</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>approach <span class="op">=</span> <span class="st">"observed"</span>, sim <span class="op">=</span> <span class="fl">1</span>, Z_sim <span class="op">=</span> <span class="va">Z</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">arm_dims</span><span class="op">(</span><span class="st">"T2"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">est_sim</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Correct: hold T3 units at their observed arm, permute only T1/T2 labels</span></span>
-<span><span class="va">dim_correct</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="va">sims3</span>, <span class="op">{</span></span>
-<span>  <span class="va">z_new</span> <span class="op">&lt;-</span> <span class="va">Z3</span></span>
-<span>  <span class="va">idx12</span> <span class="op">&lt;-</span> <span class="va">Z3</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T1"</span>, <span class="st">"T2"</span><span class="op">)</span></span>
-<span>  <span class="va">z_new</span><span class="op">[</span><span class="va">idx12</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">Z3</span><span class="op">[</span><span class="va">idx12</span><span class="op">]</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y3</span><span class="op">[</span><span class="va">z_new</span> <span class="op">==</span> <span class="st">"T2"</span><span class="op">]</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y3</span><span class="op">[</span><span class="va">z_new</span> <span class="op">==</span> <span class="st">"T1"</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">null_dims</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Naive: full permutation"</span> <span class="op">=</span></span>
+<span>      <span class="fu"><a href="https://tidyr.tidyverse.org/reference/expand_grid.html" class="external-link">expand_grid</a></span><span class="op">(</span>sim <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, <span class="va">dat_contam</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Z_sim <span class="op">=</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration_contam</span><span class="op">)</span>, .by <span class="op">=</span> <span class="va">sim</span><span class="op">)</span>,</span>
+<span>    <span class="st">"Correct: conditional permutation"</span> <span class="op">=</span></span>
+<span>      <span class="fu"><a href="https://tidyr.tidyverse.org/reference/expand_grid.html" class="external-link">expand_grid</a></span><span class="op">(</span>sim <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, <span class="va">dat_contam</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Z_sim <span class="op">=</span> <span class="fu">permute_within</span><span class="op">(</span><span class="va">Z</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T1"</span>, <span class="st">"T2"</span><span class="op">)</span><span class="op">)</span>, .by <span class="op">=</span> <span class="va">sim</span><span class="op">)</span>,</span>
+<span>    .id <span class="op">=</span> <span class="st">"approach"</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">arm_dims</span><span class="op">(</span><span class="st">"T2"</span><span class="op">)</span></span></code></pre></div>
 <p>The naive null distribution is much wider because units with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mo>≈</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">Y \approx 3</annotation></semantics></math>
 (the T3 units) randomly land in T1 or T2 across permutations, adding
 variance that has nothing to do with the T2 vs T1 comparison:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">xlim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">dim_naive</span>, <span class="va">dim_correct</span>, <span class="va">obs_dim</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fl">1.1</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">dim_naive</span>, breaks <span class="op">=</span> <span class="fl">40</span>, main <span class="op">=</span> <span class="st">"Naive: full permutation"</span>,</span>
-<span>     xlab <span class="op">=</span> <span class="st">"Simulated T2 vs T1 DiM"</span>, xlim <span class="op">=</span> <span class="va">xlim</span>, col <span class="op">=</span> <span class="st">"grey80"</span>, border <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">obs_dim</span>, col <span class="op">=</span> <span class="st">"steelblue"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">dim_correct</span>, breaks <span class="op">=</span> <span class="fl">40</span>, main <span class="op">=</span> <span class="st">"Correct: conditional permutation"</span>,</span>
-<span>     xlab <span class="op">=</span> <span class="st">"Simulated T2 vs T1 DiM"</span>, xlim <span class="op">=</span> <span class="va">xlim</span>, col <span class="op">=</span> <span class="st">"grey80"</span>, border <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="va">obs_dim</span>, col <span class="op">=</span> <span class="st">"steelblue"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" alt="" width="672"></p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"SD of null (naive):  "</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">dim_naive</span><span class="op">)</span>,   <span class="fl">2</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## SD of null (naive):   0.45</span></span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"SD of null (correct):"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">dim_correct</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## SD of null (correct): 0.24</span></span></code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"p-value (naive):     "</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">dim_naive</span><span class="op">)</span>   <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">obs_dim</span><span class="op">)</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## p-value (naive):      0.235</span></span></code></pre>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"p-value (correct):   "</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">dim_correct</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">obs_dim</span><span class="op">)</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## p-value (correct):    0.022</span></span></code></pre>
+<code class="sourceCode R"><span><span class="va">gg_df</span> <span class="op">&lt;-</span></span>
+<span>  <span class="va">null_dims</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>approach <span class="op">=</span> <span class="fu"><a href="https://forcats.tidyverse.org/reference/fct_relevel.html" class="external-link">fct_relevel</a></span><span class="op">(</span><span class="va">approach</span>, <span class="st">"Naive: full permutation"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">gg_df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">est_sim</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">40</span>, fill <span class="op">=</span> <span class="st">"grey80"</span>, colour <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">obs_dim</span>, colour <span class="op">=</span> <span class="st">"steelblue"</span>, linewidth <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">approach</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Simulated T2 vs T1 difference-in-means"</span>, y <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="Two histograms of simulated T2 versus T1 differences in means. The naive full permutation null is visibly wider than the correct conditional permutation null, and the observed estimate sits well inside the naive null but in the tail of the correct one." width="672"></p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">null_dims</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>sd_null <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">est_sim</span><span class="op">)</span>,</span>
+<span>            p_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">est_sim</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">obs_dim</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>            .by <span class="op">=</span> <span class="va">approach</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 2 × 3</span></span></span>
+<span><span class="co">##   approach                         sd_null p_value</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> Naive: full permutation            0.455   0.235</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> Correct: conditional permutation   0.244   0.022</span></span></code></pre>
 <p>The naive null’s inflated variance swamps the T2 signal: its p-value
 is too large. The correct null’s narrower spread gives a p-value that
 reflects the actual T2 effect. <code><a href="../reference/conduct_ri.html">conduct_ri()</a></code> always uses the
@@ -362,59 +397,66 @@ conservative before now makes it anti-conservative.</p>
 <p>At the same time, high-variance T1/T2 units contaminate the T3
 comparison when they shuffle in, widening that null and reducing power
 precisely where we have a real effect to detect.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
-<span><span class="va">N3</span> <span class="op">&lt;-</span> <span class="fl">90</span></span>
-<span><span class="va">decl3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N3</span>, num_arms <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<p>The same two helpers do the work here. One replication draws an
+experiment, builds both null distributions for both comparisons, and
+returns four p-values:</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">one_replication</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">declaration</span>, <span class="va">sims</span> <span class="op">=</span> <span class="fl">300</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">dat_lev</span> <span class="op">&lt;-</span></span>
+<span>    <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>Z <span class="op">=</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">Z</span> <span class="op">==</span> <span class="st">"T3"</span>,</span>
+<span>                       <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, mean <span class="op">=</span> <span class="fl">1.5</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>                       <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># T1/T2: high-variance outcomes (sd = 6).</span></span>
-<span><span class="co"># T3: leveling treatment, all units converge near 1.5 (sd = 0.1).</span></span>
-<span><span class="co"># T2 sharp null is TRUE.</span></span>
-<span><span class="va">reps_lev</span> <span class="op">&lt;-</span> <span class="fl">300</span></span>
-<span><span class="va">sims_lev</span> <span class="op">&lt;-</span> <span class="fl">300</span></span>
-<span></span>
-<span><span class="va">p_naive_T2_lev</span> <span class="op">&lt;-</span> <span class="va">p_naive_T3_lev</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="va">reps_lev</span><span class="op">)</span></span>
-<span><span class="va">p_correct_T2_lev</span> <span class="op">&lt;-</span> <span class="va">p_correct_T3_lev</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="va">reps_lev</span><span class="op">)</span></span>
-<span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">s</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">reps_lev</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">Z_s</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">decl3</span><span class="op">)</span></span>
-<span>  <span class="va">Y0_s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N3</span>, mean <span class="op">=</span> <span class="fl">0</span>, sd <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
-<span>  <span class="va">Y_s</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">Z_s</span> <span class="op">==</span> <span class="st">"T3"</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N3</span>, mean <span class="op">=</span> <span class="fl">1.5</span>, sd <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span>, <span class="va">Y0_s</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="va">obs_T2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y_s</span><span class="op">[</span><span class="va">Z_s</span> <span class="op">==</span> <span class="st">"T2"</span><span class="op">]</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y_s</span><span class="op">[</span><span class="va">Z_s</span> <span class="op">==</span> <span class="st">"T1"</span><span class="op">]</span><span class="op">)</span></span>
-<span>  <span class="va">obs_T3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y_s</span><span class="op">[</span><span class="va">Z_s</span> <span class="op">==</span> <span class="st">"T3"</span><span class="op">]</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y_s</span><span class="op">[</span><span class="va">Z_s</span> <span class="op">==</span> <span class="st">"T1"</span><span class="op">]</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="va">d_n2</span> <span class="op">&lt;-</span> <span class="va">d_n3</span> <span class="op">&lt;-</span> <span class="va">d_c2</span> <span class="op">&lt;-</span> <span class="va">d_c3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="va">sims_lev</span><span class="op">)</span></span>
-<span>  <span class="va">idx12</span> <span class="op">&lt;-</span> <span class="va">Z_s</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T1"</span>, <span class="st">"T2"</span><span class="op">)</span></span>
-<span>  <span class="va">idx13</span> <span class="op">&lt;-</span> <span class="va">Z_s</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T1"</span>, <span class="st">"T3"</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="kw">for</span> <span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">sims_lev</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">Zn</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">decl3</span><span class="op">)</span></span>
-<span>    <span class="va">d_n2</span><span class="op">[</span><span class="va">j</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y_s</span><span class="op">[</span><span class="va">Zn</span> <span class="op">==</span> <span class="st">"T2"</span><span class="op">]</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y_s</span><span class="op">[</span><span class="va">Zn</span> <span class="op">==</span> <span class="st">"T1"</span><span class="op">]</span><span class="op">)</span></span>
-<span>    <span class="va">d_n3</span><span class="op">[</span><span class="va">j</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y_s</span><span class="op">[</span><span class="va">Zn</span> <span class="op">==</span> <span class="st">"T3"</span><span class="op">]</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y_s</span><span class="op">[</span><span class="va">Zn</span> <span class="op">==</span> <span class="st">"T1"</span><span class="op">]</span><span class="op">)</span></span>
-<span>    <span class="va">z2</span> <span class="op">&lt;-</span> <span class="va">Z_s</span>; <span class="va">z2</span><span class="op">[</span><span class="va">idx12</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">Z_s</span><span class="op">[</span><span class="va">idx12</span><span class="op">]</span><span class="op">)</span></span>
-<span>    <span class="va">d_c2</span><span class="op">[</span><span class="va">j</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y_s</span><span class="op">[</span><span class="va">z2</span> <span class="op">==</span> <span class="st">"T2"</span><span class="op">]</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y_s</span><span class="op">[</span><span class="va">z2</span> <span class="op">==</span> <span class="st">"T1"</span><span class="op">]</span><span class="op">)</span></span>
-<span>    <span class="va">z3</span> <span class="op">&lt;-</span> <span class="va">Z_s</span>; <span class="va">z3</span><span class="op">[</span><span class="va">idx13</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">Z_s</span><span class="op">[</span><span class="va">idx13</span><span class="op">]</span><span class="op">)</span></span>
-<span>    <span class="va">d_c3</span><span class="op">[</span><span class="va">j</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y_s</span><span class="op">[</span><span class="va">z3</span> <span class="op">==</span> <span class="st">"T3"</span><span class="op">]</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">Y_s</span><span class="op">[</span><span class="va">z3</span> <span class="op">==</span> <span class="st">"T1"</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="va">draws</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">arm</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span></span>
+<span>      naive <span class="op">=</span></span>
+<span>        <span class="fu"><a href="https://tidyr.tidyverse.org/reference/expand_grid.html" class="external-link">expand_grid</a></span><span class="op">(</span>sim <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">sims</span>, <span class="va">dat_lev</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Z_sim <span class="op">=</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span>, .by <span class="op">=</span> <span class="va">sim</span><span class="op">)</span>,</span>
+<span>      correct <span class="op">=</span></span>
+<span>        <span class="fu"><a href="https://tidyr.tidyverse.org/reference/expand_grid.html" class="external-link">expand_grid</a></span><span class="op">(</span>sim <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">sims</span>, <span class="va">dat_lev</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Z_sim <span class="op">=</span> <span class="fu">permute_within</span><span class="op">(</span><span class="va">Z</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T1"</span>, <span class="va">arm</span><span class="op">)</span><span class="op">)</span>, .by <span class="op">=</span> <span class="va">sim</span><span class="op">)</span>,</span>
+<span>      .id <span class="op">=</span> <span class="st">"approach"</span></span>
+<span>    <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu">arm_dims</span><span class="op">(</span><span class="va">arm</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>arm <span class="op">=</span> <span class="va">arm</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span></span>
-<span>  <span class="va">p_naive_T2_lev</span><span class="op">[</span><span class="va">s</span><span class="op">]</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">d_n2</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">obs_T2</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">p_naive_T3_lev</span><span class="op">[</span><span class="va">s</span><span class="op">]</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">d_n3</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">obs_T3</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">p_correct_T2_lev</span><span class="op">[</span><span class="va">s</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">d_c2</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">obs_T2</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">p_correct_T3_lev</span><span class="op">[</span><span class="va">s</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">d_c3</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">obs_T3</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
+<span>  <span class="va">observed</span> <span class="op">&lt;-</span></span>
+<span>    <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T2"</span>, <span class="st">"T3"</span><span class="op">)</span>, \<span class="op">(</span><span class="va">arm</span><span class="op">)</span></span>
+<span>        <span class="va">dat_lev</span> <span class="op">|&gt;</span></span>
+<span>          <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>approach <span class="op">=</span> <span class="st">"observed"</span>, sim <span class="op">=</span> <span class="fl">1</span>, Z_sim <span class="op">=</span> <span class="va">Z</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>          <span class="fu">arm_dims</span><span class="op">(</span><span class="va">arm</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>          <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>arm <span class="op">=</span> <span class="va">arm</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">arm</span>, est_obs <span class="op">=</span> <span class="va">est_sim</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"T2 (null true) — naive rejection rate:   "</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">p_naive_T2_lev</span>   <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## T2 (null true) — naive rejection rate:    0.11</span></span></code></pre>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"T2 (null true) — correct rejection rate: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">p_correct_T2_lev</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## T2 (null true) — correct rejection rate:  0.04</span></span></code></pre>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"T3 (real effect) — naive power:   "</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">p_naive_T3_lev</span>   <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## T3 (real effect) — naive power:    0.1933333</span></span></code></pre>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"T3 (real effect) — correct power: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">p_correct_T3_lev</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span>, <span class="st">"\n"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## T3 (real effect) — correct power:  0.27</span></span></code></pre>
+<span>  <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T2"</span>, <span class="st">"T3"</span><span class="op">)</span>, <span class="va">draws</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://purrr.tidyverse.org/reference/list_c.html" class="external-link">list_rbind</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">observed</span>, by <span class="op">=</span> <span class="st">"arm"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>p_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">est_sim</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">est_obs</span><span class="op">)</span><span class="op">)</span>, .by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">arm</span>, <span class="va">approach</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Running it 300 times gives the rejection rate of each approach. T2’s
+sharp null is true, so its rejection rate should sit at 0.05. T3 has a
+real effect, so a higher rate there is power:</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
+<span><span class="va">declaration_lev</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">90</span>, num_arms <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">leveling_results</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>replication <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">300</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>p_values <span class="op">=</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">replication</span>, \<span class="op">(</span><span class="va">r</span><span class="op">)</span> <span class="fu">one_replication</span><span class="op">(</span><span class="va">declaration_lev</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">p_values</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>rejection_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">p_value</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span>, .by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">arm</span>, <span class="va">approach</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">leveling_results</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 4 × 3</span></span></span>
+<span><span class="co">##   arm   approach rejection_rate</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span> T2    naive            0.096<span style="text-decoration: underline;">7</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span> T2    correct          0.053<span style="text-decoration: underline;">3</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span> T3    naive            0.17  </span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span> T3    correct          0.253</span></span></code></pre>
 <p>The naive T2 test rejects at roughly twice the nominal rate: the
 low-variance T3 units narrow its null distribution, making modest
 observed T2 differences look extreme. The naive T3 test has
@@ -422,7 +464,7 @@ substantially lower power: high-variance T1/T2 units inflate its null
 distribution, making the real T3 effect harder to detect. The correct
 conditional approach maintains the nominal type I error rate for T2 and
 the correct power for T3 in both scenarios. The conditional permutation
-is not a technicality — it is what makes the test valid.</p>
+is not a technicality: it is what makes the test valid.</p>
 </div>
 </div>
 <div class="section level2">
@@ -457,14 +499,14 @@ the randomization inference analogue of an
 to see if any of the treatments influenced the outcome. We’ll consider
 the sharp null hypothesis that each unit would express exactly the same
 outcome regardless of which of the three arms it was assigned to.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">N</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
 <span><span class="co"># three-arm trial, treat 33, 33, 34 or 33, 34, 33, or 34, 33, 33</span></span>
 <span><span class="va">declaration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N</span>, num_arms <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span></span>
-<span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fl">.9</span> <span class="op">*</span> <span class="fl">.2</span> <span class="op">*</span> <span class="op">(</span><span class="va">Z</span> <span class="op">==</span> <span class="st">"T2"</span><span class="op">)</span> <span class="op">+</span> <span class="op">-</span><span class="fl">.1</span> <span class="op">*</span> <span class="op">(</span><span class="va">Z</span> <span class="op">==</span> <span class="st">"T3"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N</span><span class="op">)</span></span>
-<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">Z</span><span class="op">)</span></span>
+<span><span class="va">dat</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>Z <span class="op">=</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="fl">.9</span> <span class="op">*</span> <span class="fl">.2</span> <span class="op">*</span> <span class="op">(</span><span class="va">Z</span> <span class="op">==</span> <span class="st">"T2"</span><span class="op">)</span> <span class="op">+</span> <span class="op">-</span><span class="fl">.1</span> <span class="op">*</span> <span class="op">(</span><span class="va">Z</span> <span class="op">==</span> <span class="st">"T3"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ri2_out</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/conduct_ri.html">conduct_ri</a></span><span class="op">(</span></span>
@@ -476,12 +518,12 @@ outcome regardless of which of the three arms it was assigned to.</p>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##          term estimate two_tailed_p_value</span></span>
-<span><span class="co">## 1 F-statistic 0.681984              0.502</span></span></code></pre>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<span><span class="co">## 1 F-statistic 1.703975              0.171</span></span></code></pre>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># for comparison</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span>, </span>
 <span>      <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y</span> <span class="op">~</span> <span class="va">Z</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -490,8 +532,8 @@ outcome regardless of which of the three arms it was assigned to.</p>
 <span><span class="co">## Model 1: Y ~ 1</span></span>
 <span><span class="co">## Model 2: Y ~ Z</span></span>
 <span><span class="co">##   Res.Df    RSS Df Sum of Sq     F Pr(&gt;F)</span></span>
-<span><span class="co">## 1     99 85.571                          </span></span>
-<span><span class="co">## 2     97 84.384  2    1.1866 0.682  0.508</span></span></code></pre>
+<span><span class="co">## 1     99 110.31                          </span></span>
+<span><span class="co">## 2     97 106.57  2    3.7441 1.704 0.1874</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="interaction-terms">Interaction terms<a class="anchor" aria-label="anchor" href="#interaction-terms"></a>
@@ -506,21 +548,24 @@ hypothesis of <strong>constant effects</strong>. In the example below,
 we test using the null hypothesis that all units have a constant effect
 equal to the estimated ATE. See Gerber and Green (2012) Chapter 9 for
 more information on this procedure.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">N</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
 <span><span class="co"># two-arm trial, treat 50 of 100</span></span>
 <span><span class="va">declaration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N</span><span class="op">)</span></span>
-<span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N</span><span class="op">)</span></span>
-<span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span></span>
-<span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fl">.9</span> <span class="op">+</span> <span class="fl">.2</span> <span class="op">*</span> <span class="va">Z</span> <span class="op">+</span> <span class="fl">.1</span> <span class="op">*</span> <span class="va">X</span> <span class="op">+</span> <span class="op">-</span><span class="fl">.5</span> <span class="op">*</span> <span class="va">Z</span> <span class="op">*</span> <span class="va">X</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N</span><span class="op">)</span></span>
-<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">Y</span>, <span class="va">Z</span><span class="op">)</span></span>
+<span><span class="va">dat</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N</span><span class="op">)</span>, Z <span class="op">=</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="fl">.9</span> <span class="op">+</span> <span class="fl">.2</span> <span class="op">*</span> <span class="va">Z</span> <span class="op">+</span> <span class="fl">.1</span> <span class="op">*</span> <span class="va">X</span> <span class="op">+</span> <span class="op">-</span><span class="fl">.5</span> <span class="op">*</span> <span class="va">Z</span> <span class="op">*</span> <span class="va">X</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Observed ATE</span></span>
-<span><span class="va">ate_hat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y</span> <span class="op">~</span> <span class="va">Z</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
+<span><span class="va">ate_hat</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://declaredesign.org/r/estimatr/reference/lm_robust.html" class="external-link">lm_robust</a></span><span class="op">(</span><span class="va">Y</span> <span class="op">~</span> <span class="va">Z</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">term</span> <span class="op">==</span> <span class="st">"Z"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">estimate</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">ate_hat</span></span></code></pre></div>
-<pre><code><span><span class="co">##          Z </span></span>
-<span><span class="co">## -0.1414751</span></span></code></pre>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<pre><code><span><span class="co">## [1] 0.2486798</span></span></code></pre>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ri2_out</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/conduct_ri.html">conduct_ri</a></span><span class="op">(</span></span>
 <span>    model_1 <span class="op">=</span> <span class="va">Y</span> <span class="op">~</span> <span class="va">Z</span> <span class="op">+</span> <span class="va">X</span>, <span class="co"># restricted model</span></span>
@@ -531,12 +576,12 @@ more information on this procedure.</p>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##          term estimate two_tailed_p_value</span></span>
-<span><span class="co">## 1 F-statistic 30.25135                  0</span></span></code></pre>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<span><span class="co">## 1 F-statistic 1.701251              0.282</span></span></code></pre>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># for comparison</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/anova.html" class="external-link">anova</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y</span> <span class="op">~</span> <span class="va">Z</span> <span class="op">+</span> <span class="va">X</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span>,</span>
 <span>      <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y</span> <span class="op">~</span> <span class="va">Z</span> <span class="op">+</span> <span class="va">X</span> <span class="op">+</span> <span class="va">Z</span><span class="op">*</span><span class="va">X</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -544,11 +589,9 @@ more information on this procedure.</p>
 <span><span class="co">## </span></span>
 <span><span class="co">## Model 1: Y ~ Z + X</span></span>
 <span><span class="co">## Model 2: Y ~ Z + X + Z * X</span></span>
-<span><span class="co">##   Res.Df    RSS Df Sum of Sq      F    Pr(&gt;F)    </span></span>
-<span><span class="co">## 1     97 119.61                                  </span></span>
-<span><span class="co">## 2     96  90.95  1     28.66 30.251 3.137e-07 ***</span></span>
-<span><span class="co">## ---</span></span>
-<span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre>
+<span><span class="co">##   Res.Df    RSS Df Sum of Sq      F Pr(&gt;F)</span></span>
+<span><span class="co">## 1     97 102.37                           </span></span>
+<span><span class="co">## 2     96 100.59  1    1.7825 1.7013 0.1952</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
@@ -567,23 +610,27 @@ rest!</p>
 </h3>
 <p>For example, we can conduct a difference-in-variances test against
 the sharp null of no effect for any unit:</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">N</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
 <span><span class="va">declaration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N</span>, m <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">Z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span></span>
-<span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fl">.9</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N</span>, sd <span class="op">=</span> <span class="fl">.25</span> <span class="op">+</span> <span class="fl">.25</span><span class="op">*</span><span class="va">Z</span><span class="op">)</span></span>
-<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">Z</span><span class="op">)</span></span>
+<span><span class="va">dat</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>Z <span class="op">=</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="fl">.9</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>, sd <span class="op">=</span> <span class="fl">.25</span> <span class="op">+</span> <span class="fl">.25</span> <span class="op">*</span> <span class="va">Z</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># arbitrary function of data</span></span>
 <span><span class="va">test_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">data</span>, <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">Y</span><span class="op">[</span><span class="va">Z</span> <span class="op">==</span> <span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">Y</span><span class="op">[</span><span class="va">Z</span> <span class="op">==</span> <span class="fl">0</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">data</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span>var_Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">var</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span>, .by <span class="op">=</span> <span class="va">Z</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">Z</span>, values_from <span class="op">=</span> <span class="va">var_Y</span>, names_prefix <span class="op">=</span> <span class="st">"Z"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>diff_var <span class="op">=</span> <span class="va">Z1</span> <span class="op">-</span> <span class="va">Z0</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">diff_var</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># confirm it works</span></span>
 <span><span class="fu">test_fun</span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 0.2866155</span></span></code></pre>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<pre><code><span><span class="co">## [1] 0.2284293</span></span></code></pre>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ri2_out</span> <span class="op">&lt;-</span></span>
 <span><span class="fu"><a href="../reference/conduct_ri.html">conduct_ri</a></span><span class="op">(</span></span>
 <span>  test_function <span class="op">=</span> <span class="va">test_fun</span>,</span>
@@ -595,11 +642,11 @@ the sharp null of no effect for any unit:</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-15-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                    term  estimate two_tailed_p_value</span></span>
-<span><span class="co">## 1 Custom Test Statistic 0.2866155                  0</span></span></code></pre>
+<span><span class="co">## 1 Custom Test Statistic 0.2284293                  0</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="balance-test">Balance Test<a class="anchor" aria-label="anchor" href="#balance-test"></a>
@@ -611,27 +658,26 @@ be interested in conducting an omnibus test.</p>
 and <code>X3</code>. We’ll get a summary balance stat (the
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>F</mi><annotation encoding="application/x-tex">F</annotation></semantics></math>-statistic
 in this case), but it really could be anything!</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">N</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
 <span><span class="va">declaration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">dat</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  X1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N</span><span class="op">)</span>,</span>
-<span>  X2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">N</span>, <span class="fl">1</span>, <span class="fl">.5</span><span class="op">)</span>,</span>
-<span>  X3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="va">N</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span>  Z <span class="op">=</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span></span>
+<span>    X1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N</span><span class="op">)</span>,</span>
+<span>    X2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">N</span>, <span class="fl">1</span>, <span class="fl">.5</span><span class="op">)</span>,</span>
+<span>    X3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="va">N</span>, <span class="fl">3</span><span class="op">)</span>,</span>
+<span>    Z <span class="op">=</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
-<span>  </span>
+<span></span>
 <span><span class="va">balance_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Z</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">f</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span>  <span class="fu"><a href="https://declaredesign.org/r/estimatr/reference/lm_robust.html" class="external-link">lm_robust</a></span><span class="op">(</span><span class="va">Z</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span>, data <span class="op">=</span> <span class="va">data</span><span class="op">)</span><span class="op">$</span><span class="va">fstatistic</span><span class="op">[[</span><span class="st">"value"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># Confirm it works!</span></span>
 <span><span class="fu">balance_fun</span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##    value </span></span>
-<span><span class="co">## 2.333344</span></span></code></pre>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<pre><code><span><span class="co">## [1] 3.11156</span></span></code></pre>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ri2_out</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/conduct_ri.html">conduct_ri</a></span><span class="op">(</span></span>
 <span>  test_function <span class="op">=</span> <span class="va">balance_fun</span>,</span>
@@ -639,39 +685,27 @@ in this case), but it really could be anything!</p>
 <span>  assignment <span class="op">=</span> <span class="st">"Z"</span>,</span>
 <span>  sharp_hypothesis <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">dat</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in data.frame(est_sim = test_stat_sim, est_obs = test_stat_obs, : row</span></span>
-<span><span class="co">## names were found from a short variable and have been discarded</span></span></code></pre>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="700"></p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
+<p><img src="ri2_vignette_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                    term estimate two_tailed_p_value</span></span>
-<span><span class="co">## 1 Custom Test Statistic 2.333344              0.071</span></span></code></pre>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<span><span class="co">## 1 Custom Test Statistic  3.11156              0.055</span></span></code></pre>
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># For comparison</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Z</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Call:</span></span>
-<span><span class="co">## lm(formula = Z ~ X1 + X2 + X3, data = dat)</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## Residuals:</span></span>
-<span><span class="co">##     Min      1Q  Median      3Q     Max </span></span>
-<span><span class="co">## -0.6969 -0.4808  0.0517  0.4402  0.7874 </span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## Coefficients:</span></span>
-<span><span class="co">##             Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
-<span><span class="co">## (Intercept)  0.74479    0.11471   6.493 3.71e-09 ***</span></span>
-<span><span class="co">## X1           0.05245    0.04465   1.175   0.2430    </span></span>
-<span><span class="co">## X2          -0.09441    0.09920  -0.952   0.3437    </span></span>
-<span><span class="co">## X3          -0.06223    0.02762  -2.253   0.0265 *  </span></span>
-<span><span class="co">## ---</span></span>
-<span><span class="co">## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## Residual standard error: 0.4927 on 96 degrees of freedom</span></span>
-<span><span class="co">## Multiple R-squared:  0.06796,    Adjusted R-squared:  0.03884 </span></span>
-<span><span class="co">## F-statistic: 2.333 on 3 and 96 DF,  p-value: 0.07885</span></span></code></pre>
+<span><span class="fu"><a href="https://declaredesign.org/r/estimatr/reference/lm_robust.html" class="external-link">lm_robust</a></span><span class="op">(</span><span class="va">Z</span> <span class="op">~</span> <span class="va">X1</span> <span class="op">+</span> <span class="va">X2</span> <span class="op">+</span> <span class="va">X3</span>, data <span class="op">=</span> <span class="va">dat</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##                 Estimate Std. Error     t value     Pr(&gt;|t|)    CI Lower</span></span>
+<span><span class="co">## (Intercept)  0.626507883 0.11688584  5.35999832 5.717938e-07  0.39449133</span></span>
+<span><span class="co">## X1           0.060203097 0.04787220  1.25757958 2.115944e-01 -0.03482246</span></span>
+<span><span class="co">## X2          -0.265953770 0.09767134 -2.72294595 7.686149e-03 -0.45982984</span></span>
+<span><span class="co">## X3           0.001054774 0.02998723  0.03517413 9.720139e-01 -0.05846940</span></span>
+<span><span class="co">##                CI Upper DF</span></span>
+<span><span class="co">## (Intercept)  0.85852443 96</span></span>
+<span><span class="co">## X1           0.15522866 96</span></span>
+<span><span class="co">## X2          -0.07207770 96</span></span>
+<span><span class="co">## X3           0.06057895 96</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">
