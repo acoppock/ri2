@@ -708,6 +708,83 @@ in this case), but it really could be anything!</p>
 <span><span class="co">## X3           0.06057895 96</span></span></code></pre>
 </div>
 <div class="section level3">
+<h3 id="sharp-hypotheses-that-vary-across-units">Sharp hypotheses that vary across units<a class="anchor" aria-label="anchor" href="#sharp-hypotheses-that-vary-across-units"></a>
+</h3>
+<p>The <code>sharp_hypothesis</code> argument states one number per
+treatment condition, which means the hypothesis it expresses is always a
+constant shift: every unit’s treated potential outcome is its control
+potential outcome plus the same
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>τ</mi><annotation encoding="application/x-tex">\tau</annotation></semantics></math>.
+That is the constant-effects null, and it is usually what you want.</p>
+<p>Some hypotheses are not of that form. You might want to test that the
+effect is proportional to a covariate, or that it is a fixed fraction of
+each unit’s baseline outcome, or a schedule implied by a prior study.
+For those, state the potential outcomes directly.</p>
+<p>Write the schedule into the data as one column per condition, then
+tell <code>conduct_ri</code> which columns they are. Suppose the
+hypothesis is that the effect is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.5</mn><msub><mi>X</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">0.5 X_i</annotation></semantics></math>
+for unit
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>:</p>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">80</span><span class="op">)</span></span>
+<span><span class="va">N</span> <span class="op">&lt;-</span> <span class="fl">200</span></span>
+<span><span class="va">declaration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N</span>, m <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dat</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>Z <span class="op">=</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span>, X <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">N</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="fl">0.3</span> <span class="op">*</span> <span class="va">Z</span> <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">X</span> <span class="op">*</span> <span class="va">Z</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Y_Z_0 <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">Z</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">Y</span> <span class="op">-</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">X</span>, <span class="va">Y</span><span class="op">)</span>,</span>
+<span>         Y_Z_1 <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">Z</span> <span class="op">==</span> <span class="fl">1</span>, <span class="va">Y</span>, <span class="va">Y</span> <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">X</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dat</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Z</span>, <span class="va">X</span>, <span class="va">Y</span>, <span class="va">Y_Z_0</span>, <span class="va">Y_Z_1</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 4 × 5</span></span></span>
+<span><span class="co">##       Z     X      Y  Y_Z_0  Y_Z_1</span></span>
+<span><span class="co">##   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">1</span>     1 0.951  0.684  0.208  0.684</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">2</span>     0 0.317 -<span style="color: #BB0000;">0.620</span> -<span style="color: #BB0000;">0.620</span> -<span style="color: #BB0000;">0.461</span></span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">3</span>     0 0.465  0.434  0.434  0.667</span></span>
+<span><span class="co">## <span style="color: #BCBCBC;">4</span>     1 2.30   1.63   0.482  1.63</span></span></code></pre>
+<p>The <code>if_else</code> on both lines is the part to get right. Each
+unit’s <em>observed</em> outcome stays where it is, in the column for
+the condition that unit actually received; only the other column is
+hypothesized. A unit assigned to treatment contributes its real outcome
+to <code>Y_Z_1</code> and an imputed one to <code>Y_Z_0</code>, and vice
+versa.</p>
+<p>Pass the column names to <code>conduct_ri</code>. They are matched to
+the conditions in sorted order, so the control column comes first:</p>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ri2_out</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="../reference/conduct_ri.html">conduct_ri</a></span><span class="op">(</span></span>
+<span>    <span class="va">Y</span> <span class="op">~</span> <span class="va">Z</span>,</span>
+<span>    declaration <span class="op">=</span> <span class="va">declaration</span>,</span>
+<span>    potential_outcomes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Y_Z_0"</span>, <span class="st">"Y_Z_1"</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">dat</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##   term  estimate two_tailed_p_value</span></span>
+<span><span class="co">## 1    Z 0.2503895              0.101</span></span></code></pre>
+<p>The same approach extends to multi-arm trials: supply one column per
+arm, in sorted condition order.</p>
+<p>ri2 checks that the schedule reproduces the observed outcomes and
+errors if it does not. That catches both of the easy mistakes, passing
+the columns in the wrong order and forgetting to hold the observed
+outcomes fixed:</p>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">careless</span> <span class="op">&lt;-</span></span>
+<span>  <span class="va">dat</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Y_Z_0 <span class="op">=</span> <span class="va">Y</span>, Y_Z_1 <span class="op">=</span> <span class="va">Y</span> <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">X</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/conduct_ri.html">conduct_ri</a></span><span class="op">(</span><span class="va">Y</span> <span class="op">~</span> <span class="va">Z</span>, declaration <span class="op">=</span> <span class="va">declaration</span>,</span>
+<span>           potential_outcomes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Y_Z_0"</span>, <span class="st">"Y_Z_1"</span><span class="op">)</span>,</span>
+<span>           data <span class="op">=</span> <span class="va">careless</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `resolve_pos()`:</span></span></span>
+<span><span class="co">## <span style="color: #BBBB00;">!</span> The potential outcome columns do not reproduce the observed outcome.</span></span>
+<span><span class="co">## For each unit, the column matching its observed assignment must equal its observed outcome; only the counterfactual columns are hypothesized.</span></span>
+<span><span class="co">## Columns are matched to conditions in sorted order (0, 1), so check that potential_outcomes is given in that order.</span></span></code></pre>
+</div>
+<div class="section level3">
 <h3 id="factorial-designs">Factorial designs<a class="anchor" aria-label="anchor" href="#factorial-designs"></a>
 </h3>
 <p>A
@@ -719,7 +796,7 @@ misleading. The randomization assigns each unit to one of the four
 not separate random draws. A factorial design is a four-arm trial, and
 one assignment vector is the right representation of it.</p>
 <p>So declare the cells, and derive the factors from them:</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
 <span><span class="va">N</span> <span class="op">&lt;-</span> <span class="fl">200</span></span>
 <span><span class="va">declaration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N</span>, conditions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"00"</span>, <span class="st">"01"</span>, <span class="st">"10"</span>, <span class="st">"11"</span><span class="op">)</span><span class="op">)</span></span>
@@ -735,7 +812,7 @@ from it, like <code>Z1</code> and <code>Z2</code> above, are not
 recomputed, so they would keep their observed values across
 permutations. Derive them inside a test function instead, which receives
 the data with the permuted assignment on every draw:</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">interaction_coef</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">z1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cell</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">z2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cell</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
@@ -766,7 +843,7 @@ function can use them directly. Inverse probability weights are not
 fixed, since they depend on the permuted assignment, so recompute them
 inside the function. Your <code>declaration</code> is available there by
 closure:</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ipw_dim</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">w</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">/</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/obtain_condition_probabilities.html" class="external-link">obtain_condition_probabilities</a></span><span class="op">(</span><span class="va">declaration</span>, assignment <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">cell</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y</span> <span class="op">~</span> <span class="va">Z1</span>, data <span class="op">=</span> <span class="va">data</span>, weights <span class="op">=</span> <span class="va">w</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="st">"Z1"</span><span class="op">]</span><span class="op">]</span></span>

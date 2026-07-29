@@ -752,6 +752,95 @@ lm_robust(Z ~ X1 + X2 + X3, data = dat)
     ## X2          -0.07207770 96
     ## X3           0.06057895 96
 
+### Sharp hypotheses that vary across units
+
+The `sharp_hypothesis` argument states one number per treatment
+condition, which means the hypothesis it expresses is always a constant
+shift: every unit’s treated potential outcome is its control potential
+outcome plus the same $`\tau`$. That is the constant-effects null, and
+it is usually what you want.
+
+Some hypotheses are not of that form. You might want to test that the
+effect is proportional to a covariate, or that it is a fixed fraction of
+each unit’s baseline outcome, or a schedule implied by a prior study.
+For those, state the potential outcomes directly.
+
+Write the schedule into the data as one column per condition, then tell
+`conduct_ri` which columns they are. Suppose the hypothesis is that the
+effect is $`0.5 X_i`$ for unit $`i`$:
+
+``` r
+
+set.seed(80)
+N <- 200
+declaration <- declare_ra(N = N, m = 100)
+
+dat <-
+  tibble(Z = conduct_ra(declaration), X = rnorm(N)) |>
+  mutate(Y = 0.3 * Z + 0.5 * X * Z + rnorm(n())) |>
+  mutate(Y_Z_0 = if_else(Z == 1, Y - 0.5 * X, Y),
+         Y_Z_1 = if_else(Z == 1, Y, Y + 0.5 * X))
+
+dat |> select(Z, X, Y, Y_Z_0, Y_Z_1) |> head(4)
+```
+
+    ## # A tibble: 4 × 5
+    ##       Z     X      Y  Y_Z_0  Y_Z_1
+    ##   <int> <dbl>  <dbl>  <dbl>  <dbl>
+    ## 1     1 0.951  0.684  0.208  0.684
+    ## 2     0 0.317 -0.620 -0.620 -0.461
+    ## 3     0 0.465  0.434  0.434  0.667
+    ## 4     1 2.30   1.63   0.482  1.63
+
+The `if_else` on both lines is the part to get right. Each unit’s
+*observed* outcome stays where it is, in the column for the condition
+that unit actually received; only the other column is hypothesized. A
+unit assigned to treatment contributes its real outcome to `Y_Z_1` and
+an imputed one to `Y_Z_0`, and vice versa.
+
+Pass the column names to `conduct_ri`. They are matched to the
+conditions in sorted order, so the control column comes first:
+
+``` r
+
+ri2_out <-
+  conduct_ri(
+    Y ~ Z,
+    declaration = declaration,
+    potential_outcomes = c("Y_Z_0", "Y_Z_1"),
+    data = dat
+  )
+
+summary(ri2_out)
+```
+
+    ##   term  estimate two_tailed_p_value
+    ## 1    Z 0.2503895              0.101
+
+The same approach extends to multi-arm trials: supply one column per
+arm, in sorted condition order.
+
+ri2 checks that the schedule reproduces the observed outcomes and errors
+if it does not. That catches both of the easy mistakes, passing the
+columns in the wrong order and forgetting to hold the observed outcomes
+fixed:
+
+``` r
+
+careless <-
+  dat |>
+  mutate(Y_Z_0 = Y, Y_Z_1 = Y + 0.5 * X)
+
+conduct_ri(Y ~ Z, declaration = declaration,
+           potential_outcomes = c("Y_Z_0", "Y_Z_1"),
+           data = careless)
+```
+
+    ## Error in `resolve_pos()`:
+    ## ! The potential outcome columns do not reproduce the observed outcome.
+    ## For each unit, the column matching its observed assignment must equal its observed outcome; only the counterfactual columns are hypothesized.
+    ## Columns are matched to conditions in sorted order (0, 1), so check that potential_outcomes is given in that order.
+
 ### Factorial designs
 
 A $`2 \times 2`$ factorial looks like it needs two assignment vectors,

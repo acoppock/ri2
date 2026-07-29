@@ -11,6 +11,22 @@
   anti-conservative. Such formulas now rebuild the design matrix from
   the permuted assignment; the single-term case keeps the faster
   column-patching path.
+- Added a `potential_outcomes` argument to
+  [`conduct_ri()`](https://alexandercoppock.com/ri2/reference/conduct_ri.md)
+  ([\#19](https://github.com/acoppock/ri2/issues/19)). Naming one column
+  of `data` per treatment condition states the sharp hypothesis as a
+  full schedule of potential outcomes, which allows hypothesized effects
+  that vary across units; `sharp_hypothesis` can only express a constant
+  shift per arm. Build the columns however you like, holding each unit’s
+  observed outcome fixed for the condition it was assigned to. Supplied
+  columns are checked against the observed outcomes, which catches
+  columns given in the wrong order and schedules that do not preserve
+  what was observed.
+- Supplying a non-zero `sharp_hypothesis` to
+  [`conduct_ri()`](https://alexandercoppock.com/ri2/reference/conduct_ri.md)
+  alongside `test_function` without also naming `outcome` is now an
+  error. `outcome` defaults to `NULL`, in which case the switching
+  equation never ran and the hypothesis was silently ignored.
 - [`conduct_ri()`](https://alexandercoppock.com/ri2/reference/conduct_ri.md)
   now errors when the assignment variable does not appear in the
   formula, or in either model of a nested-model comparison. Only the

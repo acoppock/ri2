@@ -15,6 +15,7 @@ conduct_ri(
   outcome = NULL,
   declaration = NULL,
   sharp_hypothesis = 0,
+  potential_outcomes = NULL,
   studentize = FALSE,
   IPW = TRUE,
   sampling_weights = NULL,
@@ -81,6 +82,18 @@ conduct_ri(
   the vector is the hypothesized difference in potential outcomes
   between the baseline condition and each successive treatment
   condition.
+
+- potential_outcomes:
+
+  an optional character vector naming one column of `data` per treatment
+  condition, giving each unit's hypothesized outcome under that
+  condition. Columns are matched to conditions in sorted order.
+  Supplying this states the sharp hypothesis directly and allows
+  hypothesized effects that vary across units, which `sharp_hypothesis`
+  cannot express. Each unit's observed outcome must be preserved in the
+  column matching the condition it was actually assigned to; only the
+  other columns are hypothesized counterfactuals. Cannot be combined
+  with a non-zero `sharp_hypothesis`.
 
 - studentize:
 

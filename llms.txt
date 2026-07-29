@@ -67,8 +67,8 @@ estimate.](reference/figures/README-ri-example-1.png)
 ``` r
 
 summary(ri_out)
-#>   term   estimate two_tailed_p_value
-#> 1    Z -0.5711395              0.044
+#>   term  estimate two_tailed_p_value
+#> 1    Z 0.1235293              0.658
 ```
 
 The development of ri2 is supported by a Standards Grant from

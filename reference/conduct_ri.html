@@ -52,6 +52,7 @@
 <span>  outcome <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  declaration <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sharp_hypothesis <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  potential_outcomes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  studentize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  IPW <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  sampling_weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -98,6 +99,10 @@
 
 <dt id="arg-sharp-hypothesis">sharp_hypothesis<a class="anchor" aria-label="anchor" href="#arg-sharp-hypothesis"></a></dt>
 <dd><p>either a numeric scalar or a numeric vector of length k - 1, where k is the number of treatment conditions. In a two-arm trial, this number is the hypothesized difference between the treated and untreated potential outcomes for each unit. In a multi-arm trial, each number in the vector is the hypothesized difference in potential outcomes between the baseline condition and each successive treatment condition.</p></dd>
+
+
+<dt id="arg-potential-outcomes">potential_outcomes<a class="anchor" aria-label="anchor" href="#arg-potential-outcomes"></a></dt>
+<dd><p>an optional character vector naming one column of <code>data</code> per treatment condition, giving each unit's hypothesized outcome under that condition. Columns are matched to conditions in sorted order. Supplying this states the sharp hypothesis directly and allows hypothesized effects that vary across units, which <code>sharp_hypothesis</code> cannot express. Each unit's observed outcome must be preserved in the column matching the condition it was actually assigned to; only the other columns are hypothesized counterfactuals. Cannot be combined with a non-zero <code>sharp_hypothesis</code>.</p></dd>
 
 
 <dt id="arg-studentize">studentize<a class="anchor" aria-label="anchor" href="#arg-studentize"></a></dt>
