@@ -4,6 +4,16 @@
 \name{reexports}
 \alias{reexports}
 \alias{tidy}
+\alias{declare_ra}
+\alias{conduct_ra}
+\alias{simple_ra}
+\alias{complete_ra}
+\alias{block_ra}
+\alias{cluster_ra}
+\alias{block_and_cluster_ra}
+\alias{obtain_permutation_matrix}
+\alias{obtain_num_permutations}
+\alias{obtain_condition_probabilities}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -11,6 +21,8 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{generics}{\code{\link[generics]{tidy}}}
+  \item{generics}{\code{\link[generics:tidy]{tidy()}}}
+
+  \item{randomizr}{\code{\link[randomizr:block_and_cluster_ra]{block_and_cluster_ra()}}, \code{\link[randomizr:block_ra]{block_ra()}}, \code{\link[randomizr:cluster_ra]{cluster_ra()}}, \code{\link[randomizr:complete_ra]{complete_ra()}}, \code{\link[randomizr:conduct_ra]{conduct_ra()}}, \code{\link[randomizr:declare_ra]{declare_ra()}}, \code{\link[randomizr:obtain_condition_probabilities]{obtain_condition_probabilities()}}, \code{\link[randomizr:obtain_num_permutations]{obtain_num_permutations()}}, \code{\link[randomizr:obtain_permutation_matrix]{obtain_permutation_matrix()}}, \code{\link[randomizr:simple_ra]{simple_ra()}}}
 }}
 

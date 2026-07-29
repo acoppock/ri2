@@ -13,7 +13,8 @@ reference:
       - ri_ci
   - title: Re-exports
     desc: >
-      Random assignment functions from randomizr, re-exported so that a
-      declaration can be built without attaching randomizr.
+      Random assignment functions from randomizr and the `tidy()` generic from
+      generics, re-exported so that a declaration can be built and tidied
+      without attaching another package.
     contents:
       - reexports
