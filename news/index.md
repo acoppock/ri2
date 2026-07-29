@@ -11,6 +11,20 @@
   anti-conservative. Such formulas now rebuild the design matrix from
   the permuted assignment; the single-term case keeps the faster
   column-patching path.
+- [`conduct_ri()`](https://alexandercoppock.com/ri2/reference/conduct_ri.md)
+  now errors when the assignment variable does not appear in the
+  formula, or in either model of a nested-model comparison. Only the
+  assignment column is permuted, so columns derived from it are never
+  recomputed; previously such a call ran and returned a degenerate null
+  distribution with a p-value of 1 regardless of the data.
+- Supplying `sampling_weights` alongside `test_function` is now an error
+  rather than being silently ignored. ri2 cannot weight an arbitrary
+  scalar statistic, so weighting belongs inside the test function; the
+  error message says how.
+- Vignette gains a “Factorial designs” section
+  ([\#27](https://github.com/acoppock/ri2/issues/27)) showing that a
+  factorial is a multi-arm trial over its cells, and how to test any
+  factorial estimand by deriving the factors inside a `test_function`.
 - Fixed multi-arm trial bug
   ([\#33](https://github.com/acoppock/ri2/issues/33)): arms 2+ now each
   get a fresh conditional permutation matrix instead of reusing the

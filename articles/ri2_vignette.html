@@ -707,6 +707,75 @@ in this case), but it really could be anything!</p>
 <span><span class="co">## X2          -0.07207770 96</span></span>
 <span><span class="co">## X3           0.06057895 96</span></span></code></pre>
 </div>
+<div class="section level3">
+<h3 id="factorial-designs">Factorial designs<a class="anchor" aria-label="anchor" href="#factorial-designs"></a>
+</h3>
+<p>A
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><mo>×</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">2 \times 2</annotation></semantics></math>
+factorial looks like it needs two assignment vectors, one per factor,
+and <code>declare_ra</code> returns only one. That framing is
+misleading. The randomization assigns each unit to one of the four
+<em>cells</em>; the two factors are deterministic functions of the cell,
+not separate random draws. A factorial design is a four-arm trial, and
+one assignment vector is the right representation of it.</p>
+<p>So declare the cells, and derive the factors from them:</p>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
+<span><span class="va">N</span> <span class="op">&lt;-</span> <span class="fl">200</span></span>
+<span><span class="va">declaration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/declare_ra.html" class="external-link">declare_ra</a></span><span class="op">(</span>N <span class="op">=</span> <span class="va">N</span>, conditions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"00"</span>, <span class="st">"01"</span>, <span class="st">"10"</span>, <span class="st">"11"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dat</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>cell <span class="op">=</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/conduct_ra.html" class="external-link">conduct_ra</a></span><span class="op">(</span><span class="va">declaration</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Z1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">cell</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>         Z2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">cell</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>         Y <span class="op">=</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">Z1</span> <span class="op">+</span> <span class="fl">0.8</span> <span class="op">*</span> <span class="va">Z2</span> <span class="op">+</span> <span class="fl">1.2</span> <span class="op">*</span> <span class="va">Z1</span> <span class="op">*</span> <span class="va">Z2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>The one thing to be careful about is that <code>conduct_ri</code>
+permutes the <strong>assignment column only</strong>. Columns derived
+from it, like <code>Z1</code> and <code>Z2</code> above, are not
+recomputed, so they would keep their observed values across
+permutations. Derive them inside a test function instead, which receives
+the data with the permuted assignment on every draw:</p>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">interaction_coef</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">z1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cell</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">z2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substr.html" class="external-link">substr</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">cell</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">Y</span> <span class="op">~</span> <span class="va">z1</span> <span class="op">*</span> <span class="va">z2</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="st">"z1:z2"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">ri2_out</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="../reference/conduct_ri.html">conduct_ri</a></span><span class="op">(</span></span>
+<span>    test_function <span class="op">=</span> <span class="va">interaction_coef</span>,</span>
+<span>    assignment <span class="op">=</span> <span class="st">"cell"</span>,</span>
+<span>    outcome <span class="op">=</span> <span class="st">"Y"</span>,</span>
+<span>    declaration <span class="op">=</span> <span class="va">declaration</span>,</span>
+<span>    sharp_hypothesis <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    data <span class="op">=</span> <span class="va">dat</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">ri2_out</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##                    term  estimate two_tailed_p_value</span></span>
+<span><span class="co">## 1 Custom Test Statistic 0.8060049              0.035</span></span></code></pre>
+<p>Any test statistic works here, not just the interaction: swap in a
+marginal effect, a difference of differences, or anything else you can
+compute from the cell assignment. The design can also be blocked,
+clustered, or use unequal probabilities across cells, since
+<code>declare_ra</code> handles all of those over the cell variable.</p>
+<p>Two notes on weighting. Sampling weights are fixed across
+permutations, so if they are a column of <code>data</code> your test
+function can use them directly. Inverse probability weights are not
+fixed, since they depend on the permuted assignment, so recompute them
+inside the function. Your <code>declaration</code> is available there by
+closure:</p>
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ipw_dim</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">w</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">/</span> <span class="fu"><a href="https://declaredesign.org/r/randomizr/reference/obtain_condition_probabilities.html" class="external-link">obtain_condition_probabilities</a></span><span class="op">(</span><span class="va">declaration</span>, assignment <span class="op">=</span> <span class="va">data</span><span class="op">$</span><span class="va">cell</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">Y</span> <span class="op">~</span> <span class="va">Z1</span>, data <span class="op">=</span> <span class="va">data</span>, weights <span class="op">=</span> <span class="va">w</span><span class="op">)</span><span class="op">)</span><span class="op">[[</span><span class="st">"Z1"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Passing <code>sampling_weights</code> to <code>conduct_ri</code>
+alongside a <code>test_function</code> is an error rather than a silent
+no-op, because ri2 cannot know how to apply weights to an arbitrary
+scalar statistic.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
