@@ -2,6 +2,8 @@
 
 ## ri2 0.5.0
 
+CRAN release: 2026-07-29
+
 - Fixed wrong null distributions when the assignment variable appears in
   more than one term of the formula, such as `Y ~ Z * X`. Only the
   assignment columns of the design matrix were updated for each
