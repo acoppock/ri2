@@ -13,6 +13,7 @@ conduct_ri(
   outcome = NULL,
   declaration = NULL,
   sharp_hypothesis = 0,
+  potential_outcomes = NULL,
   studentize = FALSE,
   IPW = TRUE,
   sampling_weights = NULL,
@@ -40,6 +41,8 @@ conduct_ri(
 \item{declaration}{A random assignment declaration, created by \code{\link[randomizr]{declare_ra}}.}
 
 \item{sharp_hypothesis}{either a numeric scalar or a numeric vector of length k - 1, where k is the number of treatment conditions. In a two-arm trial, this number is the hypothesized difference between the treated and untreated potential outcomes for each unit. In a multi-arm trial, each number in the vector is the hypothesized difference in potential outcomes between the baseline condition and each successive treatment condition.}
+
+\item{potential_outcomes}{an optional character vector naming one column of \code{data} per treatment condition, giving each unit's hypothesized outcome under that condition. Columns are matched to conditions in sorted order. Supplying this states the sharp hypothesis directly and allows hypothesized effects that vary across units, which \code{sharp_hypothesis} cannot express. Use \code{\link{add_potential_outcomes}} to build a starting schedule. Cannot be combined with a non-zero \code{sharp_hypothesis}.}
 
 \item{studentize}{logical, defaults to FALSE. Should the test statistic be the t-ratio rather than the estimated ATE? T-ratios will be calculated using HC2 robust standard errors, or CR2 clustered standard errors when \code{clusters} is specified.}
 

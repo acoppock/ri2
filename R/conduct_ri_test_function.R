@@ -3,6 +3,7 @@ conduct_ri_test_function <- function(test_function,
                                      outcome = "Y",
                                      declaration,
                                      sharp_hypothesis = 0,
+                                     potential_outcomes = NULL,
                                      sampling_weights = NULL,
                                      permutation_matrix = NULL,
                                      data,
@@ -27,6 +28,17 @@ conduct_ri_test_function <- function(test_function,
   test_stat_obs <- test_function(data)
   assignment_vec <- data[[assignment]]
 
+  # Without `outcome`, the switching equation never runs and the outcome stays
+  # at its observed values. That is correct only under the sharp null of no
+  # effect, so any other hypothesis would otherwise be silently ignored.
+  if (is.null(outcome) && (any(sharp_hypothesis != 0) || !is.null(potential_outcomes))) {
+    stop(
+      "A sharp hypothesis was supplied without naming the outcome variable.\n",
+      "Set outcome = <name> so ri2 can impute each unit's outcome under the ",
+      "permuted assignment. Without it the outcome stays at its observed values, ",
+      "which is only correct under the sharp null of no effect."
+    )
+  }
 
   if (!is.null(outcome)) {
     if (length(sharp_hypothesis) == 1) {
@@ -34,10 +46,12 @@ conduct_ri_test_function <- function(test_function,
         rep(sharp_hypothesis, length(unique(assignment_vec))-1)
     }
 
-    pos_mat <- generate_pos(
+    pos_mat <- resolve_pos(
       Y = data[[outcome]],
       assignment_vec = assignment_vec,
-      sharp_hypothesis = sharp_hypothesis
+      sharp_hypothesis = sharp_hypothesis,
+      potential_outcomes = potential_outcomes,
+      data = data
     )
   }
 
