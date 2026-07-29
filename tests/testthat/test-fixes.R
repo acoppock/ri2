@@ -332,3 +332,23 @@ test_that("factorial via cells and a test_function matches manual permutation", 
   expect_equal(out$sims_df$est_sim, expected, tolerance = 1e-8,
                ignore_attr = TRUE)
 })
+
+# The bin count came from the total row count, but plot.ri2() facets by term, so
+# a multi-arm result got more bins per panel than a two-arm one over the same
+# number of simulations per panel.
+test_that("histogram bins do not scale with the number of arms", {
+  set.seed(102)
+  bins_drawn <- function(arms) {
+    decl <- randomizr::declare_ra(N = 150, num_arms = arms)
+    Z <- randomizr::conduct_ra(decl)
+    dat <- data.frame(Y = rnorm(150), Z = Z)
+    out <- conduct_ri(Y ~ Z, declaration = decl, data = dat, sims = 1000)
+    built <- ggplot2::ggplot_build(plot(out))
+    panel_1 <- built$data[[1]][built$data[[1]]$PANEL == 1, ]
+    length(unique(panel_1$x))
+  }
+
+  two_arm <- bins_drawn(2)
+  expect_equal(bins_drawn(3), two_arm)
+  expect_equal(bins_drawn(4), two_arm)
+})

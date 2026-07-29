@@ -255,9 +255,11 @@ plot.ri2 <- function(x, p = NULL, ...) {
   ))
   summary_df$term <- rownames(summary_df)
 
-  # geom_histogram() requires a whole number of bins, and nrow / 20 is
-  # fractional whenever the row count is not a multiple of 20.
-  n_bins <- max(30, floor(nrow(x$sims_df) / 20))
+  # Bins are chosen per panel, so divide by the number of terms rather than by
+  # the total row count: the plot facets by term, and each facet shows only its
+  # own simulations. geom_histogram() also requires a whole number.
+  n_terms <- length(unique(x$sims_df$term))
+  n_bins <- max(30, floor(nrow(x$sims_df) / n_terms / 20))
 
   ggplot(x$sims_df, aes(x = est_sim, fill = extreme)) +
     geom_histogram(bins = n_bins) +
