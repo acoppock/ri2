@@ -62,6 +62,12 @@
   floored to a whole number, as
   [`geom_histogram()`](https://ggplot2.tidyverse.org/reference/geom_histogram.html)
   requires.
+- [`plot()`](https://rdrr.io/r/graphics/plot.default.html) no longer
+  over-bins multi-arm results. The bin count came from the total number
+  of simulated estimates, but the plot facets by term, so a four-arm
+  trial drew three times as many bins per panel as a two-arm trial over
+  the same number of simulations per panel. Bins are now chosen per
+  panel.
 - Replaced floating-point rounding hack with tolerance-based comparison
   in `summary.ri2()` and `plot.ri2()`.
 - Implemented `sampling_weights` argument
