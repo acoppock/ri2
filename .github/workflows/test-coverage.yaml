@@ -40,7 +40,10 @@ jobs:
 
       - uses: codecov/codecov-action@v5
         with:
-          fail_ci_if_error: true
+          # Flip to true once an upload has actually succeeded. The secret
+          # existing is not sufficient: an empty value resolves to no token and
+          # the upload is rejected.
+          fail_ci_if_error: false
           files: ./cobertura.xml
           plugins: noop
           disable_search: true
