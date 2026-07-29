@@ -47,6 +47,7 @@ jobs:
           files: ./cobertura.xml
           plugins: noop
           disable_search: true
+          slug: ${{ github.repository }}
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Show testthat output
