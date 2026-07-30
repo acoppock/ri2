@@ -40,10 +40,14 @@ jobs:
 
       - uses: codecov/codecov-action@v5
         with:
-          # Flip to true once an upload has actually succeeded. The secret
-          # existing is not sufficient: an empty value resolves to no token and
-          # the upload is rejected.
-          fail_ci_if_error: false
+          # An upload has now landed (verified 2026-07-30), so a failure here is
+          # a real regression rather than the standing credential problem.
+          # Note for future debugging: Codecov's errors mislead. With NO token it
+          # reports "Token required because branch is protected" even on an
+          # unprotected branch; with a WRONG token it reports "Repository not
+          # found". Check api.codecov.io/api/v2/github/<owner>/repos/<repo>/,
+          # which reports `activated` and `active` separately.
+          fail_ci_if_error: true
           files: ./cobertura.xml
           plugins: noop
           disable_search: true
