@@ -9,16 +9,17 @@ template:
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
   bslib:
-    primary: '#8C3A2E'
+    primary: '#a72f5b'
     body-bg: '#FBFAF7'
-    body-color: '#2E2A25'
-    link-color: '#8C3A2E'
-    link-hover-color: '#5E241B'
-    border-color: '#E2DCD2'
-    muted-color: '#5C554B'
-    rule-color: '#E2DCD2'
-    rule-strong: '#D8D0C4'
-    code-bg: '#F4F0E8'
+    body-color: '#3C444C'
+    link-color: '#a72f5b'
+    link-hover-color: '#7d2244'
+    border-color: '#E4E0D8'
+    muted-color: '#6B7078'
+    rule-color: '#E4E0D8'
+    rule-strong: '#D6D1C6'
+    accent-teal: '#004c6d'
+    code-bg: '#F3EFE7'
     border-radius: '2px'
     btn-border-radius: '2px'
     font-size-base: '1.0625rem'
@@ -27,7 +28,7 @@ template:
     headings-font-family: '"Source Serif 4", Georgia, "Times New Roman", serif'
     font-family-monospace: '"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace'
     headings-font-weight: '600'
-    code-color: '#7A2E22'
+    code-color: '#004c6d'
 reference:
   - title: Conducting randomization inference
     desc: >
