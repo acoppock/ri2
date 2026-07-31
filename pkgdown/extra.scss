@@ -1,0 +1,174 @@
+// Generated from brand.scss. Do not edit.
+
+main {
+  max-width: 72ch;
+}
+
+// Optical sizing matters on Source Serif at display sizes; without it the
+// large headings come out too dark against the warm ground.
+h1, h2, h3, h4 {
+  line-height: 1.18;
+  letter-spacing: -0.005em;
+  font-variation-settings: "opsz" 32;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: 2.2rem;
+  margin-bottom: 1.1rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-top: 2.4rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid $rule-color;
+}
+
+h3 {
+  font-size: 1.2rem;
+  margin-top: 1.9rem;
+  font-variation-settings: "opsz" 14;
+}
+
+p {
+  margin-bottom: 1.1rem;
+}
+
+// Links read as citations rather than buttons: an offset underline that thins
+// on hover, no color change.
+main a:not(.btn):not(.nav-link) {
+  text-decoration-thickness: 0.5px;
+  text-underline-offset: 0.18em;
+}
+
+main a:not(.btn):not(.nav-link):hover {
+  text-decoration-color: #C9A79E;
+}
+
+::selection {
+  background: #F0DDD6;
+}
+
+.navbar {
+  background-color: #FBFAF7 !important;
+  border-bottom: 1px solid $rule-strong;
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+}
+
+.navbar-brand {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-weight: 600;
+  font-size: 1.2rem;
+  letter-spacing: 0;
+}
+
+.navbar .nav-link {
+  color: $muted-color !important;
+  font-size: 0.95rem;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+  color: $primary !important;
+}
+
+table {
+  font-size: 0.95rem;
+}
+
+table th {
+  font-family: "Source Serif 4", Georgia, serif;
+  font-weight: 600;
+  border-bottom: 1.5px solid $body-color;
+}
+
+table td,
+table th {
+  border-color: $rule-color;
+  padding: 0.42rem 0.6rem;
+  vertical-align: baseline;
+}
+
+table tbody tr:nth-child(odd) > * {
+  background-color: transparent;
+}
+
+// The reference index is the page a theme most often gets wrong: function
+// names need to read as code without the descriptions turning into code too.
+.ref-index th {
+  border-bottom: 1px solid $rule-strong;
+}
+
+.ref-index td:first-child {
+  white-space: normal;
+}
+
+.ref-index code,
+.ref-index a code {
+  font-size: 0.9em;
+  color: #7A2E22;
+  background: none;
+  padding: 0;
+}
+
+pre {
+  background-color: $code-bg;
+  border: 1px solid $rule-color;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+code {
+  font-size: 0.875em;
+}
+
+// pkgdown puts the table of contents and metadata in a right-hand rail; in
+// serif it competes with the body, so it stays sans and quiet.
+.sidebar,
+#toc {
+  font-size: 0.9rem;
+}
+
+.sidebar h2,
+#toc .h2 {
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $muted-color;
+}
+
+#toc .nav-link {
+  color: $muted-color;
+  padding-top: 0.15rem;
+  padding-bottom: 0.15rem;
+}
+
+#toc .nav-link.active {
+  color: $primary;
+  border-left-color: $primary;
+}
+
+blockquote {
+  border-left: 2px solid $primary;
+  padding-left: 1rem;
+  color: $muted-color;
+  font-style: italic;
+}
+
+.template-home .page-header,
+.page-header {
+  border-bottom: none;
+}
+
+footer {
+  border-top: 1px solid $rule-color;
+  margin-top: 3rem;
+  padding-top: 1rem;
+  font-size: 0.875rem;
+  color: $muted-color;
+}

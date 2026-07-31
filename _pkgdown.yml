@@ -2,7 +2,32 @@ url: https://alexandercoppock.com/ri2/
 
 template:
   bootstrap: 5
-
+  theme: gruvbox-light
+  includes:
+    in_header: |
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+  bslib:
+    primary: '#8C3A2E'
+    body-bg: '#FBFAF7'
+    body-color: '#2E2A25'
+    link-color: '#8C3A2E'
+    link-hover-color: '#5E241B'
+    border-color: '#E2DCD2'
+    muted-color: '#5C554B'
+    rule-color: '#E2DCD2'
+    rule-strong: '#D8D0C4'
+    code-bg: '#F4F0E8'
+    border-radius: '2px'
+    btn-border-radius: '2px'
+    font-size-base: '1.0625rem'
+    line-height-base: '1.6'
+    font-family-sans-serif: '"Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif'
+    headings-font-family: '"Source Serif 4", Georgia, "Times New Roman", serif'
+    font-family-monospace: '"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace'
+    headings-font-weight: '600'
+    code-color: '#7A2E22'
 reference:
   - title: Conducting randomization inference
     desc: >
