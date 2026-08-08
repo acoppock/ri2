@@ -14,6 +14,24 @@ conduct_conditional_ra <-
       )
     }
 
+    # Every branch below is an `if` with no `else`, and assignment_vec_new starts
+    # as the observed assignment, so an unrecognised declaration class used to
+    # fall through and return the observed assignment for every draw. That gives
+    # a null distribution with one unique value and a p-value of 1 whatever the
+    # data, with no error. Fail loudly instead.
+    known <- c("ra_simple", "ra_complete", "ra_blocked", "ra_clustered",
+               "ra_blocked_and_clustered")
+    if (!inherits(declaration, known)) {
+      stop(
+        "Conditional random assignment is not implemented for a declaration of class ",
+        paste(setdiff(class(declaration), "ra_declaration"), collapse = "/"),
+        ".\nSupply `permutation_matrix` to conduct_ri() directly, or use a ",
+        "declaration from declare_ra() of one of these kinds: ",
+        paste(sub("^ra_", "", known), collapse = ", "), ".",
+        call. = FALSE
+      )
+    }
+
     assignment_vec_new <- assignment_vec
 
     if (inherits(declaration, "ra_simple")) {

@@ -133,3 +133,38 @@ test_that("Conditional without conditions!", {
   table(Z2)
   table(Z, Z2)
 })
+
+
+test_that("a custom declaration wider than sims gives a real null distribution", {
+  # Regression test. obtain_num_permutations() on a custom declaration is the
+  # width of the supplied matrix, so a matrix wider than `sims` used to skip the
+  # exact branch and fall through to conduct_conditional_ra(), which has no
+  # method for ra_custom. Every draw came back as the observed assignment, so the
+  # null distribution held one value and the p-value was 1 whatever the data.
+  set.seed(2)
+  N <- 40
+  declaration <- randomizr::declare_ra(
+    permutation_matrix = replicate(3000, randomizr::complete_ra(N, N / 2))
+  )
+  Z <- randomizr::conduct_ra(declaration)
+  dat <- data.frame(Y = rnorm(N) + 2 * Z, Z = Z)
+
+  expect_true(3000 > 500)  # the matrix is wider than sims, which is the trigger
+  out <- conduct_ri(Y ~ Z, declaration = declaration, assignment = "Z",
+                    data = dat, sims = 500)
+
+  expect_gt(length(unique(out$sims_df$est_sim)), 1)
+  expect_lt(summary(out)$two_tailed_p_value[1], 0.05)
+})
+
+test_that("an unhandled declaration class errors instead of failing silently", {
+  set.seed(3)
+  declaration <- randomizr::declare_ra(N = 20, m = 10)
+  Z <- randomizr::conduct_ra(declaration)
+  class(declaration) <- c("ra_declaration", "ra_some_future_design")
+
+  expect_error(
+    conduct_conditional_ra(declaration, assignment_vec = Z, conditions = c(0, 1)),
+    "not implemented for a declaration of class"
+  )
+})

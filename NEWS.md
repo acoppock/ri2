@@ -1,3 +1,8 @@
+# ri2 0.5.1
+
+* Fixed a silent failure with custom declarations. `obtain_num_permutations()` on a declaration made from a `permutation_matrix` is the width of that matrix, so a matrix with more columns than `sims` skipped the exact-test branch and fell through to the conditional re-randomization path, which has no method for that class. Every draw came back as the observed assignment, giving a null distribution with a single value and a p-value of 1 whatever the data. A custom declaration's permutation matrix is the complete reference set, so it is now always used, however `sims` compares to its width.
+* `conduct_conditional_ra()` now errors on a declaration class it does not handle. Its branches were a chain of `if` statements with no `else`, over a variable initialized to the observed assignment, so any unrecognized class returned the observed assignment for every draw rather than raising anything. That is the mechanism behind the bug above, and it would have silently repeated for any design type added to randomizr in future.
+
 # ri2 0.5.0
 
 * Fixed wrong null distributions when the assignment variable appears in more than one term of the formula, such as `Y ~ Z * X`. Only the assignment columns of the design matrix were updated for each permutation, so interaction columns kept their observed values and the design matrix disagreed with itself about what the assignment was. The resulting null distribution was too narrow and p-values were anti-conservative. Such formulas now rebuild the design matrix from the permuted assignment; the single-term case keeps the faster column-patching path.

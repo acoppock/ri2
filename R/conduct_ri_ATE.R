@@ -149,9 +149,14 @@ conduct_ri_ATE <- function(formula,
   null_distributions <- vector("list", length = length(condition_names) - 1)
   names(null_distributions) <- coefficient_names
 
+  # A custom declaration carries the permutation matrix the user supplied, which
+  # IS the complete reference set, so it is always the right thing to use however
+  # `sims` compares to its width. Without this, a custom matrix wider than `sims`
+  # fell through to the conditional path, which has no method for that class.
   exact_pm <- NULL
   if (is.null(permutation_matrix) &&
-      sims >= obtain_num_permutations(declaration)) {
+      (inherits(declaration, "ra_custom") ||
+       sims >= obtain_num_permutations(declaration))) {
     exact_pm <- obtain_permutation_matrix(declaration, maximum_permutations = sims)
   }
 
