@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">ri2</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,12 @@
       <small>Source: <a href="https://github.com/acoppock/ri2/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.5.1" id="ri2-051">ri2 0.5.1<a class="anchor" aria-label="anchor" href="#ri2-051"></a></h2>
+<ul><li>Fixed a silent failure with custom declarations. <code><a href="https://declaredesign.org/r/randomizr/reference/obtain_num_permutations.html" class="external-link">obtain_num_permutations()</a></code> on a declaration made from a <code>permutation_matrix</code> is the width of that matrix, so a matrix with more columns than <code>sims</code> skipped the exact-test branch and fell through to the conditional re-randomization path, which has no method for that class. Every draw came back as the observed assignment, giving a null distribution with a single value and a p-value of 1 whatever the data. A custom declaration’s permutation matrix is the complete reference set, so it is now always used, however <code>sims</code> compares to its width.</li>
+<li>
+<code>conduct_conditional_ra()</code> now errors on a declaration class it does not handle. Its branches were a chain of <code>if</code> statements with no <code>else</code>, over a variable initialized to the observed assignment, so any unrecognized class returned the observed assignment for every draw rather than raising anything. That is the mechanism behind the bug above, and it would have silently repeated for any design type added to randomizr in future.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.5.0" id="ri2-050">ri2 0.5.0<a class="anchor" aria-label="anchor" href="#ri2-050"></a></h2><p class="text-muted">CRAN release: 2026-07-29</p>
 <ul><li>Fixed wrong null distributions when the assignment variable appears in more than one term of the formula, such as <code>Y ~ Z * X</code>. Only the assignment columns of the design matrix were updated for each permutation, so interaction columns kept their observed values and the design matrix disagreed with itself about what the assignment was. The resulting null distribution was too narrow and p-values were anti-conservative. Such formulas now rebuild the design matrix from the permuted assignment; the single-term case keeps the faster column-patching path.</li>
