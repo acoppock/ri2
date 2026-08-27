@@ -20,7 +20,7 @@ of the original authors) is the successor package to
 ri2 has specific support for the following:
 
 1.  All randomization schemes in
-    [randomizr](http://randomizr.declaredesign.org).
+    [randomizr](https://declaredesign.org/r/randomizr/).
 2.  Difference-in-means and OLS-adjusted estimates of ATE estimates
     using R-native formula syntax.
 3.  Multi-arm trials.

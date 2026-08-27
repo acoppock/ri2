@@ -25,7 +25,7 @@ ri2 makes conducting randomization inference easy and (with the blessing of the 
 
 ri2 has specific support for the following:
 
-1. All randomization schemes in [randomizr](http://randomizr.declaredesign.org).
+1. All randomization schemes in [randomizr](https://declaredesign.org/r/randomizr/).
 2. Difference-in-means and OLS-adjusted estimates of ATE estimates using R-native formula syntax.
 3. Multi-arm trials.
 4. ANOVA-style hypothesis tests (e.g., testing interaction term under null of constant effects),
