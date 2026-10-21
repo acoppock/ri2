@@ -1,3 +1,7 @@
+# ri2 (development version)
+
+* Fixed NA p-values in multi-arm trials when the assignment column is character rather than factor, which is what `read.csv()` produces. `conduct_conditional_ra()` assigned the factor that randomizr returns into a character vector, so the re-randomized units received level numbers ("1", "2") instead of condition names; and `conduct_ri_ATE()` rebuilt each pairwise comparison's design matrix from a factor with only the two compared levels, so one column was recycled into two and every simulated estimate was NA. The conditional draw now keeps every observed condition as a level and returns character when given character, and the per-draw factor carries the full set of condition names. Found through the EGAP methods guide on ri2, whose three-arm example had printed NA since 2023 (egap/methods-guides#48).
+
 # ri2 0.5.1
 
 * Fixed a silent failure with custom declarations. `obtain_num_permutations()` on a declaration made from a `permutation_matrix` is the width of that matrix, so a matrix with more columns than `sims` skipped the exact-test branch and fell through to the conditional re-randomization path, which has no method for that class. Every draw came back as the observed assignment, giving a null distribution with a single value and a p-value of 1 whatever the data. A custom declaration's permutation matrix is the complete reference set, so it is now always used, however `sims` compares to its width.

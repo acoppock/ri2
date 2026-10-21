@@ -179,8 +179,15 @@ conduct_ri_ATE <- function(formula,
     }
 
     ri_function <- function(Z_sim) {
+      # The conditional re-randomization returns a factor whose levels are the
+      # two arms being compared. The design matrix needs a column for every
+      # arm, so give Z_sim the full set of levels: the factor's own levels when
+      # the user supplied a factor, and the sorted condition names when the
+      # user supplied a character column (which is what read.csv() produces).
       if (is.factor(assignment_vec)) {
         Z_sim <- factor(Z_sim, levels = levels(assignment_vec))
+      } else if (!is.numeric(assignment_vec)) {
+        Z_sim <- factor(Z_sim, levels = condition_names)
       }
 
       dm_sim <- if (rebuild_design) {
