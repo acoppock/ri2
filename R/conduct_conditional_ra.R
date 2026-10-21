@@ -32,7 +32,17 @@ conduct_conditional_ra <-
       )
     }
 
-    assignment_vec_new <- assignment_vec
+    # The randomizr functions below return factors. Assigning a factor into a
+    # character vector stores its level numbers, not its labels, so a character
+    # assignment column (what read.csv() gives) would come back as "1" and "2"
+    # for the re-randomized units. Work in a factor with every observed
+    # condition as a level, and convert back to character at the end.
+    is_chr <- is.character(assignment_vec)
+    assignment_vec_new <- if (is_chr) {
+      factor(assignment_vec, levels = sort(unique(assignment_vec)))
+    } else {
+      assignment_vec
+    }
 
     if (inherits(declaration, "ra_simple")) {
       prob_each_local <-
@@ -122,5 +132,6 @@ conduct_conditional_ra <-
         )
     }
 
+    if (is_chr) assignment_vec_new <- as.character(assignment_vec_new)
     return(assignment_vec_new)
   }
