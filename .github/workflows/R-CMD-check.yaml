@@ -3,7 +3,7 @@ on:
   schedule:
     - cron: "23 20 * * 5"
   push:
-    branches: [main, master]
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
