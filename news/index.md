@@ -2,6 +2,15 @@
 
 ## ri2 0.5.1
 
+- Fixed
+  [`conduct_ri()`](https://alexandercoppock.com/ri2/reference/conduct_ri.md)
+  stopping with “subscript out of bounds” when the assignment column is
+  logical (for example `Z <- conduct_ra(declaration) == 1`). A default
+  two-arm declaration names its conditions 0 and 1, so the conditions
+  FALSE and TRUE matched nothing in its probability table. A logical
+  column is now treated as the 0/1 column it stands for whenever the
+  declaration’s conditions are 0 and 1, for formulas, F-tests, and test
+  functions alike.
 - Fixed NA p-values in multi-arm trials when the assignment column is
   character rather than factor, which is what
   [`read.csv()`](https://rdrr.io/r/utils/read.table.html) produces.
