@@ -2,7 +2,10 @@ Package: ri2
 Type: Package
 Title: Randomization Inference for Randomized Experiments
 Version: 0.5.1
-Authors@R: person("Alexander", "Coppock", email = "acoppock@gmail.com", role = c("aut", "cre"))
+Authors@R: c(
+    person("Alexander", "Coppock", email = "acoppock@gmail.com", role = c("aut", "cre")),
+    person("Jake", "Bowers", role = "ctb")
+  )
 Description: Randomization inference procedures for simple and complex randomized designs, including multi-armed trials, as described in Gerber and Green (2012, ISBN: 978-0393979954). Users formally describe their randomization procedure and test statistic. The randomization distribution of the test statistic under some null hypothesis is efficiently simulated.
 License: MIT + file LICENSE
 URL: https://alexandercoppock.com/ri2/, https://github.com/acoppock/ri2
