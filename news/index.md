@@ -2,6 +2,21 @@
 
 ## ri2 0.5.1
 
+- Fixed NA p-values in multi-arm trials when the assignment column is
+  character rather than factor, which is what
+  [`read.csv()`](https://rdrr.io/r/utils/read.table.html) produces.
+  `conduct_conditional_ra()` assigned the factor that randomizr returns
+  into a character vector, so the re-randomized units received level
+  numbers (“1”, “2”) instead of condition names; and `conduct_ri_ATE()`
+  rebuilt each pairwise comparison’s design matrix from a factor with
+  only the two compared levels, so one column was recycled into two and
+  every simulated estimate was NA. The conditional draw now keeps every
+  observed condition as a level and returns character when given
+  character, and the per-draw factor carries the full set of condition
+  names. Found through the EGAP methods guide on ri2, whose three-arm
+  example had printed NA since 2023 (egap/methods-guides#48;
+  [@jwbowers](https://github.com/jwbowers),
+  [\#42](https://github.com/acoppock/ri2/issues/42)).
 - Fixed a silent failure with custom declarations.
   [`obtain_num_permutations()`](https://declaredesign.org/r/randomizr/reference/obtain_num_permutations.html)
   on a declaration made from a `permutation_matrix` is the width of that

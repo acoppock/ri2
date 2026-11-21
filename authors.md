@@ -4,6 +4,8 @@
 
 - **Alexander Coppock**. Author, maintainer.
 
+- **Jake Bowers**. Contributor.
+
 ## Citation
 
 Source:
