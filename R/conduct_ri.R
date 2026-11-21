@@ -151,6 +151,15 @@ conduct_ri <- function(formula = NULL,
   if (!assignment %in% names(data)) {
     stop("Assignment variable '", assignment, "' not found in data.")
   }
+  # A logical assignment column (Z <- conduct_ra(...) == 1) has conditions FALSE
+  # and TRUE, but a default two-arm declaration names its conditions 0 and 1, so
+  # every lookup of "prob_FALSE" in the declaration failed. Treat it as the 0/1
+  # column it stands for. A declaration made with conditions = c(FALSE, TRUE)
+  # already matches and is left alone.
+  if (is.logical(data[[assignment]]) &&
+      all(c(0, 1) %in% declaration$conditions)) {
+    data[[assignment]] <- as.integer(data[[assignment]])
+  }
   if (!is.null(potential_outcomes) && any(sharp_hypothesis != 0)) {
     stop(
       "Supply either potential_outcomes or a non-zero sharp_hypothesis, not both.\n",
